@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Background Colors */
+  --bg-primary: #0A0E27;
+  --bg-secondary: #0F1629;
+  --bg-tertiary: #1A1F3A;
+  --bg-hover: #252B47;
+
+  /* Cyber Grid Pattern */
+  --grid-pattern: linear-gradient(90deg, rgba(0,191,255,0.03) 1px, transparent 1px),
+                  linear-gradient(rgba(0,191,255,0.03) 1px, transparent 1px);
+  --grid-size: 50px 50px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-primary);
+  color: #F8FAFC;
+  overflow-x: hidden;
+  background-image: var(--grid-pattern);
+  background-size: var(--grid-size);
+  background-position: 0 0, 0 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Orbitron', 'Inter', sans-serif;
+}
+
+code {
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00BFFF;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00A8E6;
+}
+
+/* Focus Styles */
+*:focus-visible {
+  outline: 2px solid #00BFFF;
+  outline-offset: 2px;
+}
+
+/* Smooth Transitions */
+button, a, input, select {
+  transition: all 0.25s ease;
+}
+
+/* Loading Animation */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(
+    to right,
+    var(--bg-secondary) 4%,
+    var(--bg-tertiary) 25%,
+    var(--bg-secondary) 36%
+  );
+  background-size: 1000px 100%;
+}
