@@ -6,6 +6,7 @@ import DeviceTable from '../components/dashboard/DeviceTable';
 import VulnerabilityTimeline from '../components/dashboard/VulnerabilityTimeline';
 import VulnerabilityChart from '../components/dashboard/VulnerabilityChart';
 import DeviceModal from '../components/dashboard/DeviceModal';
+import HistoryView from './HistoryView';
 import Button from '../components/ui/Button';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { scannerAPI } from '../services/api';
@@ -124,88 +125,101 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="flex-1 ml-60 p-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-4xl font-heading font-bold text-text-primary mb-2">
-              Security Dashboard
-            </h1>
-            <p className="text-text-tertiary">
-              Monitor and protect your camera network in real-time
-            </p>
-          </div>
-          <div className="flex gap-3">
-            <Button
-              variant="ghost"
-              icon={RefreshCw}
-              onClick={fetchDevices}
-              disabled={scanning}
-            >
-              Refresh
-            </Button>
-            <Button
-              variant="primary"
-              icon={PlayCircle}
-              onClick={runScan}
-              disabled={scanning}
-            >
-              {scanning ? 'Scanning...' : 'Run Scan'}
-            </Button>
-          </div>
-        </div>
-
-        {/* Error Message */}
-        {error && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400">
-            {error}
-          </div>
-        )}
-
-        {/* No Devices State */}
-        {!loading && devices.length === 0 && !error && (
+        {/* Render based on active view */}
+        {activeView === 'history' ? (
+          <HistoryView />
+        ) : activeView === 'settings' ? (
           <div className="text-center py-20">
-            <div className="text-6xl mb-4">📹</div>
-            <h2 className="text-2xl font-bold text-text-primary mb-2">No Devices Found</h2>
-            <p className="text-text-tertiary mb-6">
-              Run your first scan to discover cameras on your network
-            </p>
-            <Button variant="primary" icon={PlayCircle} onClick={runScan}>
-              Run First Scan
-            </Button>
+            <h2 className="text-2xl font-bold text-text-primary mb-2">Settings</h2>
+            <p className="text-text-tertiary">Settings page coming soon...</p>
           </div>
-        )}
-
-        {/* Dashboard Content */}
-        {devices.length > 0 && (
+        ) : (
           <>
-            {/* Stats Bar */}
-            <StatsBar stats={stats} />
-
-            {/* Health Score Grid */}
-            <HealthScoreGrid devices={devices} onDeviceClick={handleDeviceClick} />
-
-            {/* Main Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-              <div className="lg:col-span-2">
-                <DeviceTable devices={devices} onDeviceClick={handleDeviceClick} />
+            {/* Dashboard View */}
+            {/* Header */}
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h1 className="text-4xl font-heading font-bold text-text-primary mb-2">
+                  Security Dashboard
+                </h1>
+                <p className="text-text-tertiary">
+                  Monitor and protect your camera network in real-time
+                </p>
               </div>
-              <div className="space-y-6">
-                <VulnerabilityChart devices={devices} />
+              <div className="flex gap-3">
+                <Button
+                  variant="ghost"
+                  icon={RefreshCw}
+                  onClick={fetchDevices}
+                  disabled={scanning}
+                >
+                  Refresh
+                </Button>
+                <Button
+                  variant="primary"
+                  icon={PlayCircle}
+                  onClick={runScan}
+                  disabled={scanning}
+                >
+                  {scanning ? 'Scanning...' : 'Run Scan'}
+                </Button>
               </div>
             </div>
 
-            {/* Vulnerability Timeline */}
-            <VulnerabilityTimeline devices={devices} />
-          </>
-        )}
+            {/* Error Message */}
+            {error && (
+              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400">
+                {error}
+              </div>
+            )}
 
-        {/* Device Modal */}
-        {selectedDevice && (
-          <DeviceModal
-            device={selectedDevice}
-            onClose={() => setSelectedDevice(null)}
-            onRescan={handleRescan}
-          />
+            {/* No Devices State */}
+            {!loading && devices.length === 0 && !error && (
+              <div className="text-center py-20">
+                <div className="text-6xl mb-4">📹</div>
+                <h2 className="text-2xl font-bold text-text-primary mb-2">No Devices Found</h2>
+                <p className="text-text-tertiary mb-6">
+                  Run your first scan to discover cameras on your network
+                </p>
+                <Button variant="primary" icon={PlayCircle} onClick={runScan}>
+                  Run First Scan
+                </Button>
+              </div>
+            )}
+
+            {/* Dashboard Content */}
+            {devices.length > 0 && (
+              <>
+                {/* Stats Bar */}
+                <StatsBar stats={stats} />
+
+                {/* Health Score Grid */}
+                <HealthScoreGrid devices={devices} onDeviceClick={handleDeviceClick} />
+
+                {/* Main Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 items-start">
+                  <div className="lg:col-span-2">
+                    <DeviceTable devices={devices} onDeviceClick={handleDeviceClick} />
+                  </div>
+                  <div className="flex flex-col h-full">
+                    <VulnerabilityChart devices={devices} />
+                  </div>
+                </div>
+
+                {/* Vulnerability Timeline */}
+                <VulnerabilityTimeline devices={devices} />
+              </>
+            )}
+
+            {/* Device Modal */}
+            {selectedDevice && (
+              <DeviceModal
+                device={selectedDevice}
+                onClose={() => setSelectedDevice(null)}
+                onRescan={handleRescan}
+              />
+            )}
+          </>
         )}
       </main>
     </div>

@@ -89,3 +89,24 @@ button, a, input, select {
   );
   background-size: 1000px 100%;
 }
+
+/* Pie Chart Hover Effects */
+.recharts-pie-sector {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.recharts-pie-sector:hover {
+  filter: brightness(1.2);
+  transform: scale(1.05);
+}
+
+/* Custom glow for active pie segments */
+@keyframes pieGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 5px currentColor);
+  }
+  50% {
+    filter: drop-shadow(0 0 15px currentColor);
+  }
+}

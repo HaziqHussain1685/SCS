@@ -1,12 +1,10 @@
 import React from 'react';
-import { Shield, Activity, Camera, AlertTriangle, BarChart3, Settings, User } from 'lucide-react';
+import { Shield, Activity, BarChart3, Settings, User } from 'lucide-react';
 
 const Sidebar = ({ activeView, onViewChange, deviceStats, scanStatus }) => {
   const navItems = [
     { id: 'dashboard', icon: Activity, label: 'Dashboard', badge: deviceStats.online },
-    { id: 'devices', icon: Camera, label: 'Devices', count: deviceStats.total },
-    { id: 'vulnerabilities', icon: AlertTriangle, label: 'Vulnerabilities', alert: deviceStats.critical > 0 },
-    { id: 'analytics', icon: BarChart3, label: 'Analytics' },
+    { id: 'history', icon: BarChart3, label: 'History' },
     { id: 'settings', icon: Settings, label: 'Settings' },
   ];
 
