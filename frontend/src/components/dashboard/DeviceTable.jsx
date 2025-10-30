@@ -200,16 +200,26 @@ const DeviceTable = ({ devices, onDeviceClick }) => {
                             Device Information
                           </h4>
                           <div className="space-y-2 text-sm">
-                            <InfoRow label="Model" value={device.device_info?.model || 'N/A'} />
-                            <InfoRow label="Firmware" value={device.firmware_info?.version || 'N/A'} />
-                            <InfoRow 
-                              label="Status" 
-                              value={device.status === 'online' ? '🟢 Online' : '🔴 Offline'} 
-                            />
-                            <InfoRow 
-                              label="Credentials" 
-                              value={device.default_credentials_detected ? '⚠️ Weak/Default' : '✅ Secure'} 
-                            />
+                            <div className="flex items-center gap-3 p-2 bg-bg-secondary rounded">
+                              <span className="text-text-tertiary w-24">Model:</span>
+                              <span className="text-text-primary font-medium">{device.device_info?.model || 'N/A'}</span>
+                            </div>
+                            <div className="flex items-center gap-3 p-2 bg-bg-secondary rounded">
+                              <span className="text-text-tertiary w-24">Firmware:</span>
+                              <span className="text-text-primary font-medium">{device.firmware_info?.version || 'N/A'}</span>
+                            </div>
+                            <div className="flex items-center gap-3 p-2 bg-bg-secondary rounded">
+                              <span className="text-text-tertiary w-24">Status:</span>
+                              <span className="text-text-primary font-medium">{device.status === 'online' ? '🟢 Online' : '🔴 Offline'}</span>
+                            </div>
+                            <div className="flex items-center gap-3 p-2 bg-bg-secondary rounded">
+                              <span className="text-text-tertiary w-24">Credentials:</span>
+                              <span className="text-text-primary font-medium">
+                                {device.default_credentials_detected 
+                                  ? `⚠️ ${device.detected_username}:${device.detected_password}` 
+                                  : '✅ Secure'}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </div>

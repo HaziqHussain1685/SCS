@@ -3,7 +3,7 @@
     "name": "Camera 1 - Vulnerable",
     "ip": "172.25.0.11",
     "container_name": "smartcam-demo-cam1",
-    "scan_time": "2025-10-30T22:27:28.442025",
+    "scan_time": "2025-10-30T22:54:23.060254",
     "status": "online",
     "open_ports": [
       {
@@ -81,7 +81,7 @@
     "name": "Camera 2 - Secure",
     "ip": "172.25.0.12",
     "container_name": "smartcam-demo-cam2",
-    "scan_time": "2025-10-30T22:27:28.461317",
+    "scan_time": "2025-10-30T22:54:23.110187",
     "status": "online",
     "open_ports": [
       {
@@ -141,7 +141,7 @@
     "name": "Camera 3 - Critical",
     "ip": "172.25.0.13",
     "container_name": "smartcam-demo-cam3",
-    "scan_time": "2025-10-30T22:27:28.520450",
+    "scan_time": "2025-10-30T22:54:23.174227",
     "status": "online",
     "open_ports": [
       {
@@ -237,7 +237,7 @@
     "name": "Camera 4 - Moderate",
     "ip": "172.25.0.14",
     "container_name": "smartcam-demo-cam4",
-    "scan_time": "2025-10-30T22:27:28.573188",
+    "scan_time": "2025-10-30T22:54:23.271092",
     "status": "offline",
     "open_ports": [],
     "credentials": null,
