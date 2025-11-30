@@ -1,425 +1,257 @@
-# SmartCam Shield - Camera Security Platform
+# SmartCam Shield - Camera Security Monitoring System
 
 > A comprehensive security solution for protecting smart cameras in home environments
 
-## Overview
-
-SmartCam Shield is a specialized cybersecurity platform designed to secure smart cameras by detecting vulnerabilities, analyzing risks, and providing actionable remediation guidance. The system automates security assessments and empowers homeowners to protect their privacy without requiring technical expertise.
-
-## Problem
-
-Smart cameras in homes are increasingly vulnerable to cyberattacks due to:
-- Default or weak passwords
-- Outdated firmware with known CVEs
-- Insecure network services (Telnet, FTP, unencrypted RTSP)
-- Direct exposure to the internet
-- Lack of user-friendly security tools
-
-## Solution
-
-SmartCam Shield provides:
-- ✅ Automated network scanning and device discovery
-- ✅ Weak credential detection (dictionary-based testing)
-- ✅ Firmware vulnerability assessment
-- ✅ Insecure service identification (Telnet, FTP, etc.)
-- ✅ Health Index Score (0-100) for each device
-- ✅ Actionable remediation recommendations
-- ✅ Password rotation automation
-- ✅ Continuous monitoring capabilities
-
-## Features
-
-### 1. Network Scanner
-- Discovers smart cameras on local network
-- Tests for weak/default credentials
-- Identifies open ports and insecure services
-- Validates firmware versions against CVE databases
-
-### 2. Risk Analysis Engine
-- Calculates Health Index Score (0-100, higher is better)
-- Assigns risk levels: CRITICAL, HIGH, MEDIUM, LOW
-- Provides detailed vulnerability breakdown
-- Prioritizes security issues by severity
-
-### 3. Automated Remediation
-- Generates step-by-step remediation guides
-- Supports automated password updates (where possible)
-- Provides firmware update instructions
-- Recommends network isolation strategies
-
-### 4. Dashboard Integration
-- Outputs JSON data for web dashboard consumption
-- Supports visualization of health scores
-- Tracks remediation progress
-- Enables continuous monitoring alerts
-
-## Project Structure
-
-```
-SmartCam Shield/
-├── camera-simulator/           # Docker-based camera simulators for testing
-│   ├── app.py                  # Python camera simulator
-│   ├── Dockerfile              # Container configuration
-│   └── .dockerignore
-├── scanner/                    # Scanning and analysis tools
-│   ├── network_scanner.py      # Main vulnerability scanner
-│   ├── password_demo.py        # Remediation demonstration script
-│   └── scan_results.json       # Output (generated after scan)
-├── docker-compose.yml          # Multi-camera test environment
-├── DEMO_GUIDE.md              # Complete demonstration walkthrough
-└── README.md                  # This file
-```
-
-## Quick Start
+## 🚀 Quick Start
 
 ### Prerequisites
 - Docker Desktop (for camera simulators)
-- Python 3.8 or higher
-- `requests` library: `pip install requests`
+- Python 3.8+ (for scanner backend)
+- Node.js 18+ (for React dashboard)
 
-### Running the Demo
+### Start the Application
 
-#### Step 1: Start Camera Simulators
+**Terminal 1 - Backend API:**
 ```powershell
-# Build and start all simulated cameras
+cd scanner
+python scanner_api.py
+```
+Runs on: `http://127.0.0.1:5000`
+
+**Terminal 2 - Frontend Dashboard:**
+```powershell
+cd frontend
+npm install  # First time only
+npm run dev
+```
+Runs on: `http://localhost:3000`
+
+**Terminal 3 - Docker Cameras (Optional):**
+```powershell
+docker-compose up -d
+```
+
+## 📊 Features
+
+- ✅ **Real-time Device Monitoring** - Tracks camera online/offline status
+- ✅ **Vulnerability Detection** - Identifies weak passwords, outdated firmware, insecure services
+- ✅ **Health Score System** - Quantifies security (0-100 scale)
+- ✅ **Risk Categorization** - CRITICAL, HIGH, MEDIUM, LOW levels
+- ✅ **Interactive Dashboard** - Modern React UI with animations
+- ✅ **Scan History** - Tracks security trends over time
+- ✅ **Remediation Guidance** - Step-by-step security fixes
+
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  React Dashboard (Port 3000)                            │
+│  - Health Score Visualization                           │
+│  - Device Table                                         │
+│  - Vulnerability Timeline                               │
+│  - Scan History                                         │
+└────────────────────┬────────────────────────────────────┘
+                     │ HTTP API
+                     ▼
+┌─────────────────────────────────────────────────────────┐
+│  Flask Scanner API (Port 5000)                          │
+│  - Network Scanning                                     │
+│  - Port Detection                                       │
+│  - Credential Testing                                   │
+│  - Health Score Calculation                             │
+└────────────────────┬────────────────────────────────────┘
+                     │ TCP/IP
+                     ▼
+┌─────────────────────────────────────────────────────────┐
+│  Docker Camera Simulators (Ports 8081-8084)            │
+│  - 4 Cameras with Different Security Profiles          │
+│  - Realistic HTTP/RTSP/Telnet/FTP Services            │
+└─────────────────────────────────────────────────────────┘
+```
+
+## 📁 Project Structure
+
+```
+SmartCam-Shield/
+├── frontend/                    # React Dashboard
+│   ├── src/
+│   │   ├── components/         # UI Components
+│   │   ├── pages/              # Dashboard, History views
+│   │   ├── services/           # API integration
+│   │   └── utils/              # Helper functions
+│   └── package.json
+├── scanner/                    # Python Backend
+│   ├── scanner_api.py         # Flask REST API
+│   ├── network_scanner.py     # Vulnerability scanner
+│   ├── password_demo.py       # Remediation demo
+│   └── requirements.txt
+├── camera-simulator/          # Docker camera simulator
+│   ├── app.py
+│   └── Dockerfile
+├── docs/                      # PlantUML diagrams
+│   ├── architecture_diagram.puml
+│   ├── data_model_diagram.puml
+│   ├── sequence_diagram.puml
+│   ├── component_diagram.puml
+│   └── deployment_diagram.puml
+├── readme/                    # Documentation
+│   ├── DEMO_GUIDE.md
+│   ├── QUICK_START.md
+│   ├── DESIGN_SYSTEM.md
+│   └── DASHBOARD_LAYOUT.md
+├── docker-compose.yml
+├── .gitignore
+└── README.md                  # This file
+```
+
+## 🎯 API Endpoints
+
+### Scanner API (Flask - Port 5000)
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/scan` | POST | Trigger new network scan |
+| `/api/devices` | GET | Get current device status |
+| `/api/history` | GET | Get scan history |
+| `/api/device/<name>` | GET | Get specific device details |
+| `/api/health` | GET | API health check |
+
+## 🎨 Dashboard Components
+
+1. **Stats Bar** - Total devices, critical issues, average health, last scan
+2. **Health Score Grid** - Circular meters for each device
+3. **Device Table** - Sortable, expandable table with port details
+4. **Vulnerability Timeline** - Chronological security issues
+5. **Vulnerability Chart** - Pie chart distribution
+6. **Device Modal** - Detailed device information with 3 tabs
+7. **Scan History** - Historical scans with trend analysis
+
+## 🔧 Development
+
+### Frontend (React + Vite)
+```powershell
+cd frontend
+npm install
+npm run dev     # Development server
+npm run build   # Production build
+```
+
+### Backend (Flask)
+```powershell
+cd scanner
+pip install -r requirements.txt
+python scanner_api.py
+```
+
+### Docker Cameras
+```powershell
+docker-compose up -d    # Start
+docker-compose ps       # Check status
+docker-compose down     # Stop
+```
+
+## 📚 Documentation
+
+- **[QUICK_START.md](readme/QUICK_START.md)** - 5-minute quick start guide
+- **[DEMO_GUIDE.md](readme/DEMO_GUIDE.md)** - Complete demonstration script
+- **[DESIGN_SYSTEM.md](readme/DESIGN_SYSTEM.md)** - UI/UX design specifications
+- **[DASHBOARD_LAYOUT.md](readme/DASHBOARD_LAYOUT.md)** - Component specifications
+- **[docs/README.md](docs/README.md)** - PlantUML diagrams guide
+
+## 🎓 Academic Context
+
+**Project:** SmartCam Shield - IoT Camera Security Platform  
+**Institution:** FAST National University  
+**Course:** Final Year Project (FYP) - Semester 7  
+**Year:** 2024-2025
+
+## 🛡️ Security Features
+
+- **Weak Password Detection** - Tests against common credential database
+- **Firmware Vulnerability Analysis** - CVE database integration
+- **Insecure Service Detection** - Identifies Telnet, FTP, unencrypted protocols
+- **Internet Exposure Check** - Flags publicly accessible devices
+- **Health Score Calculation** - Quantitative security metric (0-100)
+- **Automated Remediation** - Step-by-step security improvement guides
+
+## 🚀 Demo Flow
+
+1. Start Docker cameras: `docker-compose up -d`
+2. Start backend API: `python scanner/scanner_api.py`
+3. Start frontend: `npm run dev` in `frontend/`
+4. Open browser: `http://localhost:3000`
+5. Click "Run Scan" to see vulnerabilities
+6. Explore device details and remediation steps
+
+## 🎨 Tech Stack
+
+### Frontend
+- React 18.3.1
+- Tailwind CSS 3.4.4
+- Framer Motion 11.3.0 (animations)
+- Recharts 2.12.7 (charts)
+- Axios 1.7.2 (API client)
+- Vite 5.3.4 (build tool)
+
+### Backend
+- Python 3.11
+- Flask 3.0.0 (REST API)
+- Flask-CORS (cross-origin support)
+- Requests (HTTP client)
+
+### Infrastructure
+- Docker 24.x
+- Docker Compose
+- Custom bridge network
+
+## 🐛 Troubleshooting
+
+### Frontend won't start
+```powershell
+cd frontend
+Remove-Item -Recurse -Force node_modules
+npm install
+npm run dev
+```
+
+### Backend API errors
+```powershell
+cd scanner
+pip install --upgrade -r requirements.txt
+python scanner_api.py
+```
+
+### Docker issues
+```powershell
+docker-compose down
+docker system prune -f
 docker-compose up -d --build
-
-# Verify cameras are running
-docker-compose ps
 ```
 
-You should see 4 containers running:
-- `smartcam-demo-cam1` - Vulnerable (default creds, outdated firmware)
-- `smartcam-demo-cam2` - Secure (strong password, current firmware)
-- `smartcam-demo-cam3` - Critical (weak creds, ancient firmware, all insecure services)
-- `smartcam-demo-cam4` - Moderate (weak password, Telnet open)
-
-#### Step 2: Run Network Scan
-```powershell
-cd scanner
-python network_scanner.py
-```
-
-The scanner will:
-1. Discover all cameras on localhost
-2. Test for weak credentials
-3. Check firmware versions
-4. Identify insecure services
-5. Calculate health scores
-6. Generate `scan_results.json`
-
-#### Step 3: View Results
-```powershell
-# View JSON output
-Get-Content scan_results.json | ConvertFrom-Json | ConvertTo-Json -Depth 10
-
-# Quick summary
-Get-Content scan_results.json | ConvertFrom-Json | Select-Object name, health_score, risk_level
-```
-
-#### Step 4: Run Remediation Demo
-```powershell
-python password_demo.py
-```
-
-This demonstrates:
-- Authenticating with weak credentials
-- Updating to strong passwords
-- Verifying changes
-- Security improvement
-
-#### Step 5: Verify Improvements
-```powershell
-# Rescan to see improved health scores
-python network_scanner.py
-
-# Compare before/after
-Get-Content scan_results.json | ConvertFrom-Json | Select-Object name, health_score, risk_level
-```
-
-#### Step 6: Cleanup
-```powershell
-cd ..
-docker-compose down
-```
-
-## Camera Simulator Details
-
-Each simulated camera runs multiple network services:
-
-### Camera 1: AcmeCam A1 (Vulnerable)
-- **IP**: 127.0.0.1:8081
-- **Credentials**: admin/admin (default)
-- **Firmware**: 1.0.2 (outdated)
-- **Services**: HTTP (80), RTSP (554)
-- **Expected Health Score**: ~25/100 (HIGH risk)
-
-### Camera 2: SafeView Pro 100 (Secure)
-- **IP**: 127.0.0.1:8082
-- **Credentials**: homeowner/SecureP@ssw0rd2024! (strong)
-- **Firmware**: 2.4.0 (current)
-- **Services**: HTTP (80) only
-- **Expected Health Score**: 95/100 (LOW risk)
-
-### Camera 3: OldEye Z200 (Critical)
-- **IP**: 127.0.0.1:8083
-- **Credentials**: root/12345 (weak)
-- **Firmware**: 0.9.4 (vulnerable with CVEs)
-- **Services**: FTP (21), Telnet (23), HTTP (80), RTSP (554)
-- **Exposure**: Flagged as internet-exposed
-- **Expected Health Score**: 0/100 (CRITICAL risk)
-
-### Camera 4: BudgetCam 500 (Moderate)
-- **IP**: 127.0.0.1:8084
-- **Credentials**: admin/password (weak)
-- **Firmware**: 1.5.1 (outdated)
-- **Services**: Telnet (23), HTTP (80), RTSP (554)
-- **Expected Health Score**: ~45/100 (MEDIUM risk)
-
-## Health Score Calculation
-
-The Health Index Score starts at 100 and deducts points for vulnerabilities:
-
-| Issue | Deduction | Severity |
-|-------|-----------|----------|
-| Vulnerable firmware (with CVEs) | -50 | CRITICAL |
-| Outdated firmware | -30 | HIGH |
-| Default/weak credentials | -40 | CRITICAL |
-| Moderate password strength | -20 | MEDIUM |
-| Each insecure service (Telnet/FTP) | -15 | HIGH |
-| Internet exposure | -50 | CRITICAL |
-
-**Score Ranges:**
-- 80-100: LOW risk (green)
-- 60-79: MEDIUM risk (yellow)
-- 40-59: HIGH risk (orange)
-- 0-39: CRITICAL risk (red)
-
-## API Endpoints (Simulator)
-
-Each camera simulator exposes:
-
-### Public Endpoints
-- `GET /` - Camera homepage (HTML)
-- `GET /api/status` - Public status (no auth required)
-
-### Authenticated Endpoints (Basic Auth required)
-- `GET /info` - Device information (model, firmware, capabilities)
-- `GET /stream` - Simulated stream endpoint
-- `POST /api/credentials` - Update credentials (for remediation demo)
-
-### Example: Access Device Info
-```powershell
-# Using PowerShell
-$credentials = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("admin:admin"))
-Invoke-WebRequest -Uri http://localhost:8081/info -Headers @{Authorization="Basic $credentials"}
-```
-
-## Development Notes
-
-### Extending the Scanner
-
-To add new vulnerability checks, edit `scanner/network_scanner.py`:
-
-```python
-# Add to PORT_RISKS dictionary
-PORT_RISKS = {
-    # ... existing entries ...
-    8080: {"service": "HTTP-Alt", "risk": "MEDIUM", "description": "Alternative HTTP port"},
-}
-
-# Add to FIRMWARE_DB for new firmware versions
-FIRMWARE_DB = {
-    # ... existing entries ...
-    "1.8.0": {"status": "outdated", "cves": [], "risk": "MEDIUM"},
-}
-```
-
-### Adding New Camera Models
-
-Edit `docker-compose.yml` to add more simulators:
-
-```yaml
-camera5-custom:
-  build: ./camera-simulator
-  container_name: smartcam-demo-cam5
-  environment:
-    - MODEL=YourModel X100
-    - FIRMWARE=1.0.0
-    - DEFAULT_USER=admin
-    - DEFAULT_PASS=admin
-    - OPEN_PORTS=80,554,8080
-    - EXPOSED=false
-  ports:
-    - "8085:80"
-  networks:
-    smartcam_net:
-      ipv4_address: 172.25.0.15
-```
-
-Then update `scanner/network_scanner.py` TARGETS list:
-
-```python
-TARGETS = [
-    # ... existing entries ...
-    {"name": "Camera 5", "ip": "127.0.0.1", "ports": [8085]},
-]
-```
-
-## Dashboard Integration
-
-The scanner outputs `scan_results.json` with structure:
-
-```json
-{
-  "name": "Camera 1",
-  "ip": "127.0.0.1",
-  "health_score": 25,
-  "risk_level": "HIGH",
-  "open_ports": [...],
-  "credentials": {...},
-  "device_info": {...},
-  "firmware_info": {...},
-  "identified_risks": [...],
-  "recommendations": [
-    {
-      "priority": "CRITICAL",
-      "action": "Change password",
-      "steps": [...]
-    }
-  ]
-}
-```
-
-Your web dashboard can:
-1. Parse this JSON via API endpoint
-2. Display health scores as gauges/charts
-3. Show risk-level color coding
-4. Render remediation checklists
-5. Track progress over time
-
-## Testing
-
-### Verify Scanner Functionality
-```powershell
-# Test port scanning
-cd scanner
-python -c "from network_scanner import check_port; print(check_port('127.0.0.1', 8081))"
-
-# Test credential checking
-python -c "from network_scanner import test_credentials; print(test_credentials('127.0.0.1', 8081, [('admin', 'admin')]))"
-
-# Test health score calculation
-python network_scanner.py
-```
-
-### Verify Camera Simulators
-```powershell
-# Test HTTP response
-Invoke-WebRequest -Uri http://localhost:8081 -UseBasicParsing
-
-# Test authentication
-Invoke-WebRequest -Uri http://localhost:8081/info -Headers @{Authorization=("Basic " + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("admin:admin")))}
-
-# Test service ports
-Test-NetConnection -ComputerName localhost -Port 2323  # Telnet on Camera 3
-Test-NetConnection -ComputerName localhost -Port 2121  # FTP on Camera 3
-```
-
-## Troubleshooting
-
-### Docker Issues
-```powershell
-# Check Docker is running
-docker version
-
-# View container logs
-docker-compose logs camera1-vulnerable
-
-# Restart containers
-docker-compose restart
-
-# Rebuild from scratch
-docker-compose down
-docker-compose up -d --build --force-recreate
-```
-
-### Scanner Issues
-```powershell
-# Install dependencies
-pip install requests
-
-# Check connectivity
-Test-NetConnection -ComputerName localhost -Port 8081
-
-# Run with verbose output (add print statements to network_scanner.py)
-```
-
-### Port Conflicts
-```powershell
-# Check if ports are in use
-netstat -an | Select-String "8081|8082|8083|8084"
-
-# Modify docker-compose.yml if needed:
-ports:
-  - "9081:80"  # Use different host port
-```
-
-## Future Enhancements
-
-- [ ] Web-based dashboard (React/Vue.js)
-- [ ] Cloud backend API (Flask/FastAPI)
-- [ ] Email/SMS alerts for critical issues
-- [ ] Mobile app for monitoring
-- [ ] Integration with Shodan API for exposure checks
-- [ ] Machine learning for anomaly detection
-- [ ] Support for additional IoT devices (doorbells, locks)
-- [ ] Automated firmware update downloads
-- [ ] Network traffic analysis
-- [ ] VLAN/network segmentation recommendations
-
-## Technology Stack
-
-- **Camera Simulator**: Python 3.11, Socket programming, HTTP server
-- **Scanner**: Python 3.8+, Requests library
-- **Containerization**: Docker, Docker Compose
-- **Output Format**: JSON (for dashboard integration)
-- **Target Platform**: Cross-platform (Windows/Linux/macOS)
-
-## Project Objectives (from FYP)
-
-✅ **Completed:**
-1. Automate detection of default/weak passwords
-2. Identify open or insecure network services
-3. Verify firmware versions and flag vulnerabilities
-4. Assess external exposure
-5. Generate Health Index Score with actionable recommendations
-6. Support password rotation and automated resets
-
-🔄 **In Progress:**
-7. Web-based dashboard for visualization
-8. Continuous monitoring with alerts
-
-## Contributors
-
-- **Student**: [Your Name]
-- **Supervisor**: [Supervisor Name]
-- **Institution**: FAST National University
-- **Year**: 2024-2025
-
-## License
-
-This project is developed for educational purposes as part of a Final Year Project (FYP).
-
-## Documentation
-
-- **[DEMO_GUIDE.md](DEMO_GUIDE.md)** - Complete demonstration script for evaluators (20-minute walkthrough)
-- **README.md** - This file (technical documentation)
-
-## Contact
-
-For questions or support, contact: [Your Email]
+## 📈 Future Enhancements
+
+- [ ] Mobile responsive design improvements
+- [ ] Real-time WebSocket updates
+- [ ] Email/SMS alert notifications
+- [ ] Multi-network scanning
+- [ ] User authentication system
+- [ ] Export reports (PDF/CSV)
+- [ ] Advanced analytics charts
+- [ ] Machine learning anomaly detection
+
+## 📞 Support
+
+For issues or questions:
+1. Check [Documentation](readme/)
+2. Review [Troubleshooting](#troubleshooting)
+3. Check git issues
 
 ---
 
-**Last Updated**: October 30, 2025
+**Status:** ✅ Production Ready  
+**Last Updated:** November 30, 2025  
+**Demo Ready:** YES 🎉
+
+## License
+
+Educational project for FAST National University FYP.

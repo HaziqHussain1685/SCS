@@ -3903,5 +3903,3945 @@
         "recommendations": []
       }
     ]
+  },
+  {
+    "scan_id": 14,
+    "timestamp": "2025-10-30T23:06:29.055574",
+    "devices": [
+      {
+        "name": "Camera 1 - Vulnerable",
+        "ip": "172.25.0.11",
+        "container_name": "smartcam-demo-cam1",
+        "scan_time": "2025-10-30T23:06:28.690617",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8081,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 5541,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "admin",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "admin",
+        "device_info": {
+          "model": "AcmeCam A1",
+          "firmware": "1.0.2",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-30T16:17:20.238113",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "HIGH",
+          "version": "1.0.2"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for AcmeCam A1",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 2 - Secure",
+        "ip": "172.25.0.12",
+        "container_name": "smartcam-demo-cam2",
+        "scan_time": "2025-10-30T23:06:28.732384",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8082,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "homeowner",
+          "password": "SecureP@ssw0rd2024!",
+          "strength": "moderate"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "homeowner",
+        "detected_password": "SecureP@ssw0rd2024!",
+        "device_info": {
+          "model": "SafeView Pro 100",
+          "firmware": "2.4.0",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-30T16:17:20.237784",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "up-to-date",
+          "cves": [],
+          "risk": "LOW",
+          "version": "2.4.0"
+        },
+        "exposed_to_internet": false,
+        "health_score": 80,
+        "risk_level": "LOW",
+        "identified_risks": [
+          {
+            "severity": "MEDIUM",
+            "issue": "Moderate password strength",
+            "impact": -20
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 3 - Critical",
+        "ip": "172.25.0.13",
+        "container_name": "smartcam-demo-cam3",
+        "scan_time": "2025-10-30T23:06:28.856542",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8083,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 2121,
+            "service": "FTP",
+            "risk": "HIGH"
+          },
+          {
+            "port": 2323,
+            "service": "Telnet",
+            "risk": "CRITICAL"
+          },
+          {
+            "port": 5543,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "root",
+          "password": "12345",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "root",
+        "detected_password": "12345",
+        "device_info": {
+          "model": "OldEye Z200",
+          "firmware": "0.9.4",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-30T17:17:54.649124",
+          "exposed_to_internet": true,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "vulnerable",
+          "cves": [
+            "CVE-2023-1234",
+            "CVE-2023-5678"
+          ],
+          "risk": "CRITICAL",
+          "version": "0.9.4"
+        },
+        "exposed_to_internet": true,
+        "health_score": 0,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "CRITICAL",
+            "issue": "Vulnerable firmware with known CVEs",
+            "impact": -50
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Device exposed to internet",
+            "impact": -50
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "HIGH",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for OldEye Z200",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 4 - Moderate",
+        "ip": "172.25.0.14",
+        "container_name": "smartcam-demo-cam4",
+        "scan_time": "2025-10-30T23:06:28.970030",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8084,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 2324,
+            "service": "Telnet",
+            "risk": "CRITICAL"
+          },
+          {
+            "port": 5544,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "password",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "password",
+        "device_info": {
+          "model": "BudgetCam 500",
+          "firmware": "1.5.1",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-30T18:06:25.719044",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "MEDIUM",
+          "version": "1.5.1"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for BudgetCam 500",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "scan_id": 15,
+    "timestamp": "2025-10-31T00:11:51.184571",
+    "devices": [
+      {
+        "name": "Camera 1 - Vulnerable",
+        "ip": "172.25.0.11",
+        "container_name": "smartcam-demo-cam1",
+        "scan_time": "2025-10-31T00:11:41.174843",
+        "status": "offline",
+        "open_ports": [],
+        "credentials": null,
+        "default_credentials_detected": false,
+        "detected_username": null,
+        "detected_password": null,
+        "device_info": null,
+        "firmware_info": null,
+        "exposed_to_internet": false,
+        "health_score": 0,
+        "risk_level": "OFFLINE",
+        "identified_risks": [],
+        "recommendations": []
+      },
+      {
+        "name": "Camera 2 - Secure",
+        "ip": "172.25.0.12",
+        "container_name": "smartcam-demo-cam2",
+        "scan_time": "2025-10-31T00:11:43.177366",
+        "status": "offline",
+        "open_ports": [],
+        "credentials": null,
+        "default_credentials_detected": false,
+        "detected_username": null,
+        "detected_password": null,
+        "device_info": null,
+        "firmware_info": null,
+        "exposed_to_internet": false,
+        "health_score": 0,
+        "risk_level": "OFFLINE",
+        "identified_risks": [],
+        "recommendations": []
+      },
+      {
+        "name": "Camera 3 - Critical",
+        "ip": "172.25.0.13",
+        "container_name": "smartcam-demo-cam3",
+        "scan_time": "2025-10-31T00:11:44.177715",
+        "status": "offline",
+        "open_ports": [],
+        "credentials": null,
+        "default_credentials_detected": false,
+        "detected_username": null,
+        "detected_password": null,
+        "device_info": null,
+        "firmware_info": null,
+        "exposed_to_internet": false,
+        "health_score": 0,
+        "risk_level": "OFFLINE",
+        "identified_risks": [],
+        "recommendations": []
+      },
+      {
+        "name": "Camera 4 - Moderate",
+        "ip": "172.25.0.14",
+        "container_name": "smartcam-demo-cam4",
+        "scan_time": "2025-10-31T00:11:48.179200",
+        "status": "offline",
+        "open_ports": [],
+        "credentials": null,
+        "default_credentials_detected": false,
+        "detected_username": null,
+        "detected_password": null,
+        "device_info": null,
+        "firmware_info": null,
+        "exposed_to_internet": false,
+        "health_score": 0,
+        "risk_level": "OFFLINE",
+        "identified_risks": [],
+        "recommendations": []
+      }
+    ]
+  },
+  {
+    "scan_id": 16,
+    "timestamp": "2025-10-31T00:14:11.772788",
+    "devices": [
+      {
+        "name": "Camera 1 - Vulnerable",
+        "ip": "172.25.0.11",
+        "container_name": "smartcam-demo-cam1",
+        "scan_time": "2025-10-31T00:14:11.584389",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8081,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 5541,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "admin",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "admin",
+        "device_info": {
+          "model": "AcmeCam A1",
+          "firmware": "1.0.2",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-30T19:13:35.432738",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "HIGH",
+          "version": "1.0.2"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for AcmeCam A1",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 2 - Secure",
+        "ip": "172.25.0.12",
+        "container_name": "smartcam-demo-cam2",
+        "scan_time": "2025-10-31T00:14:11.632562",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8082,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "homeowner",
+          "password": "SecureP@ssw0rd2024!",
+          "strength": "moderate"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "homeowner",
+        "detected_password": "SecureP@ssw0rd2024!",
+        "device_info": {
+          "model": "SafeView Pro 100",
+          "firmware": "2.4.0",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-30T19:13:35.432920",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "up-to-date",
+          "cves": [],
+          "risk": "LOW",
+          "version": "2.4.0"
+        },
+        "exposed_to_internet": false,
+        "health_score": 80,
+        "risk_level": "LOW",
+        "identified_risks": [
+          {
+            "severity": "MEDIUM",
+            "issue": "Moderate password strength",
+            "impact": -20
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 3 - Critical",
+        "ip": "172.25.0.13",
+        "container_name": "smartcam-demo-cam3",
+        "scan_time": "2025-10-31T00:14:11.677493",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8083,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 2121,
+            "service": "FTP",
+            "risk": "HIGH"
+          },
+          {
+            "port": 2323,
+            "service": "Telnet",
+            "risk": "CRITICAL"
+          },
+          {
+            "port": 5543,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "root",
+          "password": "12345",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "root",
+        "detected_password": "12345",
+        "device_info": {
+          "model": "OldEye Z200",
+          "firmware": "0.9.4",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-30T19:13:35.432714",
+          "exposed_to_internet": true,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "vulnerable",
+          "cves": [
+            "CVE-2023-1234",
+            "CVE-2023-5678"
+          ],
+          "risk": "CRITICAL",
+          "version": "0.9.4"
+        },
+        "exposed_to_internet": true,
+        "health_score": 0,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "CRITICAL",
+            "issue": "Vulnerable firmware with known CVEs",
+            "impact": -50
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Device exposed to internet",
+            "impact": -50
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "HIGH",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for OldEye Z200",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 4 - Moderate",
+        "ip": "172.25.0.14",
+        "container_name": "smartcam-demo-cam4",
+        "scan_time": "2025-10-31T00:14:11.723942",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8084,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 2324,
+            "service": "Telnet",
+            "risk": "CRITICAL"
+          },
+          {
+            "port": 5544,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "password",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "password",
+        "device_info": {
+          "model": "BudgetCam 500",
+          "firmware": "1.5.1",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-30T19:13:35.433296",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "MEDIUM",
+          "version": "1.5.1"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for BudgetCam 500",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "scan_id": 17,
+    "timestamp": "2025-10-31T00:14:28.884568",
+    "devices": [
+      {
+        "name": "Camera 1 - Vulnerable",
+        "ip": "172.25.0.11",
+        "container_name": "smartcam-demo-cam1",
+        "scan_time": "2025-10-31T00:14:28.677618",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8081,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 5541,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "admin",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "admin",
+        "device_info": {
+          "model": "AcmeCam A1",
+          "firmware": "1.0.2",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-30T19:13:35.432738",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "HIGH",
+          "version": "1.0.2"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for AcmeCam A1",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 2 - Secure",
+        "ip": "172.25.0.12",
+        "container_name": "smartcam-demo-cam2",
+        "scan_time": "2025-10-31T00:14:28.719408",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8082,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "homeowner",
+          "password": "SecureP@ssw0rd2024!",
+          "strength": "moderate"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "homeowner",
+        "detected_password": "SecureP@ssw0rd2024!",
+        "device_info": {
+          "model": "SafeView Pro 100",
+          "firmware": "2.4.0",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-30T19:13:35.432920",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "up-to-date",
+          "cves": [],
+          "risk": "LOW",
+          "version": "2.4.0"
+        },
+        "exposed_to_internet": false,
+        "health_score": 80,
+        "risk_level": "LOW",
+        "identified_risks": [
+          {
+            "severity": "MEDIUM",
+            "issue": "Moderate password strength",
+            "impact": -20
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 3 - Critical",
+        "ip": "172.25.0.13",
+        "container_name": "smartcam-demo-cam3",
+        "scan_time": "2025-10-31T00:14:28.773103",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8083,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 2121,
+            "service": "FTP",
+            "risk": "HIGH"
+          },
+          {
+            "port": 2323,
+            "service": "Telnet",
+            "risk": "CRITICAL"
+          },
+          {
+            "port": 5543,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "root",
+          "password": "12345",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "root",
+        "detected_password": "12345",
+        "device_info": {
+          "model": "OldEye Z200",
+          "firmware": "0.9.4",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-30T19:13:35.432714",
+          "exposed_to_internet": true,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "vulnerable",
+          "cves": [
+            "CVE-2023-1234",
+            "CVE-2023-5678"
+          ],
+          "risk": "CRITICAL",
+          "version": "0.9.4"
+        },
+        "exposed_to_internet": true,
+        "health_score": 0,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "CRITICAL",
+            "issue": "Vulnerable firmware with known CVEs",
+            "impact": -50
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Device exposed to internet",
+            "impact": -50
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "HIGH",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for OldEye Z200",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 4 - Moderate",
+        "ip": "172.25.0.14",
+        "container_name": "smartcam-demo-cam4",
+        "scan_time": "2025-10-31T00:14:28.841609",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8084,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 2324,
+            "service": "Telnet",
+            "risk": "CRITICAL"
+          },
+          {
+            "port": 5544,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "password",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "password",
+        "device_info": {
+          "model": "BudgetCam 500",
+          "firmware": "1.5.1",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-30T19:13:35.433296",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "MEDIUM",
+          "version": "1.5.1"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for BudgetCam 500",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "scan_id": 18,
+    "timestamp": "2025-10-31T00:14:41.467913",
+    "devices": [
+      {
+        "name": "Camera 1 - Vulnerable",
+        "ip": "172.25.0.11",
+        "container_name": "smartcam-demo-cam1",
+        "scan_time": "2025-10-31T00:14:38.193315",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8081,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 5541,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "admin",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "admin",
+        "device_info": {
+          "model": "AcmeCam A1",
+          "firmware": "1.0.2",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-30T19:13:35.432738",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "HIGH",
+          "version": "1.0.2"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for AcmeCam A1",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 2 - Secure",
+        "ip": "172.25.0.12",
+        "container_name": "smartcam-demo-cam2",
+        "scan_time": "2025-10-31T00:14:38.219615",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8082,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "homeowner",
+          "password": "SecureP@ssw0rd2024!",
+          "strength": "moderate"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "homeowner",
+        "detected_password": "SecureP@ssw0rd2024!",
+        "device_info": {
+          "model": "SafeView Pro 100",
+          "firmware": "2.4.0",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-30T19:13:35.432920",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "up-to-date",
+          "cves": [],
+          "risk": "LOW",
+          "version": "2.4.0"
+        },
+        "exposed_to_internet": false,
+        "health_score": 80,
+        "risk_level": "LOW",
+        "identified_risks": [
+          {
+            "severity": "MEDIUM",
+            "issue": "Moderate password strength",
+            "impact": -20
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 3 - Critical",
+        "ip": "172.25.0.13",
+        "container_name": "smartcam-demo-cam3",
+        "scan_time": "2025-10-31T00:14:38.295571",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8083,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 2121,
+            "service": "FTP",
+            "risk": "HIGH"
+          },
+          {
+            "port": 2323,
+            "service": "Telnet",
+            "risk": "CRITICAL"
+          },
+          {
+            "port": 5543,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "root",
+          "password": "12345",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "root",
+        "detected_password": "12345",
+        "device_info": {
+          "model": "OldEye Z200",
+          "firmware": "0.9.4",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-30T19:13:35.432714",
+          "exposed_to_internet": true,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "vulnerable",
+          "cves": [
+            "CVE-2023-1234",
+            "CVE-2023-5678"
+          ],
+          "risk": "CRITICAL",
+          "version": "0.9.4"
+        },
+        "exposed_to_internet": true,
+        "health_score": 0,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "CRITICAL",
+            "issue": "Vulnerable firmware with known CVEs",
+            "impact": -50
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Device exposed to internet",
+            "impact": -50
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "HIGH",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for OldEye Z200",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 4 - Moderate",
+        "ip": "172.25.0.14",
+        "container_name": "smartcam-demo-cam4",
+        "scan_time": "2025-10-31T00:14:38.413492",
+        "status": "offline",
+        "open_ports": [],
+        "credentials": null,
+        "default_credentials_detected": false,
+        "detected_username": null,
+        "detected_password": null,
+        "device_info": null,
+        "firmware_info": null,
+        "exposed_to_internet": false,
+        "health_score": 0,
+        "risk_level": "OFFLINE",
+        "identified_risks": [],
+        "recommendations": []
+      }
+    ]
+  },
+  {
+    "scan_id": 19,
+    "timestamp": "2025-10-31T10:30:43.397668",
+    "devices": [
+      {
+        "name": "Camera 1 - Vulnerable",
+        "ip": "172.25.0.11",
+        "container_name": "smartcam-demo-cam1",
+        "scan_time": "2025-10-31T10:30:43.054831",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8081,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 5541,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "admin",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "admin",
+        "device_info": {
+          "model": "AcmeCam A1",
+          "firmware": "1.0.2",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-31T05:27:46.438696",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "HIGH",
+          "version": "1.0.2"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for AcmeCam A1",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 2 - Secure",
+        "ip": "172.25.0.12",
+        "container_name": "smartcam-demo-cam2",
+        "scan_time": "2025-10-31T10:30:43.115137",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8082,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "homeowner",
+          "password": "SecureP@ssw0rd2024!",
+          "strength": "moderate"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "homeowner",
+        "detected_password": "SecureP@ssw0rd2024!",
+        "device_info": {
+          "model": "SafeView Pro 100",
+          "firmware": "2.4.0",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-31T05:27:46.438543",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "up-to-date",
+          "cves": [],
+          "risk": "LOW",
+          "version": "2.4.0"
+        },
+        "exposed_to_internet": false,
+        "health_score": 80,
+        "risk_level": "LOW",
+        "identified_risks": [
+          {
+            "severity": "MEDIUM",
+            "issue": "Moderate password strength",
+            "impact": -20
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 3 - Critical",
+        "ip": "172.25.0.13",
+        "container_name": "smartcam-demo-cam3",
+        "scan_time": "2025-10-31T10:30:43.207261",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8083,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 2121,
+            "service": "FTP",
+            "risk": "HIGH"
+          },
+          {
+            "port": 2323,
+            "service": "Telnet",
+            "risk": "CRITICAL"
+          },
+          {
+            "port": 5543,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "root",
+          "password": "12345",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "root",
+        "detected_password": "12345",
+        "device_info": {
+          "model": "OldEye Z200",
+          "firmware": "0.9.4",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-31T05:27:46.438535",
+          "exposed_to_internet": true,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "vulnerable",
+          "cves": [
+            "CVE-2023-1234",
+            "CVE-2023-5678"
+          ],
+          "risk": "CRITICAL",
+          "version": "0.9.4"
+        },
+        "exposed_to_internet": true,
+        "health_score": 0,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "CRITICAL",
+            "issue": "Vulnerable firmware with known CVEs",
+            "impact": -50
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Device exposed to internet",
+            "impact": -50
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "HIGH",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for OldEye Z200",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 4 - Moderate",
+        "ip": "172.25.0.14",
+        "container_name": "smartcam-demo-cam4",
+        "scan_time": "2025-10-31T10:30:43.299773",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8084,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 2324,
+            "service": "Telnet",
+            "risk": "CRITICAL"
+          },
+          {
+            "port": 5544,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "password",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "password",
+        "device_info": {
+          "model": "BudgetCam 500",
+          "firmware": "1.5.1",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-31T05:27:46.438575",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "MEDIUM",
+          "version": "1.5.1"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for BudgetCam 500",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "scan_id": 20,
+    "timestamp": "2025-10-31T10:31:25.502544",
+    "devices": [
+      {
+        "name": "Camera 1 - Vulnerable",
+        "ip": "172.25.0.11",
+        "container_name": "smartcam-demo-cam1",
+        "scan_time": "2025-10-31T10:31:21.238847",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8081,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 5541,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "admin",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "admin",
+        "device_info": {
+          "model": "AcmeCam A1",
+          "firmware": "1.0.2",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-31T05:27:46.438696",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "HIGH",
+          "version": "1.0.2"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for AcmeCam A1",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 2 - Secure",
+        "ip": "172.25.0.12",
+        "container_name": "smartcam-demo-cam2",
+        "scan_time": "2025-10-31T10:31:21.296571",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8082,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "homeowner",
+          "password": "SecureP@ssw0rd2024!",
+          "strength": "moderate"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "homeowner",
+        "detected_password": "SecureP@ssw0rd2024!",
+        "device_info": {
+          "model": "SafeView Pro 100",
+          "firmware": "2.4.0",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-31T05:27:46.438543",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "up-to-date",
+          "cves": [],
+          "risk": "LOW",
+          "version": "2.4.0"
+        },
+        "exposed_to_internet": false,
+        "health_score": 80,
+        "risk_level": "LOW",
+        "identified_risks": [
+          {
+            "severity": "MEDIUM",
+            "issue": "Moderate password strength",
+            "impact": -20
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 3 - Critical",
+        "ip": "172.25.0.13",
+        "container_name": "smartcam-demo-cam3",
+        "scan_time": "2025-10-31T10:31:21.404839",
+        "status": "offline",
+        "open_ports": [],
+        "credentials": null,
+        "default_credentials_detected": false,
+        "detected_username": null,
+        "detected_password": null,
+        "device_info": null,
+        "firmware_info": null,
+        "exposed_to_internet": false,
+        "health_score": 0,
+        "risk_level": "OFFLINE",
+        "identified_risks": [],
+        "recommendations": []
+      },
+      {
+        "name": "Camera 4 - Moderate",
+        "ip": "172.25.0.14",
+        "container_name": "smartcam-demo-cam4",
+        "scan_time": "2025-10-31T10:31:25.426201",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8084,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 2324,
+            "service": "Telnet",
+            "risk": "CRITICAL"
+          },
+          {
+            "port": 5544,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "password",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "password",
+        "device_info": {
+          "model": "BudgetCam 500",
+          "firmware": "1.5.1",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-31T05:27:46.438575",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "MEDIUM",
+          "version": "1.5.1"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for BudgetCam 500",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "scan_id": 21,
+    "timestamp": "2025-10-31T10:31:48.455147",
+    "devices": [
+      {
+        "name": "Camera 1 - Vulnerable",
+        "ip": "172.25.0.11",
+        "container_name": "smartcam-demo-cam1",
+        "scan_time": "2025-10-31T10:31:48.082197",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8081,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 5541,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "admin",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "admin",
+        "device_info": {
+          "model": "AcmeCam A1",
+          "firmware": "1.0.2",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-31T05:27:46.438696",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "HIGH",
+          "version": "1.0.2"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for AcmeCam A1",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 2 - Secure",
+        "ip": "172.25.0.12",
+        "container_name": "smartcam-demo-cam2",
+        "scan_time": "2025-10-31T10:31:48.137769",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8082,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "homeowner",
+          "password": "SecureP@ssw0rd2024!",
+          "strength": "moderate"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "homeowner",
+        "detected_password": "SecureP@ssw0rd2024!",
+        "device_info": {
+          "model": "SafeView Pro 100",
+          "firmware": "2.4.0",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-31T05:27:46.438543",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "up-to-date",
+          "cves": [],
+          "risk": "LOW",
+          "version": "2.4.0"
+        },
+        "exposed_to_internet": false,
+        "health_score": 80,
+        "risk_level": "LOW",
+        "identified_risks": [
+          {
+            "severity": "MEDIUM",
+            "issue": "Moderate password strength",
+            "impact": -20
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 3 - Critical",
+        "ip": "172.25.0.13",
+        "container_name": "smartcam-demo-cam3",
+        "scan_time": "2025-10-31T10:31:48.234992",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8083,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 2121,
+            "service": "FTP",
+            "risk": "HIGH"
+          },
+          {
+            "port": 2323,
+            "service": "Telnet",
+            "risk": "CRITICAL"
+          },
+          {
+            "port": 5543,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "root",
+          "password": "12345",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "root",
+        "detected_password": "12345",
+        "device_info": {
+          "model": "OldEye Z200",
+          "firmware": "0.9.4",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-31T05:31:38.151042",
+          "exposed_to_internet": true,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "vulnerable",
+          "cves": [
+            "CVE-2023-1234",
+            "CVE-2023-5678"
+          ],
+          "risk": "CRITICAL",
+          "version": "0.9.4"
+        },
+        "exposed_to_internet": true,
+        "health_score": 0,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "CRITICAL",
+            "issue": "Vulnerable firmware with known CVEs",
+            "impact": -50
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Device exposed to internet",
+            "impact": -50
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "HIGH",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for OldEye Z200",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 4 - Moderate",
+        "ip": "172.25.0.14",
+        "container_name": "smartcam-demo-cam4",
+        "scan_time": "2025-10-31T10:31:48.364518",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8084,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 2324,
+            "service": "Telnet",
+            "risk": "CRITICAL"
+          },
+          {
+            "port": 5544,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "password",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "password",
+        "device_info": {
+          "model": "BudgetCam 500",
+          "firmware": "1.5.1",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-31T05:27:46.438575",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "MEDIUM",
+          "version": "1.5.1"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for BudgetCam 500",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "scan_id": 22,
+    "timestamp": "2025-10-31T11:34:53.836999",
+    "devices": [
+      {
+        "name": "Camera 1 - Vulnerable",
+        "ip": "172.25.0.11",
+        "container_name": "smartcam-demo-cam1",
+        "scan_time": "2025-10-31T11:34:49.479648",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8081,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 5541,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "admin",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "admin",
+        "device_info": {
+          "model": "AcmeCam A1",
+          "firmware": "1.0.2",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-31T05:27:46.438696",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "HIGH",
+          "version": "1.0.2"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for AcmeCam A1",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 2 - Secure",
+        "ip": "172.25.0.12",
+        "container_name": "smartcam-demo-cam2",
+        "scan_time": "2025-10-31T11:34:49.566766",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8082,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "homeowner",
+          "password": "SecureP@ssw0rd2024!",
+          "strength": "moderate"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "homeowner",
+        "detected_password": "SecureP@ssw0rd2024!",
+        "device_info": {
+          "model": "SafeView Pro 100",
+          "firmware": "2.4.0",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-31T05:27:46.438543",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "up-to-date",
+          "cves": [],
+          "risk": "LOW",
+          "version": "2.4.0"
+        },
+        "exposed_to_internet": false,
+        "health_score": 80,
+        "risk_level": "LOW",
+        "identified_risks": [
+          {
+            "severity": "MEDIUM",
+            "issue": "Moderate password strength",
+            "impact": -20
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 3 - Critical",
+        "ip": "172.25.0.13",
+        "container_name": "smartcam-demo-cam3",
+        "scan_time": "2025-10-31T11:34:49.701013",
+        "status": "offline",
+        "open_ports": [],
+        "credentials": null,
+        "default_credentials_detected": false,
+        "detected_username": null,
+        "detected_password": null,
+        "device_info": null,
+        "firmware_info": null,
+        "exposed_to_internet": false,
+        "health_score": 0,
+        "risk_level": "OFFLINE",
+        "identified_risks": [],
+        "recommendations": []
+      },
+      {
+        "name": "Camera 4 - Moderate",
+        "ip": "172.25.0.14",
+        "container_name": "smartcam-demo-cam4",
+        "scan_time": "2025-10-31T11:34:53.735112",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8084,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 2324,
+            "service": "Telnet",
+            "risk": "CRITICAL"
+          },
+          {
+            "port": 5544,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "password",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "password",
+        "device_info": {
+          "model": "BudgetCam 500",
+          "firmware": "1.5.1",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-10-31T05:27:46.438575",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "MEDIUM",
+          "version": "1.5.1"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for BudgetCam 500",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "scan_id": 23,
+    "timestamp": "2025-11-30T23:39:10.439557",
+    "devices": [
+      {
+        "name": "Camera 1 - Vulnerable",
+        "ip": "172.25.0.11",
+        "container_name": "smartcam-demo-cam1",
+        "scan_time": "2025-11-30T23:39:10.220211",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8081,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 5541,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "admin",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "admin",
+        "device_info": {
+          "model": "AcmeCam A1",
+          "firmware": "1.0.2",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-11-30T18:24:48.132126",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "HIGH",
+          "version": "1.0.2"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for AcmeCam A1",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 2 - Secure",
+        "ip": "172.25.0.12",
+        "container_name": "smartcam-demo-cam2",
+        "scan_time": "2025-11-30T23:39:10.230962",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8082,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "homeowner",
+          "password": "SecureP@ssw0rd2024!",
+          "strength": "moderate"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "homeowner",
+        "detected_password": "SecureP@ssw0rd2024!",
+        "device_info": {
+          "model": "SafeView Pro 100",
+          "firmware": "2.4.0",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-11-30T18:24:48.131642",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "up-to-date",
+          "cves": [],
+          "risk": "LOW",
+          "version": "2.4.0"
+        },
+        "exposed_to_internet": false,
+        "health_score": 80,
+        "risk_level": "LOW",
+        "identified_risks": [
+          {
+            "severity": "MEDIUM",
+            "issue": "Moderate password strength",
+            "impact": -20
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 3 - Critical",
+        "ip": "172.25.0.13",
+        "container_name": "smartcam-demo-cam3",
+        "scan_time": "2025-11-30T23:39:10.283899",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8083,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 2121,
+            "service": "FTP",
+            "risk": "HIGH"
+          },
+          {
+            "port": 2323,
+            "service": "Telnet",
+            "risk": "CRITICAL"
+          },
+          {
+            "port": 5543,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "root",
+          "password": "12345",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "root",
+        "detected_password": "12345",
+        "device_info": {
+          "model": "OldEye Z200",
+          "firmware": "0.9.4",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-11-30T18:24:48.131570",
+          "exposed_to_internet": true,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "vulnerable",
+          "cves": [
+            "CVE-2023-1234",
+            "CVE-2023-5678"
+          ],
+          "risk": "CRITICAL",
+          "version": "0.9.4"
+        },
+        "exposed_to_internet": true,
+        "health_score": 0,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "CRITICAL",
+            "issue": "Vulnerable firmware with known CVEs",
+            "impact": -50
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Device exposed to internet",
+            "impact": -50
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "HIGH",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for OldEye Z200",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 4 - Moderate",
+        "ip": "172.25.0.14",
+        "container_name": "smartcam-demo-cam4",
+        "scan_time": "2025-11-30T23:39:10.385230",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8084,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 2324,
+            "service": "Telnet",
+            "risk": "CRITICAL"
+          },
+          {
+            "port": 5544,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "password",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "password",
+        "device_info": {
+          "model": "BudgetCam 500",
+          "firmware": "1.5.1",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-11-30T18:24:48.131510",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "MEDIUM",
+          "version": "1.5.1"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for BudgetCam 500",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "scan_id": 24,
+    "timestamp": "2025-11-30T23:39:18.187336",
+    "devices": [
+      {
+        "name": "Camera 1 - Vulnerable",
+        "ip": "172.25.0.11",
+        "container_name": "smartcam-demo-cam1",
+        "scan_time": "2025-11-30T23:39:17.967107",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8081,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 5541,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "admin",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "admin",
+        "device_info": {
+          "model": "AcmeCam A1",
+          "firmware": "1.0.2",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-11-30T18:24:48.132126",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "HIGH",
+          "version": "1.0.2"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for AcmeCam A1",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 2 - Secure",
+        "ip": "172.25.0.12",
+        "container_name": "smartcam-demo-cam2",
+        "scan_time": "2025-11-30T23:39:17.976045",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8082,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "homeowner",
+          "password": "SecureP@ssw0rd2024!",
+          "strength": "moderate"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "homeowner",
+        "detected_password": "SecureP@ssw0rd2024!",
+        "device_info": {
+          "model": "SafeView Pro 100",
+          "firmware": "2.4.0",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-11-30T18:24:48.131642",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "up-to-date",
+          "cves": [],
+          "risk": "LOW",
+          "version": "2.4.0"
+        },
+        "exposed_to_internet": false,
+        "health_score": 80,
+        "risk_level": "LOW",
+        "identified_risks": [
+          {
+            "severity": "MEDIUM",
+            "issue": "Moderate password strength",
+            "impact": -20
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 3 - Critical",
+        "ip": "172.25.0.13",
+        "container_name": "smartcam-demo-cam3",
+        "scan_time": "2025-11-30T23:39:18.034601",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8083,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 2121,
+            "service": "FTP",
+            "risk": "HIGH"
+          },
+          {
+            "port": 2323,
+            "service": "Telnet",
+            "risk": "CRITICAL"
+          },
+          {
+            "port": 5543,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "root",
+          "password": "12345",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "root",
+        "detected_password": "12345",
+        "device_info": {
+          "model": "OldEye Z200",
+          "firmware": "0.9.4",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-11-30T18:24:48.131570",
+          "exposed_to_internet": true,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "vulnerable",
+          "cves": [
+            "CVE-2023-1234",
+            "CVE-2023-5678"
+          ],
+          "risk": "CRITICAL",
+          "version": "0.9.4"
+        },
+        "exposed_to_internet": true,
+        "health_score": 0,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "CRITICAL",
+            "issue": "Vulnerable firmware with known CVEs",
+            "impact": -50
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Device exposed to internet",
+            "impact": -50
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "HIGH",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for OldEye Z200",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 4 - Moderate",
+        "ip": "172.25.0.14",
+        "container_name": "smartcam-demo-cam4",
+        "scan_time": "2025-11-30T23:39:18.134891",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8084,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 2324,
+            "service": "Telnet",
+            "risk": "CRITICAL"
+          },
+          {
+            "port": 5544,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "password",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "password",
+        "device_info": {
+          "model": "BudgetCam 500",
+          "firmware": "1.5.1",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-11-30T18:24:48.131510",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "MEDIUM",
+          "version": "1.5.1"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for BudgetCam 500",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "scan_id": 25,
+    "timestamp": "2025-11-30T23:39:37.825811",
+    "devices": [
+      {
+        "name": "Camera 1 - Vulnerable",
+        "ip": "172.25.0.11",
+        "container_name": "smartcam-demo-cam1",
+        "scan_time": "2025-11-30T23:39:37.657549",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8081,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 5541,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "admin",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "admin",
+        "device_info": {
+          "model": "AcmeCam A1",
+          "firmware": "1.0.2",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-11-30T18:24:48.132126",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "HIGH",
+          "version": "1.0.2"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for AcmeCam A1",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 2 - Secure",
+        "ip": "172.25.0.12",
+        "container_name": "smartcam-demo-cam2",
+        "scan_time": "2025-11-30T23:39:37.666309",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8082,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "homeowner",
+          "password": "SecureP@ssw0rd2024!",
+          "strength": "moderate"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "homeowner",
+        "detected_password": "SecureP@ssw0rd2024!",
+        "device_info": {
+          "model": "SafeView Pro 100",
+          "firmware": "2.4.0",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-11-30T18:24:48.131642",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "up-to-date",
+          "cves": [],
+          "risk": "LOW",
+          "version": "2.4.0"
+        },
+        "exposed_to_internet": false,
+        "health_score": 80,
+        "risk_level": "LOW",
+        "identified_risks": [
+          {
+            "severity": "MEDIUM",
+            "issue": "Moderate password strength",
+            "impact": -20
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 3 - Critical",
+        "ip": "172.25.0.13",
+        "container_name": "smartcam-demo-cam3",
+        "scan_time": "2025-11-30T23:39:37.693557",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8083,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 2121,
+            "service": "FTP",
+            "risk": "HIGH"
+          },
+          {
+            "port": 2323,
+            "service": "Telnet",
+            "risk": "CRITICAL"
+          },
+          {
+            "port": 5543,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "root",
+          "password": "12345",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "root",
+        "detected_password": "12345",
+        "device_info": {
+          "model": "OldEye Z200",
+          "firmware": "0.9.4",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-11-30T18:24:48.131570",
+          "exposed_to_internet": true,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "vulnerable",
+          "cves": [
+            "CVE-2023-1234",
+            "CVE-2023-5678"
+          ],
+          "risk": "CRITICAL",
+          "version": "0.9.4"
+        },
+        "exposed_to_internet": true,
+        "health_score": 0,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "CRITICAL",
+            "issue": "Vulnerable firmware with known CVEs",
+            "impact": -50
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Device exposed to internet",
+            "impact": -50
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "HIGH",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for OldEye Z200",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 4 - Moderate",
+        "ip": "172.25.0.14",
+        "container_name": "smartcam-demo-cam4",
+        "scan_time": "2025-11-30T23:39:37.798076",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8084,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 2324,
+            "service": "Telnet",
+            "risk": "CRITICAL"
+          },
+          {
+            "port": 5544,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "password",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "password",
+        "device_info": {
+          "model": "BudgetCam 500",
+          "firmware": "1.5.1",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-11-30T18:24:48.131510",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "MEDIUM",
+          "version": "1.5.1"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for BudgetCam 500",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "scan_id": 26,
+    "timestamp": "2025-11-30T23:39:44.934360",
+    "devices": [
+      {
+        "name": "Camera 1 - Vulnerable",
+        "ip": "172.25.0.11",
+        "container_name": "smartcam-demo-cam1",
+        "scan_time": "2025-11-30T23:39:39.754482",
+        "status": "offline",
+        "open_ports": [],
+        "credentials": null,
+        "default_credentials_detected": false,
+        "detected_username": null,
+        "detected_password": null,
+        "device_info": null,
+        "firmware_info": null,
+        "exposed_to_internet": false,
+        "health_score": 0,
+        "risk_level": "OFFLINE",
+        "identified_risks": [],
+        "recommendations": []
+      },
+      {
+        "name": "Camera 2 - Secure",
+        "ip": "172.25.0.12",
+        "container_name": "smartcam-demo-cam2",
+        "scan_time": "2025-11-30T23:39:41.767663",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8082,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "homeowner",
+          "password": "SecureP@ssw0rd2024!",
+          "strength": "moderate"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "homeowner",
+        "detected_password": "SecureP@ssw0rd2024!",
+        "device_info": {
+          "model": "SafeView Pro 100",
+          "firmware": "2.4.0",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-11-30T18:24:48.131642",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "up-to-date",
+          "cves": [],
+          "risk": "LOW",
+          "version": "2.4.0"
+        },
+        "exposed_to_internet": false,
+        "health_score": 80,
+        "risk_level": "LOW",
+        "identified_risks": [
+          {
+            "severity": "MEDIUM",
+            "issue": "Moderate password strength",
+            "impact": -20
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 3 - Critical",
+        "ip": "172.25.0.13",
+        "container_name": "smartcam-demo-cam3",
+        "scan_time": "2025-11-30T23:39:41.838610",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8083,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 2121,
+            "service": "FTP",
+            "risk": "HIGH"
+          },
+          {
+            "port": 2323,
+            "service": "Telnet",
+            "risk": "CRITICAL"
+          },
+          {
+            "port": 5543,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "root",
+          "password": "12345",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "root",
+        "detected_password": "12345",
+        "device_info": {
+          "model": "OldEye Z200",
+          "firmware": "0.9.4",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-11-30T18:24:48.131570",
+          "exposed_to_internet": true,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "vulnerable",
+          "cves": [
+            "CVE-2023-1234",
+            "CVE-2023-5678"
+          ],
+          "risk": "CRITICAL",
+          "version": "0.9.4"
+        },
+        "exposed_to_internet": true,
+        "health_score": 0,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "CRITICAL",
+            "issue": "Vulnerable firmware with known CVEs",
+            "impact": -50
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Device exposed to internet",
+            "impact": -50
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "HIGH",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for OldEye Z200",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 4 - Moderate",
+        "ip": "172.25.0.14",
+        "container_name": "smartcam-demo-cam4",
+        "scan_time": "2025-11-30T23:39:41.886402",
+        "status": "offline",
+        "open_ports": [],
+        "credentials": null,
+        "default_credentials_detected": false,
+        "detected_username": null,
+        "detected_password": null,
+        "device_info": null,
+        "firmware_info": null,
+        "exposed_to_internet": false,
+        "health_score": 0,
+        "risk_level": "OFFLINE",
+        "identified_risks": [],
+        "recommendations": []
+      }
+    ]
+  },
+  {
+    "scan_id": 27,
+    "timestamp": "2025-11-30T23:40:03.464596",
+    "devices": [
+      {
+        "name": "Camera 1 - Vulnerable",
+        "ip": "172.25.0.11",
+        "container_name": "smartcam-demo-cam1",
+        "scan_time": "2025-11-30T23:40:03.242999",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8081,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 5541,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "admin",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "admin",
+        "device_info": {
+          "model": "AcmeCam A1",
+          "firmware": "1.0.2",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-11-30T18:39:57.140421",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "HIGH",
+          "version": "1.0.2"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for AcmeCam A1",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 2 - Secure",
+        "ip": "172.25.0.12",
+        "container_name": "smartcam-demo-cam2",
+        "scan_time": "2025-11-30T23:40:03.301746",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8082,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "homeowner",
+          "password": "SecureP@ssw0rd2024!",
+          "strength": "moderate"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "homeowner",
+        "detected_password": "SecureP@ssw0rd2024!",
+        "device_info": {
+          "model": "SafeView Pro 100",
+          "firmware": "2.4.0",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-11-30T18:24:48.131642",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "up-to-date",
+          "cves": [],
+          "risk": "LOW",
+          "version": "2.4.0"
+        },
+        "exposed_to_internet": false,
+        "health_score": 80,
+        "risk_level": "LOW",
+        "identified_risks": [
+          {
+            "severity": "MEDIUM",
+            "issue": "Moderate password strength",
+            "impact": -20
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 3 - Critical",
+        "ip": "172.25.0.13",
+        "container_name": "smartcam-demo-cam3",
+        "scan_time": "2025-11-30T23:40:03.338538",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8083,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 2121,
+            "service": "FTP",
+            "risk": "HIGH"
+          },
+          {
+            "port": 2323,
+            "service": "Telnet",
+            "risk": "CRITICAL"
+          },
+          {
+            "port": 5543,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "root",
+          "password": "12345",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "root",
+        "detected_password": "12345",
+        "device_info": {
+          "model": "OldEye Z200",
+          "firmware": "0.9.4",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-11-30T18:24:48.131570",
+          "exposed_to_internet": true,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "vulnerable",
+          "cves": [
+            "CVE-2023-1234",
+            "CVE-2023-5678"
+          ],
+          "risk": "CRITICAL",
+          "version": "0.9.4"
+        },
+        "exposed_to_internet": true,
+        "health_score": 0,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "CRITICAL",
+            "issue": "Vulnerable firmware with known CVEs",
+            "impact": -50
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Device exposed to internet",
+            "impact": -50
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "HIGH",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for OldEye Z200",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Camera 4 - Moderate",
+        "ip": "172.25.0.14",
+        "container_name": "smartcam-demo-cam4",
+        "scan_time": "2025-11-30T23:40:03.387654",
+        "status": "online",
+        "open_ports": [
+          {
+            "port": 8084,
+            "service": "HTTP",
+            "risk": "MEDIUM"
+          },
+          {
+            "port": 2324,
+            "service": "Telnet",
+            "risk": "CRITICAL"
+          },
+          {
+            "port": 5544,
+            "service": "RTSP",
+            "risk": "MEDIUM"
+          }
+        ],
+        "credentials": {
+          "username": "admin",
+          "password": "password",
+          "strength": "weak"
+        },
+        "default_credentials_detected": true,
+        "detected_username": "admin",
+        "detected_password": "password",
+        "device_info": {
+          "model": "BudgetCam 500",
+          "firmware": "1.5.1",
+          "manufacturer": "SmartCam Simulator Inc.",
+          "last_update": "2025-11-30T18:39:58.459360",
+          "exposed_to_internet": false,
+          "capabilities": [
+            "video",
+            "audio",
+            "motion_detection"
+          ]
+        },
+        "firmware_info": {
+          "status": "outdated",
+          "cves": [],
+          "risk": "MEDIUM",
+          "version": "1.5.1"
+        },
+        "exposed_to_internet": false,
+        "health_score": 30,
+        "risk_level": "CRITICAL",
+        "identified_risks": [
+          {
+            "severity": "HIGH",
+            "issue": "Outdated firmware",
+            "impact": -30
+          },
+          {
+            "severity": "CRITICAL",
+            "issue": "Weak or default credentials",
+            "impact": -40
+          }
+        ],
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "action": "Update firmware",
+            "steps": [
+              "1. Visit manufacturer website for BudgetCam 500",
+              "2. Download latest firmware"
+            ]
+          },
+          {
+            "priority": "CRITICAL",
+            "action": "Change password",
+            "steps": [
+              "1. Access camera admin panel",
+              "2. Change default password"
+            ]
+          }
+        ]
+      }
+    ]
   }
 ]

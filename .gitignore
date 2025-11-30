@@ -1,0 +1,116 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+*.log
+.venv
+venv/
+ENV/
+env/
+
+# Node.js / Frontend
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp/
+.pnp.js
+dist/
+dist-ssr/
+*.local
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+*.env
+
+# Operating System
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Docker
+*.pid
+*.seed
+*.pid.lock
+
+# Scanner output (optional - comment out if you want to track these)
+scanner/scan_results.json
+scanner/scan_history.json
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+
+# Build outputs
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Documentation (optional - move to readme/ folder instead of ignoring)
+# Uncomment these if you want to exclude from git:
+# COMPLETE_SETUP_GUIDE.md
+# DASHBOARD_LAYOUT.md
+# DEMO_CHECKLIST.md
+# DEMO_GUIDE.md
+# DESIGN_SYSTEM.md
+# FEATURE_REFRESH_SCAN.md
+# FINAL_IMPLEMENTATION_SUMMARY.md
+# FRONTEND_FIX_APPLIED.md
+# FRONTEND_REBUILD_SUMMARY.md
+# IMPLEMENTATION_SUMMARY.md
+# QUICK_DEMO_REFERENCE.md
+# QUICK_START.md
+
+# Keep main README
+# !README.md
