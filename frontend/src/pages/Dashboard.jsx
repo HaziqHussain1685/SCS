@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/layout/Sidebar';
+import AttackFeed from '../components/dashboard/AttackFeed';
 import StatsBar from '../components/dashboard/StatsBar';
 import HealthScoreGrid from '../components/dashboard/HealthScoreGrid';
 import DeviceTable from '../components/dashboard/DeviceTable';
@@ -190,6 +191,9 @@ const Dashboard = () => {
             {/* Dashboard Content */}
             {devices.length > 0 && (
               <>
+                {/* Attack Feed */}
+                <AttackFeed />
+
                 {/* Stats Bar */}
                 <StatsBar stats={stats} />
 
