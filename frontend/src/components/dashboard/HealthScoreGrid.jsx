@@ -12,7 +12,7 @@ const HealthScoreGrid = ({ devices, onDeviceClick }) => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {devices.map((device, index) => (
           <motion.div
-            key={device.name}
+            key={device.ip_address || device.name || index}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: index * 0.1 }}
@@ -69,8 +69,8 @@ const HealthMeter = ({ device, onClick }) => {
           />
           <defs>
             <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" className={`${getHealthScoreGradient(score).split(' ')[0]}`} />
-              <stop offset="100%" className={`${getHealthScoreGradient(score).split(' ')[2]}`} />
+              <stop offset="0%" stopColor={score >= 80 ? '#10b981' : score >= 60 ? '#eab308' : score >= 40 ? '#f59e0b' : '#ef4444'} />
+              <stop offset="100%" stopColor={score >= 80 ? '#06b6d4' : score >= 60 ? '#10b981' : score >= 40 ? '#eab308' : '#f59e0b'} />
             </linearGradient>
           </defs>
         </svg>
@@ -86,10 +86,10 @@ const HealthMeter = ({ device, onClick }) => {
 
       {/* Device Info */}
       <h3 className="font-semibold text-text-primary mb-1">
-        {device.name.split(' - ')[0]}
+        {device.device_name || device.name?.split(' - ')[0] || 'Unknown Device'}
       </h3>
       <p className="text-sm text-text-tertiary mb-3">
-        {device.device_info?.model || 'Camera Device'}
+        {device.model || device.device_info?.model || 'Camera Device'}
       </p>
 
       {/* Risk Badge */}

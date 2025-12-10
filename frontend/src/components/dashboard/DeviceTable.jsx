@@ -76,18 +76,18 @@ const DeviceTable = ({ devices, onDeviceClick }) => {
             </tr>
           </thead>
           <tbody>
-            {sortedDevices.map((device) => (
-              <React.Fragment key={device.name}>
+            {sortedDevices.map((device, index) => (
+              <React.Fragment key={device.ip_address || device.name || index}>
                 <tr 
                   className={`
                     border-b border-cyan-500/10 hover:bg-bg-hover transition-colors cursor-pointer
                     ${device.risk_level === 'CRITICAL' ? 'border-l-4 border-l-red-500' : ''}
                     ${device.risk_level === 'HIGH' ? 'border-l-4 border-l-amber-500' : ''}
                   `}
-                  onClick={() => setExpandedRow(expandedRow === device.name ? null : device.name)}
+                  onClick={() => setExpandedRow(expandedRow === (device.ip_address || device.name) ? null : (device.ip_address || device.name))}
                 >
                   <td className="py-4 px-4">
-                    {expandedRow === device.name ? (
+                    {expandedRow === (device.ip_address || device.name) ? (
                       <ChevronDown className="w-4 h-4 text-cyan-400" />
                     ) : (
                       <ChevronRight className="w-4 h-4 text-text-tertiary" />
@@ -99,15 +99,15 @@ const DeviceTable = ({ devices, onDeviceClick }) => {
                         📹
                       </div>
                       <div>
-                        <p className="font-semibold text-text-primary">{device.name.split(' - ')[0]}</p>
+                        <p className="font-semibold text-text-primary">{device.device_name || device.name?.split(' - ')[0] || 'Unknown Device'}</p>
                         <p className="text-sm text-text-tertiary">
-                          {device.device_info?.model || 'Unknown Model'}
+                          {device.model || device.device_info?.model || 'Unknown Model'}
                         </p>
                       </div>
                     </div>
                   </td>
                   <td className="py-4 px-4">
-                    <code className="font-mono text-sm text-cyan-400">{device.ip}</code>
+                    <code className="font-mono text-sm text-cyan-400">{device.ip_address || device.ip || 'N/A'}</code>
                   </td>
                   <td className="py-4 px-4">
                     <div className="flex items-center gap-2">
@@ -169,7 +169,7 @@ const DeviceTable = ({ devices, onDeviceClick }) => {
                 </tr>
                 
                 {/* Expanded Row */}
-                {expandedRow === device.name && (
+                {expandedRow === (device.ip_address || device.name) && (
                   <tr className="bg-bg-tertiary">
                     <td colSpan="7" className="py-4 px-4">
                       <div className="grid grid-cols-2 gap-4">

@@ -3,7 +3,7 @@
     "name": "Camera 1 - Vulnerable",
     "ip": "172.25.0.11",
     "container_name": "smartcam-demo-cam1",
-    "scan_time": "2025-11-30T23:40:03.242999",
+    "scan_time": "2025-12-11T03:10:56.337096",
     "status": "online",
     "open_ports": [
       {
@@ -29,7 +29,7 @@
       "model": "AcmeCam A1",
       "firmware": "1.0.2",
       "manufacturer": "SmartCam Simulator Inc.",
-      "last_update": "2025-11-30T18:39:57.140421",
+      "last_update": "2025-12-10T21:00:23.926037",
       "exposed_to_internet": false,
       "capabilities": [
         "video",
@@ -81,7 +81,7 @@
     "name": "Camera 2 - Secure",
     "ip": "172.25.0.12",
     "container_name": "smartcam-demo-cam2",
-    "scan_time": "2025-11-30T23:40:03.301746",
+    "scan_time": "2025-12-11T03:10:56.347896",
     "status": "online",
     "open_ports": [
       {
@@ -102,7 +102,7 @@
       "model": "SafeView Pro 100",
       "firmware": "2.4.0",
       "manufacturer": "SmartCam Simulator Inc.",
-      "last_update": "2025-11-30T18:24:48.131642",
+      "last_update": "2025-12-10T21:00:23.926354",
       "exposed_to_internet": false,
       "capabilities": [
         "video",
@@ -141,7 +141,7 @@
     "name": "Camera 3 - Critical",
     "ip": "172.25.0.13",
     "container_name": "smartcam-demo-cam3",
-    "scan_time": "2025-11-30T23:40:03.338538",
+    "scan_time": "2025-12-11T03:10:56.392318",
     "status": "online",
     "open_ports": [
       {
@@ -177,7 +177,7 @@
       "model": "OldEye Z200",
       "firmware": "0.9.4",
       "manufacturer": "SmartCam Simulator Inc.",
-      "last_update": "2025-11-30T18:24:48.131570",
+      "last_update": "2025-12-10T21:00:23.926256",
       "exposed_to_internet": true,
       "capabilities": [
         "video",
@@ -237,7 +237,7 @@
     "name": "Camera 4 - Moderate",
     "ip": "172.25.0.14",
     "container_name": "smartcam-demo-cam4",
-    "scan_time": "2025-11-30T23:40:03.387654",
+    "scan_time": "2025-12-11T03:10:56.442142",
     "status": "online",
     "open_ports": [
       {
@@ -268,7 +268,7 @@
       "model": "BudgetCam 500",
       "firmware": "1.5.1",
       "manufacturer": "SmartCam Simulator Inc.",
-      "last_update": "2025-11-30T18:39:58.459360",
+      "last_update": "2025-12-10T21:00:23.926054",
       "exposed_to_internet": false,
       "capabilities": [
         "video",
