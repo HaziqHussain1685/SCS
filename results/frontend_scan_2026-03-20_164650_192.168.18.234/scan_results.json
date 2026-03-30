@@ -1,0 +1,65 @@
+{
+  "scan_date": "2026-03-20T16:50:45.277456",
+  "target": "192.168.18.234",
+  "devices": [
+    {
+      "ip": "192.168.18.234",
+      "hostname": "Unknown",
+      "os": "Unknown",
+      "open_ports": 3,
+      "ports": [
+        {
+          "port": "554",
+          "protocol": "tcp",
+          "service": "rtsp",
+          "version": "Unknown",
+          "state": "open",
+          "vulnerabilities": [
+            "Video stream unencrypted",
+            "Weak authentication often default",
+            "Service version not identified - could be vulnerable"
+          ],
+          "recommendations": [
+            "Change default credentials",
+            "Use RTSPS (encrypted) if available",
+            "Restrict RTSP access",
+            "Check service documentation for latest version"
+          ],
+          "risk": "HIGH"
+        },
+        {
+          "port": "8089",
+          "protocol": "tcp",
+          "service": "unknown",
+          "version": "Unknown",
+          "state": "open",
+          "vulnerabilities": [
+            "Service version not identified - could be vulnerable"
+          ],
+          "recommendations": [
+            "Check service documentation for latest version"
+          ],
+          "risk": "LOW"
+        },
+        {
+          "port": "8899",
+          "protocol": "tcp",
+          "service": "ospf-lite",
+          "version": "Unknown",
+          "state": "open",
+          "vulnerabilities": [
+            "Service version not identified - could be vulnerable"
+          ],
+          "recommendations": [
+            "Check service documentation for latest version"
+          ],
+          "risk": "LOW"
+        }
+      ],
+      "health_score": 85,
+      "scan_time": "2026-03-20_164650"
+    }
+  ],
+  "scan_dir": "C:\\Users\\haziq\\OneDrive\\Desktop\\SCS\\results\\frontend_scan_2026-03-20_164650_192.168.18.234",
+  "xml_file": "C:\\Users\\haziq\\OneDrive\\Desktop\\SCS\\results\\frontend_scan_2026-03-20_164650_192.168.18.234\\nmap_results.xml"
+}

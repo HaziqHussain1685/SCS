@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///C:/Program Files (x86)/Nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.98 scan initiated Fri Mar 20 16:04:39 2026 as: &quot;C:\\Program Files (x86)\\Nmap\\nmap.exe&quot; -sV -T4 -p- -oX ..\\results\\quick_scan_2026-03-20_1604\\scan_results.xml 192.168.18.234 -->
+<nmaprun scanner="nmap" args="&quot;C:\\Program Files (x86)\\Nmap\\nmap.exe&quot; -sV -T4 -p- -oX ..\\results\\quick_scan_2026-03-20_1604\\scan_results.xml 192.168.18.234" start="1774004679" startstr="Fri Mar 20 16:04:39 2026" version="7.98" xmloutputversion="1.05">
+<scaninfo type="syn" protocol="tcp" numservices="65535" services="1-65535"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<hosthint><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="192.168.18.234" addrtype="ipv4"/>
+<address addr="2C:D8:DE:54:02:6D" addrtype="mac" vendor="AltoBeam"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<taskprogress task="SYN Stealth Scan" time="1774004715" percent="26.75" remaining="94" etc="1774004808"/>
+<taskprogress task="SYN Stealth Scan" time="1774004747" percent="52.28" remaining="61" etc="1774004807"/>
+<host starttime="1774004681" endtime="1774004884"><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="192.168.18.234" addrtype="ipv4"/>
+<address addr="2C:D8:DE:54:02:6D" addrtype="mac" vendor="AltoBeam"/>
+<hostnames>
+</hostnames>
+<ports><extraports state="closed" count="65532">
+<extrareasons reason="reset" count="65532" proto="tcp" ports="1-553,555-8088,8090-8898,8900-65535"/>
+</extraports>
+<port protocol="tcp" portid="554"><state state="open" reason="syn-ack" reason_ttl="255"/><service name="rtsp" servicefp="SF-Port554-TCP:V=7.98%I=7%D=3/20%Time=69BD2A59%P=i686-pc-windows-windows%r(RTSPRequest,54,&quot;RTSP/1\.0\x20200\x20OK\r\nCSeq:\x20\r\nPublic:\x20OPTIONS,\x20DESCRIBE,\x20SETUP,\x20TEARDOWN,\x20PLAY,\x20PAUSE\r\n\r\n&quot;)%r(HTTPOptions,54,&quot;RTSP/1\.0\x20200\x20OK\r\nCSeq:\x20\r\nPublic:\x20OPTIONS,\x20DESCRIBE,\x20SETUP,\x20TEARDOWN,\x20PLAY,\x20PAUSE\r\n\r\n&quot;)%r(SIPOptions,5E,&quot;RTSP/1\.0\x20200\x20OK\r\nCSeq:\x2042\x20OPTIONS\r\nPublic:\x20OPTIONS,\x20DESCRIBE,\x20SETUP,\x20TEARDOWN,\x20PLAY,\x20PAUSE\r\n\r\n&quot;);" method="probed" conf="10"/></port>
+<port protocol="tcp" portid="8089"><state state="open" reason="syn-ack" reason_ttl="255"/><service name="unknown" servicefp="SF-Port8089-TCP:V=7.98%I=7%D=3/20%Time=69BD2A80%P=i686-pc-windows-windows%r(LANDesk-RC,47,&quot;\x18\x08\x038\x01\0\0\0\0\0\0\x007\0\0\0{\&quot;id\&quot;:0,\&quot;chn\&quot;:0,\&quot;ts\&quot;:1774004863,\&quot;result\&quot;:{\&quot;code\&quot;:1102}}&quot;);" method="table" conf="3"/></port>
+<port protocol="tcp" portid="8899"><state state="open" reason="syn-ack" reason_ttl="255"/><service name="ospf-lite" method="table" conf="3"/></port>
+</ports>
+<times srtt="17227" rttvar="9781" to="100000"/>
+</host>
+<runstats><finished time="1774004884" timestr="Fri Mar 20 16:08:04 2026" summary="Nmap done at Fri Mar 20 16:08:04 2026; 1 IP address (1 host up) scanned in 205.48 seconds" elapsed="205.48" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

@@ -2,10 +2,22 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, FileText, Download, CheckSquare } from 'lucide-react';
 import Button from '../ui/Button';
+import { exportScanResultsAsJSON, exportScanResultsAsCSV, exportScanResultsAsHTML } from '../../utils/exportUtils';
 
-const ExportReportModal = ({ isOpen, onClose, devices }) => {
+const ExportReportModal = ({ isOpen, onClose, devices, scanResults }) => {
   const [exporting, setExporting] = useState(false);
-  const [selectedDevices, setSelectedDevices] = useState(devices.map(d => d.ip_address || d.name));
+  // Use fresh scanResults devices if available, otherwise fallback to devices prop
+  const devicesToDisplay = scanResults ? [{ 
+    ip_address: scanResults.target_ip,
+    device_name: `Smart Camera (${scanResults.target_ip})`,
+    health_score: scanResults.global_health_score,
+    risk_level: scanResults.global_risk_level
+  }] : devices;
+  
+  const [selectedDevices, setSelectedDevices] = useState(
+    devicesToDisplay.map(d => d.ip_address || d.name)
+  );
+  const [exportFormat, setExportFormat] = useState('html'); // html, csv, json
   const [options, setOptions] = useState({
     include_summary: true,
     include_stats: true,
@@ -18,42 +30,52 @@ const ExportReportModal = ({ isOpen, onClose, devices }) => {
     setExporting(true);
     
     try {
-      const devicesToExport = devices.filter(d => 
+      const devicesToExport = devicesToDisplay.filter(d => 
         selectedDevices.includes(d.ip_address || d.name)
       );
 
-      const response = await fetch('http://127.0.0.1:5000/api/export/pdf', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          devices: devicesToExport,
-          options: options
-        }),
-      });
-
-      if (response.ok) {
-        // Create a blob from the response
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `SmartCam_Security_Report_${new Date().toISOString().slice(0, 10)}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-        
-        onClose();
-      } else {
-        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
-        console.error('PDF generation failed:', errorData);
-        alert(`Failed to generate PDF report: ${errorData.message || 'Please check that reportlab is installed and the backend is running.'}`);
+      if (devicesToExport.length === 0) {
+        alert('Please select at least one device to export');
+        setExporting(false);
+        return;
       }
+
+      // Use fresh scanResults if available for most current data
+      const reportData = scanResults ? {
+        target_ip: scanResults.target_ip,
+        scan_time: scanResults.scan_time,
+        global_health_score: scanResults.global_health_score,
+        global_risk_level: scanResults.global_risk_level,
+        nmap: scanResults.nmap,
+        onvif: scanResults.onvif,
+        combined_vulnerabilities: scanResults.combined_vulnerabilities,
+        devices: devicesToExport,
+        options: options
+      } : {
+        target_ip: devicesToExport[0]?.ip_address || devicesToExport[0]?.ip || 'Unknown',
+        scan_time: new Date().toISOString(),
+        global_health_score: devicesToExport[0]?.health_score || 75,
+        global_risk_level: devicesToExport[0]?.risk_level || 'LOW',
+        nmap: devicesToExport[0]?.nmap_data || null,
+        onvif: devicesToExport[0]?.onvif_data || null,
+        combined_vulnerabilities: devicesToExport[0]?.vulnerabilities || [],
+        devices: devicesToExport,
+        options: options
+      };
+
+      // Export based on selected format
+      if (exportFormat === 'html') {
+        exportScanResultsAsHTML(reportData);
+      } else if (exportFormat === 'csv') {
+        exportScanResultsAsCSV(reportData);
+      } else if (exportFormat === 'json') {
+        exportScanResultsAsJSON(reportData);
+      }
+
+      onClose();
     } catch (error) {
       console.error('Export failed:', error);
-      alert(`Failed to export report: ${error.message}. Make sure the backend API is running on port 5000.`);
+      alert(`Failed to export report: ${error.message}`);
     } finally {
       setExporting(false);
     }
@@ -68,10 +90,10 @@ const ExportReportModal = ({ isOpen, onClose, devices }) => {
   };
 
   const toggleAll = () => {
-    if (selectedDevices.length === devices.length) {
+    if (selectedDevices.length === devicesToDisplay.length) {
       setSelectedDevices([]);
     } else {
-      setSelectedDevices(devices.map(d => d.ip_address || d.name));
+      setSelectedDevices(devicesToDisplay.map(d => d.ip_address || d.name));
     }
   };
 
@@ -113,12 +135,12 @@ const ExportReportModal = ({ isOpen, onClose, devices }) => {
                 onClick={toggleAll}
                 className="text-sm text-cyan-400 hover:text-cyan-300"
               >
-                {selectedDevices.length === devices.length ? 'Deselect All' : 'Select All'}
+                {selectedDevices.length === devicesToDisplay.length ? 'Deselect All' : 'Select All'}
               </button>
             </div>
 
             <div className="max-h-48 overflow-y-auto space-y-2 p-3 bg-bg-tertiary rounded-lg border border-gray-700">
-              {devices.map((device) => {
+              {devicesToDisplay.map((device) => {
                 const deviceId = device.ip_address || device.name;
                 const isSelected = selectedDevices.includes(deviceId);
                 
@@ -234,6 +256,49 @@ const ExportReportModal = ({ isOpen, onClose, devices }) => {
             </div>
           </div>
 
+          {/* Export Format Selection */}
+          <div className="space-y-3 pt-4 border-t border-gray-700">
+            <h3 className="font-semibold text-text-primary">Export Format</h3>
+            
+            <div className="grid grid-cols-3 gap-3">
+              <button
+                onClick={() => setExportFormat('html')}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  exportFormat === 'html'
+                    ? 'border-cyan-500 bg-cyan-500/10'
+                    : 'border-gray-700 bg-bg-tertiary hover:border-gray-600'
+                }`}
+              >
+                <div className="font-medium text-text-primary mb-1">HTML</div>
+                <div className="text-xs text-text-secondary">Formatted report</div>
+              </button>
+
+              <button
+                onClick={() => setExportFormat('csv')}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  exportFormat === 'csv'
+                    ? 'border-cyan-500 bg-cyan-500/10'
+                    : 'border-gray-700 bg-bg-tertiary hover:border-gray-600'
+                }`}
+              >
+                <div className="font-medium text-text-primary mb-1">CSV</div>
+                <div className="text-xs text-text-secondary">Spreadsheet</div>
+              </button>
+
+              <button
+                onClick={() => setExportFormat('json')}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  exportFormat === 'json'
+                    ? 'border-cyan-500 bg-cyan-500/10'
+                    : 'border-gray-700 bg-bg-tertiary hover:border-gray-600'
+                }`}
+              >
+                <div className="font-medium text-text-primary mb-1">JSON</div>
+                <div className="text-xs text-text-secondary">Raw data</div>
+              </button>
+            </div>
+          </div>
+
           {/* Preview Info */}
           <div className="p-4 bg-cyan-500/10 border border-cyan-500/20 rounded-lg">
             <div className="flex items-start gap-3">
@@ -242,8 +307,8 @@ const ExportReportModal = ({ isOpen, onClose, devices }) => {
                 <p className="font-semibold mb-1">Report Preview</p>
                 <p className="text-cyan-200/80">
                   Your report will include {selectedDevices.length} device(s) with{' '}
-                  {Object.values(options).filter(Boolean).length} section(s).
-                  The PDF will be downloaded automatically when ready.
+                  {Object.values(options).filter(Boolean).length} section(s) in {exportFormat.toUpperCase()} format.
+                  The file will be downloaded automatically when ready.
                 </p>
               </div>
             </div>
@@ -260,7 +325,7 @@ const ExportReportModal = ({ isOpen, onClose, devices }) => {
             disabled={exporting || selectedDevices.length === 0}
           >
             <Download className="w-4 h-4 mr-2" />
-            {exporting ? 'Generating...' : 'Generate PDF'}
+            {exporting ? 'Exporting...' : `Export as ${exportFormat.toUpperCase()}`}
           </Button>
         </div>
       </motion.div>

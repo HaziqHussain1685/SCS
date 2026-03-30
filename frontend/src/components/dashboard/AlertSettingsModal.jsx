@@ -31,11 +31,12 @@ const AlertSettingsModal = ({ isOpen, onClose }) => {
 
   const loadSettings = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/alerts/settings');
-      const data = await response.json();
+      const response = await scannerAPI.getAlertSettings();
       
-      if (data.success) {
-        setSettings(data.settings);
+      if (response.success && response.data) {
+        setSettings(response.data);
+      } else {
+        showMessage('error', 'Failed to load settings');
       }
     } catch (error) {
       console.error('Failed to load alert settings:', error);
@@ -46,20 +47,15 @@ const AlertSettingsModal = ({ isOpen, onClose }) => {
   const saveSettings = async () => {
     setSaving(true);
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/alerts/settings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(settings)
-      });
+      const response = await scannerAPI.saveAlertSettings(settings);
       
-      const data = await response.json();
-      
-      if (data.success) {
+      if (response.success) {
         showMessage('success', 'Settings saved successfully!');
       } else {
-        showMessage('error', data.message || 'Failed to save settings');
+        showMessage('error', response.error || 'Failed to save settings');
       }
     } catch (error) {
+      console.error('Error saving settings:', error);
       showMessage('error', 'Failed to save settings');
     } finally {
       setSaving(false);

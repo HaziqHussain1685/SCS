@@ -1,0 +1,90 @@
+{
+  "scan_time": "2026-03-14T05:40:24.184792",
+  "source": "nmap scan results",
+  "total_devices": 1,
+  "devices": [
+    {
+      "name": "Device_192_168_18_234",
+      "ip": "192.168.18.234",
+      "mac_address": "2C:D8:DE:54:02:6D",
+      "hostname": null,
+      "scan_time": "2026-03-14T05:40:24.180170",
+      "status": "online",
+      "open_ports": [
+        {
+          "port": 554,
+          "state": "open",
+          "service": "rtsp",
+          "version": null
+        },
+        {
+          "port": 8089,
+          "state": "open",
+          "service": "Unknown",
+          "version": null
+        },
+        {
+          "port": 8899,
+          "state": "open",
+          "service": "ospf-lite",
+          "version": null
+        }
+      ],
+      "closed_ports": [],
+      "filtered_ports": [],
+      "identified_risks": [
+        {
+          "severity": "MEDIUM",
+          "port": 554,
+          "service": "RTSP",
+          "issue": "RTSP on port 554",
+          "vuln_id": "rtsp_unauth"
+        },
+        {
+          "severity": "MEDIUM",
+          "port": 8089,
+          "service": "Unknown",
+          "issue": "Unknown on port 8089",
+          "vuln_id": "port_unknown"
+        },
+        {
+          "severity": "MEDIUM",
+          "port": 8899,
+          "service": "OSPF-lite",
+          "issue": "OSPF-lite on port 8899",
+          "vuln_id": "port_unknown"
+        }
+      ],
+      "health_score": 55,
+      "risk_level": "HIGH",
+      "services": [
+        {
+          "port": 554,
+          "name": "RTSP",
+          "risk": "MEDIUM"
+        },
+        {
+          "port": 8089,
+          "name": "Unknown",
+          "risk": "MEDIUM"
+        },
+        {
+          "port": 8899,
+          "name": "OSPF-lite",
+          "risk": "MEDIUM"
+        }
+      ],
+      "raw_data": {
+        "scan_type": "nmap XML",
+        "device_status": "unknown"
+      }
+    }
+  ],
+  "summary": {
+    "total_scanned": 1,
+    "critical_devices": 0,
+    "high_risk": 1,
+    "medium_risk": 0,
+    "low_risk": 0
+  }
+}

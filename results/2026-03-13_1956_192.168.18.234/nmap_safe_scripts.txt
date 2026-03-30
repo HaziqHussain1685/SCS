@@ -1,0 +1,107 @@
+# Nmap 7.95 scan initiated Fri Mar 13 20:19:51 2026 as: /usr/lib/nmap/nmap -Pn -p 554,8089,8899 --script default,safe -oN /media/sf_results/2026-03-13_1956_192.168.18.234/nmap_safe_scripts.txt 192.168.18.234
+Pre-scan script results:
+| broadcast-dhcp-discover: 
+|   Response 1 of 1: 
+|     Interface: eth0
+|     IP Offered: 192.168.18.238
+|     Server Identifier: 192.168.18.1
+|     Subnet Mask: 255.255.255.0
+|     Router: 192.168.18.1
+|_    Domain Name Server: 192.168.18.1
+| broadcast-igmp-discovery: 
+|   192.168.18.10
+|     Interface: eth0
+|     Version: 2
+|     Group: 224.0.0.251
+|     Description: mDNS (rfc6762)
+|   192.168.18.10
+|     Interface: eth0
+|     Version: 2
+|     Group: 239.255.255.250
+|     Description: Organization-Local Scope (rfc2365)
+|   192.168.18.234
+|     Interface: eth0
+|     Version: 2
+|     Group: 239.255.255.250
+|     Description: Organization-Local Scope (rfc2365)
+|_  Use the newtargets script-arg to add the results as targets
+|_eap-info: please specify an interface with -e
+| broadcast-listener: 
+|   ether
+|       ARP Request
+|         sender ip     sender mac         target ip
+|         192.168.18.1  28:53:4e:0d:80:5f  192.168.18.238
+|   udp
+|       Spotify
+|         ip
+|         192.168.18.185
+|       MDNS
+|         Generic
+|           ip             ipv6                       name
+|           192.168.18.10  fe80::1607:a511:d661:5843  _googlecast._tcp.local
+|           192.168.18.10  fe80::1607:a511:d661:5843  _services._dns-sd._udp.local
+|       DHCP
+|         srv ip        cli ip          mask           gw            dns           vendor
+|         192.168.18.1  192.168.18.238  255.255.255.0  192.168.18.1  192.168.18.1  -
+|         192.168.18.1  192.168.18.239  255.255.255.0  192.168.18.1  192.168.18.1  -
+|       SSDP
+|         ip              uri
+|_        192.168.18.185   urn:dial-multiscreen-org:service:dial:1
+|_hostmap-robtex: *TEMPORARILY DISABLED* due to changes in Robtex's API. See https://www.robtex.com/api/
+|_http-robtex-shared-ns: *TEMPORARILY DISABLED* due to changes in Robtex's API. See https://www.robtex.com/api/
+| broadcast-ping: 
+|   IP: 192.168.18.3  MAC: 76:45:ee:f9:1e:b6
+|_  Use --script-args=newtargets to add the results as targets
+| targets-asn: 
+|_  targets-asn.asn is a mandatory parameter
+|_multicast-profinet-discovery: 0
+| broadcast-wsdd-discover: 
+|   Devices
+|     239.255.255.250
+|       Failed to decode response from device: Unknown error
+|     239.255.255.250
+|       Failed to decode response from device: Unknown error
+|   WCF Services
+|     239.255.255.250
+|       Failed to decode response from device: Unknown error
+|     239.255.255.250
+|_      Failed to decode response from device: Unknown error
+| broadcast-upnp-info: 
+|   239.255.255.250
+|       Server: Linux/4.14.236+, UPnP/1.0, Chromecast/1.6.18
+|_      Location: http://192.168.18.10:8008/ssdp/device-desc.xml
+Nmap scan report for 192.168.18.234
+Host is up (0.090s latency).
+
+PORT     STATE SERVICE
+554/tcp  open  rtsp
+|_rtsp-methods: OPTIONS, DESCRIBE, SETUP, TEARDOWN, PLAY, PAUSE
+8089/tcp open  unknown
+8899/tcp open  ospf-lite
+MAC Address: 2C:D8:DE:54:02:6D (Unknown)
+
+Host script results:
+|_fcrdns: FAIL (No PTR record)
+|_path-mtu: PMTU == 1500
+| qscan: 
+| PORT  FAMILY  MEAN (us)  STDDEV   LOSS (%)
+| 554   0       10791.20   3869.01  0.0%
+| 8089  0       9579.80    2149.01  0.0%
+|_8899  0       9131.80    2710.20  0.0%
+|_ipidseq: Incremental!
+| dns-blacklist: 
+|   SPAM
+|     list.quorum.to - SPAM
+|_    l2.apews.org - FAIL
+| port-states: 
+|   tcp: 
+|_    open: 554,8089,8899
+| unusual-port: 
+|_  WARNING: this script depends on Nmap's service/version detection (-sV)
+
+Post-scan script results:
+| reverse-index: 
+|   554/tcp: 192.168.18.234
+|   8089/tcp: 192.168.18.234
+|_  8899/tcp: 192.168.18.234
+# Nmap done at Fri Mar 13 20:20:50 2026 -- 1 IP address (1 host up) scanned in 59.73 seconds

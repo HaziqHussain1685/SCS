@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Plus, Edit2, Trash2, Save, Folder, Tag } from 'lucide-react';
 import Button from '../ui/Button';
+import { scannerAPI } from '../../services/api';
 
 const GroupManagementModal = ({ isOpen, onClose, devices, onGroupsUpdated }) => {
   const [groups, setGroups] = useState([]);
@@ -30,14 +31,14 @@ const GroupManagementModal = ({ isOpen, onClose, devices, onGroupsUpdated }) => 
 
   const loadGroups = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/groups');
-      const data = await response.json();
+      const response = await scannerAPI.getGroups();
       
-      if (data.success) {
-        setGroups(data.groups);
+      if (response.success && response.data) {
+        setGroups(Array.isArray(response.data) ? response.data : []);
       }
     } catch (error) {
       console.error('Failed to load groups:', error);
+      setGroups([]);
     }
   };
 
@@ -46,20 +47,14 @@ const GroupManagementModal = ({ isOpen, onClose, devices, onGroupsUpdated }) => 
 
     setLoading(true);
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/groups', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: newGroupName,
-          color: newGroupColor,
-          cameras: selectedCameras
-        })
+      const response = await scannerAPI.createGroup({
+        name: newGroupName,
+        color: newGroupColor,
+        cameras: selectedCameras
       });
 
-      const data = await response.json();
-      
-      if (data.success) {
-        setGroups([...groups, data.group]);
+      if (response.success && response.data) {
+        setGroups([...groups, response.data]);
         setNewGroupName('');
         setSelectedCameras([]);
         onGroupsUpdated?.();
@@ -74,16 +69,10 @@ const GroupManagementModal = ({ isOpen, onClose, devices, onGroupsUpdated }) => 
   const updateGroup = async (groupId, updates) => {
     setLoading(true);
     try {
-      const response = await fetch(`http://127.0.0.1:5000/api/groups/${groupId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates)
-      });
-
-      const data = await response.json();
+      const response = await scannerAPI.updateGroup(groupId, updates);
       
-      if (data.success) {
-        setGroups(groups.map(g => g.id === groupId ? data.group : g));
+      if (response.success) {
+        setGroups(groups.map(g => g.id === groupId ? { ...g, ...updates } : g));
         setEditingGroup(null);
         onGroupsUpdated?.();
       }
@@ -99,13 +88,9 @@ const GroupManagementModal = ({ isOpen, onClose, devices, onGroupsUpdated }) => 
 
     setLoading(true);
     try {
-      const response = await fetch(`http://127.0.0.1:5000/api/groups/${groupId}`, {
-        method: 'DELETE'
-      });
-
-      const data = await response.json();
+      const response = await scannerAPI.deleteGroup(groupId);
       
-      if (data.success) {
+      if (response.success) {
         setGroups(groups.filter(g => g.id !== groupId));
         onGroupsUpdated?.();
       }

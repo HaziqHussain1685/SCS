@@ -1,8 +1,13 @@
 import React from 'react';
 import Dashboard from './pages/Dashboard';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 function App() {
-  return <Dashboard />;
+  return (
+    <ThemeProvider>
+      <Dashboard />
+    </ThemeProvider>
+  );
 }
 
 export default App;

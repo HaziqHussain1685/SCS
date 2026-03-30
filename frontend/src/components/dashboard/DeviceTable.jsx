@@ -128,7 +128,7 @@ const DeviceTable = ({ devices, onDeviceClick }) => {
                         device.health_score >= 40 ? 'text-amber-400' :
                         'text-red-400'
                       }`}>
-                        {device.status === 'offline' ? '--' : device.health_score}
+                        {(device.status === 'offline' || device.status === 'checking') ? '--' : device.health_score}
                       </span>
                     </div>
                   </td>
@@ -210,7 +210,13 @@ const DeviceTable = ({ devices, onDeviceClick }) => {
                             </div>
                             <div className="flex items-center gap-3 p-2 bg-bg-secondary rounded">
                               <span className="text-text-tertiary w-24">Status:</span>
-                              <span className="text-text-primary font-medium">{device.status === 'online' ? '🟢 Online' : '🔴 Offline'}</span>
+                              <span className="text-text-primary font-medium">
+                                {device.status === 'online' 
+                                  ? '🟢 Online' 
+                                  : device.status === 'checking'
+                                  ? '🟡 Checking...'
+                                  : '🔴 Offline'}
+                              </span>
                             </div>
                             <div className="flex items-center gap-3 p-2 bg-bg-secondary rounded">
                               <span className="text-text-tertiary w-24">Credentials:</span>

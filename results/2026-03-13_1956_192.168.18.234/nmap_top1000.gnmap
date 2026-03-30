@@ -1,0 +1,4 @@
+# Nmap 7.95 scan initiated Fri Mar 13 19:56:55 2026 as: /usr/lib/nmap/nmap -sS -Pn --top-ports 1000 -sV -sC -oA /media/sf_results/2026-03-13_1956_192.168.18.234/nmap_top1000 192.168.18.234
+Host: 192.168.18.234 ()	Status: Up
+Host: 192.168.18.234 ()	Ports: 554/open/tcp//rtsp///, 8089/open/tcp//unknown///, 8899/open/tcp//ospf-lite?///	Ignored State: closed (997)
+# Nmap done at Fri Mar 13 19:58:13 2026 -- 1 IP address (1 host up) scanned in 78.37 seconds

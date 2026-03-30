@@ -35,11 +35,13 @@ const HealthMeter = ({ device, onClick }) => {
   const offset = circumference - (score / 100) * circumference;
 
   const isOffline = device.status === 'offline';
+  const isChecking = device.status === 'checking';
+  const isUnavailable = isOffline || isChecking;
 
   return (
     <Card 
       onClick={onClick}
-      className={`text-center ${isOffline ? 'opacity-50' : ''}`}
+      className={`text-center ${isUnavailable ? 'opacity-50' : ''}`}
     >
       {/* Circular Progress */}
       <div className="relative w-40 h-40 mx-auto mb-4">
@@ -63,7 +65,7 @@ const HealthMeter = ({ device, onClick }) => {
             strokeWidth="8"
             fill="none"
             strokeDasharray={circumference}
-            strokeDashoffset={isOffline ? circumference : offset}
+            strokeDashoffset={isUnavailable ? circumference : offset}
             strokeLinecap="round"
             className="transition-all duration-1000"
           />
@@ -77,10 +79,10 @@ const HealthMeter = ({ device, onClick }) => {
         
         {/* Score Text */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className={`text-4xl font-bold ${isOffline ? 'text-gray-400' : getHealthScoreColor(score)}`}>
-            {isOffline ? '--' : score}
+          <span className={`text-4xl font-bold ${isUnavailable ? 'text-gray-400' : getHealthScoreColor(score)}`}>
+            {isUnavailable ? '--' : score}
           </span>
-          <span className="text-xs text-text-tertiary">{isOffline ? 'OFFLINE' : 'HEALTH'}</span>
+          <span className="text-xs text-text-tertiary">{isOffline ? 'OFFLINE' : isChecking ? 'CHECKING' : 'HEALTH'}</span>
         </div>
       </div>
 

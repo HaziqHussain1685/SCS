@@ -1,0 +1,10 @@
+# Nmap 7.95 scan initiated Fri Mar 13 20:19:50 2026 as: /usr/lib/nmap/nmap -Pn -p 554 --script rtsp-methods -oN /media/sf_results/2026-03-13_1956_192.168.18.234/nmap_rtsp_methods.txt 192.168.18.234
+Nmap scan report for 192.168.18.234
+Host is up (0.11s latency).
+
+PORT    STATE SERVICE
+554/tcp open  rtsp
+|_rtsp-methods: OPTIONS, DESCRIBE, SETUP, TEARDOWN, PLAY, PAUSE
+MAC Address: 2C:D8:DE:54:02:6D (Unknown)
+
+# Nmap done at Fri Mar 13 20:19:50 2026 -- 1 IP address (1 host up) scanned in 0.43 seconds
