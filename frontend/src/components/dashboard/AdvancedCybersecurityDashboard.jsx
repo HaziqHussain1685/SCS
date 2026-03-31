@@ -490,7 +490,7 @@ const RTSPProofTab = ({ rtspProof }) => {
       <div className="p-6 border border-slate-700 rounded-lg backdrop-blur-sm text-center">
         <Eye className="w-12 h-12 text-slate-600 mx-auto mb-3" />
         <p className="text-slate-400">No RTSP proof-of-concept data available</p>
-        <p className="text-xs text-slate-500 mt-1">RTSP testing requires FFmpeg and an accessible camera</p>
+        <p className="text-xs text-slate-500 mt-1">Live stream testing requires an accessible camera</p>
       </div>
     );
   }
@@ -541,7 +541,7 @@ const RTSPProofTab = ({ rtspProof }) => {
                   </div>
                   {streamError && <p className="text-red-400 text-sm">{streamError}</p>}
                   <p className="text-xs text-slate-500 mt-2">
-                    ℹ️ Stream updates every 2-5 seconds. If not loading, ensure FFmpeg is installed.
+                    ℹ️ Stream updates every 2-5 seconds. If not loading, check your stream connection.
                   </p>
                 </div>
               )}

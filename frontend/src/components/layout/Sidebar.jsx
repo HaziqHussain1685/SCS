@@ -4,7 +4,7 @@ import { Shield, Activity, BarChart3, Settings, User, AlertTriangle, Radar, Lock
 const Sidebar = ({ activeView, onViewChange, deviceStats, scanStatus }) => {
   const navItems = [
     { id: 'dashboard', icon: Activity, label: 'Dashboard', badge: deviceStats.online },
-    { id: 'scan', icon: Radar, label: 'Port Scan (nmap)' },
+    { id: 'scan', icon: Radar, label: 'Network Scan' },
     { id: 'onvif-scan', icon: Lock, label: 'ONVIF Scan' },
     { id: 'vulnerabilities', icon: AlertTriangle, label: 'Vulnerabilities' },
     { id: 'history', icon: BarChart3, label: 'History' },

@@ -751,6 +751,85 @@ def server_error(error):
         "error": f"Server error: {str(error)}"
     }), 500
 
+# ============== EXPORT & TIMELINE ENDPOINTS ==============
+
+@app.route('/api/scan/timeline', methods=['GET'])
+def get_scan_timeline():
+    """
+    Get current scan timeline/progress (for real-time frontend updates)
+    
+    Returns:
+    {
+        "success": true,
+        "timeline": [
+            {
+                "id": "connectivity",
+                "label": "Device Connectivity",
+                "description": "Checking if device is reachable",
+                "status": "completed|in_progress|pending",
+                "message": "Device is online"
+            },
+            ...
+        ],
+        "current_stage": "port_scan",
+        "is_scanning": true
+    }
+    """
+    try:
+        from scan_status_tracker import get_tracker
+        tracker = get_tracker()
+        timeline = tracker.get_timeline()
+        
+        return jsonify({
+            "success": True,
+            "timeline": timeline,
+            "current_stage": tracker.current_stage,
+            "is_scanning": tracker.current_stage is not None and any(s['status'] == 'in_progress' for s in timeline)
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+@app.route('/api/export-report', methods=['GET'])
+def export_report():
+    """
+    Export the latest scan report as JSON
+    
+    Query params:
+        scan_id: Optional - specific scan to export (default: latest)
+        format: "json" (only option for now, PDF coming soon)
+    
+    Returns:
+        JSON file download with complete scan data
+    """
+    try:
+        # Get latest scan from history
+        history = load_history()
+        
+        if not history:
+            return jsonify({
+                "success": False,
+                "error": "No scans available to export"
+            }), 404
+        
+        scan_data = history[-1]  # Latest scan
+        filename = f"scan_report_{scan_data['timestamp'].replace(':', '-').replace('T', '_')}.json"
+        
+        # Create JSON response with download
+        return jsonify(scan_data), 200, {
+            'Content-Disposition': f'attachment; filename={filename}',
+            'Content-Type': 'application/json'
+        }
+        
+    except Exception as e:
+        print(f"❌ Export error: {e}")
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
 # ============== MAIN ==============
 
 if __name__ == '__main__':

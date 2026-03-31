@@ -154,7 +154,7 @@ export const ModernScanInterface = () => {
           <Shield className="w-8 h-8 text-cyan-500" />
           <h1 className="text-4xl font-bold text-white">IoT Camera Scanner</h1>
         </div>
-        <p className="text-slate-400">Advanced vulnerability detection powered by Nmap</p>
+        <p className="text-slate-400">Advanced vulnerability detection via Security Scanning Engine</p>
       </div>
 
       <div className="max-w-6xl mx-auto space-y-6">
@@ -257,7 +257,7 @@ export const ModernScanInterface = () => {
               <Activity className="w-6 h-6 text-cyan-500 animate-spin" />
               <div>
                 <p className="text-white font-medium">Scanning in progress...</p>
-                <p className="text-slate-400 text-sm">Running comprehensive nmap analysis</p>
+                <p className="text-slate-400 text-sm">Running comprehensive security analysis</p>
               </div>
             </div>
             {/* Progress Bar */}

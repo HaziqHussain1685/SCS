@@ -229,7 +229,7 @@ const ScannerInterface = ({ onScanResults, onScanStart }) => {
           <ul className="space-y-2 text-sm text-slate-300">
             <li>• This scanner is for authorized security testing only</li>
             <li>• Ensure you have permission before scanning any device</li>
-            <li>• FFmpeg must be installed for RTSP frame capture</li>
+            <li>• Media streaming engine required for frame capture</li>
             <li>• Results include actionable remediation steps</li>
             <li>• All vulnerabilities are presented for educational demonstration</li>
           </ul>

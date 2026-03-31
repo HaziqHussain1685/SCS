@@ -21,8 +21,9 @@ import DiscoveryModal from '../components/dashboard/DiscoveryModal';  // Network
 
 // Other views
 import HistoryView from './HistoryView';  // Historical scan data view
-import { ScanInterface } from '../components/dashboard/ScanInterface';  // Real-time nmap scan interface
-import { ONVIFScanInterface } from '../components/dashboard/ONVIFScanInterface';  // ONVIF security scan interface
+import { ScanInterface } from '../components/dashboard/ScanInterface';  // Real-time scan interface
+import { ONVIFScanInterface } from '../components/dashboard/ONVIFScanInterface';  // Security scan interface
+import ScanTimeline from '../components/dashboard/ScanTimeline';  // Real-time scan progress timeline
 import ComprehensiveAuditReport from '../components/dashboard/ComprehensiveAuditReport';  // Professional 8-scanner audit report
 import { ScanProgressIndicator } from '../components/dashboard/ScanProgressIndicator';  // Scan progress tracking
 
@@ -599,17 +600,43 @@ const Dashboard = () => {
               </div>
             )}
 
+            {/* Scan Progress Timeline */}
+            {scanning && (
+              <div className="mb-8">
+                <ScanTimeline isScanning={scanning} currentStage="port_scan" />
+              </div>
+            )}
+
             {/* Comprehensive Audit Report */}
             {scanResults && (
               <div className="mb-8">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-2xl font-bold text-text-primary">Comprehensive Security Audit Report</h2>
-                  <Button
-                    variant="secondary"
-                    onClick={() => setScanResults(null)}
-                  >
-                    ✕ Close Report
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="secondary"
+                      onClick={() => {
+                        // Export report functionality
+                        const reportData = scanResults;
+                        const dataStr = JSON.stringify(reportData, null, 2);
+                        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                        const url = URL.createObjectURL(dataBlob);
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = `security_report_${new Date().toISOString().slice(0,10)}.json`;
+                        link.click();
+                        URL.revokeObjectURL(url);
+                      }}
+                    >
+                      Download Report
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      onClick={() => setScanResults(null)}
+                    >
+                      ✕ Close Report
+                    </Button>
+                  </div>
                 </div>
                 <ComprehensiveAuditReport auditData={scanResults} device={devices[0]} />
               </div>

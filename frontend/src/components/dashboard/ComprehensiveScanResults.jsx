@@ -96,7 +96,7 @@ export function ComprehensiveScanResults({ results }) {
           <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow border border-gray-100 dark:border-gray-700">
             <p className="text-xs text-gray-600 dark:text-gray-400 font-medium mb-1">Scan Tools Used</p>
             <p className="text-2xl font-bold text-blue-600">2</p>
-            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">nmap + ONVIF</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Advanced Detection Engines</p>
           </div>
         </div>
 
@@ -125,7 +125,7 @@ export function ComprehensiveScanResults({ results }) {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-100 dark:border-gray-700">
           <div className="flex items-center gap-2 mb-4">
             <Wifi className="w-5 h-5 text-blue-600" />
-            <h3 className="text-lg font-bold text-gray-800 dark:text-white">Network Scan (nmap)</h3>
+            <h3 className="text-lg font-bold text-gray-800 dark:text-white">Network Scan Results</h3>
           </div>
 
           <div className="grid grid-cols-2 gap-4 mb-6">
