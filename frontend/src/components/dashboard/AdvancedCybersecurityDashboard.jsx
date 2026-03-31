@@ -448,6 +448,43 @@ const VulnerabilitiesTab = ({ vulnerabilities, selectedVuln, setSelectedVuln }) 
 };
 
 const RTSPProofTab = ({ rtspProof }) => {
+  const [liveStreamUrl, setLiveStreamUrl] = React.useState(null);
+  const [showLiveStream, setShowLiveStream] = React.useState(false);
+  const [capturing, setCapturing] = React.useState(false);
+  const [streamError, setStreamError] = React.useState(null);
+  const [snapshots, setSnapshots] = React.useState([]);
+
+  React.useEffect(() => {
+    if (rtspProof?.accessible && rtspProof?.snapshots?.[0]?.url) {
+      const rtspUrl = rtspProof.snapshots[0].url;
+      const encodedUrl = encodeURIComponent(rtspUrl);
+      setLiveStreamUrl(`/live-stream?rtsp_url=${encodedUrl}`);
+    }
+    fetch('/api/snapshots?limit=5')
+      .then(r => r.json())
+      .then(d => { if (d.success && d.snapshots) { setSnapshots(d.snapshots); } })
+      .catch(err => console.log('Snapshots load error:', err));
+  }, [rtspProof]);
+
+  const handleCaptureSnapshot = async () => {
+    if (!rtspProof?.snapshots?.[0]?.url) return;
+    setCapturing(true);
+    try {
+      const response = await fetch('/api/snapshot/capture', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rtsp_url: rtspProof.snapshots[0].url, camera_id: 'dashboard' })
+      });
+      const data = await response.json();
+      if (data.success) {
+        const snapsResponse = await fetch('/api/snapshots?limit=5');
+        const snapsData = await snapsResponse.json();
+        if (snapsData.success) { setSnapshots(snapsData.snapshots); }
+      }
+    } catch (err) { console.error('Capture error:', err);
+    } finally { setCapturing(false); }
+  };
+
   if (!rtspProof) {
     return (
       <div className="p-6 border border-slate-700 rounded-lg backdrop-blur-sm text-center">
@@ -468,37 +505,119 @@ const RTSPProofTab = ({ rtspProof }) => {
               <h3 className="text-xl font-bold text-red-400">⚠ CRITICAL: UNAUTHORIZED STREAM ACCESS CONFIRMED</h3>
             </div>
             <p className="text-red-300 text-sm">Live camera footage is actively accessible without authentication</p>
+            <p className="text-red-300/70 text-xs mt-2">Anyone on your network can view this feed in real-time</p>
           </div>
 
-          {rtspProof.snapshots && rtspProof.snapshots.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {rtspProof.snapshots.map((snapshot, idx) => (
-                <div key={idx} className="border border-slate-700 rounded-lg overflow-hidden backdrop-blur-sm">
-                  <div className="bg-slate-800 p-3 border-b border-slate-700">
-                    <p className="font-semibold text-cyan-400 text-sm">Captured Frame {idx + 1}</p>
-                    <p className="text-xs text-slate-400 mt-1">Stream: {snapshot.path}</p>
-                  </div>
-                  <div className="p-4">
-                    {snapshot.snapshot && (
-                      <div className="bg-slate-900 rounded overflow-hidden mb-3">
-                        <img
-                          src={snapshot.snapshot}
-                          alt={`RTSP Snapshot ${idx + 1}`}
-                          className="w-full h-auto"
-                          onError={(e) => {
-                            e.target.src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22200%22%3E%3Crect fill=%22%23334155%22 width=%22300%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23cbd5e1%22%3ESnapshot Not Found%3C/text%3E%3C/svg%3E';
-                          }}
-                        />
-                      </div>
-                    )}
-                    <div className="space-y-2 text-xs text-slate-400">
-                      <p><span className="text-slate-300">URL:</span> {snapshot.url}</p>
-                      <p><span className="text-slate-300">Credentials:</span> {snapshot.credential}</p>
-                      <p><span className="text-slate-300">Size:</span> {(snapshot.file_size_bytes / 1024).toFixed(2)} KB</p>
+          {liveStreamUrl && (
+            <div className="border border-purple-500/30 bg-purple-900/10 rounded-lg overflow-hidden">
+              <div className="bg-slate-800 p-4 border-b border-purple-500/30 flex items-center justify-between">
+                <div>
+                  <p className="font-semibold text-purple-400 flex items-center gap-2">
+                    <Zap className="w-4 h-4" />
+                    Live Camera Feed
+                  </p>
+                  <p className="text-xs text-slate-400 mt-1">Real-time MJPEG stream from accessible camera</p>
+                </div>
+                <button
+                  onClick={() => setShowLiveStream(!showLiveStream)}
+                  className="px-3 py-1 text-sm bg-purple-600 hover:bg-purple-500 rounded transition-colors"
+                >
+                  {showLiveStream ? 'Hide' : 'Show'}
+                </button>
+              </div>
+              {showLiveStream && (
+                <div className="p-4">
+                  <div className="bg-slate-900 rounded-lg overflow-hidden border border-slate-700 mb-3">
+                    <div className="aspect-video bg-slate-950 flex items-center justify-center">
+                      <img
+                        key={liveStreamUrl}
+                        src={liveStreamUrl}
+                        alt="Live RTSP Stream"
+                        className="w-full h-full object-cover"
+                        onError={() => setStreamError('Failed to load stream')}
+                        onLoad={() => setStreamError(null)}
+                      />
                     </div>
                   </div>
+                  {streamError && <p className="text-red-400 text-sm">{streamError}</p>}
+                  <p className="text-xs text-slate-500 mt-2">
+                    ℹ️ Stream updates every 2-5 seconds. If not loading, ensure FFmpeg is installed.
+                  </p>
                 </div>
-              ))}
+              )}
+            </div>
+          )}
+
+          {(rtspProof.snapshots && rtspProof.snapshots.length > 0 || snapshots.length > 0) && (
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="font-semibold text-cyan-400 flex items-center gap-2">
+                  <Camera className="w-4 h-4" />
+                  Captured Snapshots
+                </h4>
+                <button
+                  onClick={handleCaptureSnapshot}
+                  disabled={capturing || !rtspProof?.accessible}
+                  className="px-3 py-1 text-sm bg-cyan-600 hover:bg-cyan-500 disabled:bg-slate-600 rounded transition-colors disabled:cursor-not-allowed"
+                >
+                  {capturing ? 'Capturing...' : 'Capture New'}
+                </button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {rtspProof.snapshots && rtspProof.snapshots.map((snapshot, idx) => (
+                  <div key={`original-${idx}`} className="border border-slate-700 rounded-lg overflow-hidden backdrop-blur-sm hover:border-slate-600 transition-colors">
+                    <div className="bg-slate-800/80 p-3 border-b border-slate-700">
+                      <p className="font-semibold text-cyan-400 text-sm">Captured Frame {idx + 1}</p>
+                      <p className="text-xs text-slate-400 mt-1">Stream: {snapshot.path}</p>
+                    </div>
+                    <div className="p-4">
+                      {snapshot.snapshot && (
+                        <div className="bg-slate-900 rounded overflow-hidden mb-3 border border-slate-700">
+                          <img
+                            src={snapshot.snapshot}
+                            alt={`RTSP Snapshot ${idx + 1}`}
+                            className="w-full h-auto"
+                            onError={(e) => {
+                              e.target.src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22200%22%3E%3Crect fill=%22%23334155%22 width=%22300%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23cbd5e1%22%3ESnapshot Not Found%3C/text%3E%3C/svg%3E';
+                            }}
+                          />
+                        </div>
+                      )}
+                      <div className="space-y-2 text-xs text-slate-400">
+                        <p><span className="text-slate-300">URL:</span> {snapshot.url}</p>
+                        <p><span className="text-slate-300">Credentials:</span> {snapshot.credential}</p>
+                        <p><span className="text-slate-300">Size:</span> {(snapshot.file_size_bytes / 1024).toFixed(2)} KB</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {snapshots.slice(0, 2).map((snapshot, idx) => (
+                  <div key={`recent-${idx}`} className="border border-slate-700 rounded-lg overflow-hidden backdrop-blur-sm hover:border-slate-600 transition-colors">
+                    <div className="bg-slate-800/80 p-3 border-b border-slate-700">
+                      <p className="font-semibold text-blue-400 text-sm">Recent Capture</p>
+                      <p className="text-xs text-slate-400 mt-1">{new Date(snapshot.created).toLocaleTimeString()}</p>
+                    </div>
+                    <div className="p-4">
+                      <a href={snapshot.url} target="_blank" rel="noopener noreferrer" className="block">
+                        <div className="bg-slate-900 rounded overflow-hidden mb-3 border border-slate-700 hover:border-blue-500 transition-colors">
+                          <img
+                            src={snapshot.url}
+                            alt="Snapshot"
+                            className="w-full h-auto"
+                            onError={(e) => {
+                              e.target.src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22200%22%3E%3Crect fill=%22%23334155%22 width=%22300%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23cbd5e1%22%3EImage Not Found%3C/text%3E%3C/svg%3E';
+                            }}
+                          />
+                        </div>
+                      </a>
+                      <div className="space-y-1 text-xs text-slate-400">
+                        <p><span className="text-slate-300">File:</span> {snapshot.filename}</p>
+                        <p><span className="text-slate-300">Size:</span> {(snapshot.file_size_bytes / 1024).toFixed(2)} KB</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
@@ -515,6 +634,19 @@ const RTSPProofTab = ({ rtspProof }) => {
               </ol>
             </div>
           )}
+
+          <div className="p-4 border border-slate-600 bg-slate-800/30 rounded-lg">
+            <h4 className="font-semibold text-slate-300 mb-2 flex items-center gap-2">
+              <Shield className="w-4 h-4" />
+              Security Impact
+            </h4>
+            <ul className="space-y-1 text-xs text-slate-400">
+              <li>• <span className="text-slate-300">Privacy Risk:</span> Live surveillance accessible to anyone on the network</li>
+              <li>• <span className="text-slate-300">No Authentication:</span> Access without username/password required</li>
+              <li>• <span className="text-slate-300">Real-time Threat:</span> Footage can be recorded and analyzed</li>
+              <li>• <span className="text-slate-300">Network Exposure:</span> Accessible from any device that can reach this IP</li>
+            </ul>
+          </div>
         </>
       ) : (
         <div className="p-6 border border-green-900/50 bg-green-900/20 rounded-lg">

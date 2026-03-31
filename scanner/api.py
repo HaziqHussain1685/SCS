@@ -4,9 +4,10 @@ Smart Camera Scanner API - Clean, Minimal, Modern
 Provides REST endpoints for improved nmap-based IoT camera scanning
 """
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file, Response
 from flask_cors import CORS
 from scanner_main import IoTCameraScanner
+from rtsp_streams import RTSPStreamManager
 from datetime import datetime
 import json
 import os
@@ -15,6 +16,9 @@ import platform
 
 app = Flask(__name__)
 CORS(app)
+
+# Initialize RTSP stream manager
+rtsp_manager = RTSPStreamManager(snapshots_dir="snapshots")
 
 # Store scan history
 HISTORY_FILE = "scan_history.json"
@@ -463,6 +467,237 @@ def clear_history():
             "error": str(e)
         }), 500
 
+# ============== RTSP STREAMING ENDPOINTS ==============
+
+@app.route('/live-stream', methods=['GET'])
+def live_stream():
+    """
+    Stream RTSP as MJPEG for browser display
+    
+    Query params:
+        rtsp_url: Full RTSP URL (e.g., rtsp://192.168.18.234/live)
+    
+    Example:
+        GET /live-stream?rtsp_url=rtsp://192.168.18.234/live
+    """
+    try:
+        rtsp_url = request.args.get('rtsp_url')
+        
+        if not rtsp_url:
+            return jsonify({
+                "success": False,
+                "error": "Missing rtsp_url parameter"
+            }), 400
+        
+        print(f"\n📺 LIVE STREAM REQUEST: {rtsp_url}")
+        
+        # Validate URL format
+        if not rtsp_url.startswith('rtsp://'):
+            return jsonify({
+                "success": False,
+                "error": "Invalid RTSP URL format"
+            }), 400
+        
+        # Return MJPEG stream with proper headers
+        return Response(
+            rtsp_manager.get_live_stream(rtsp_url),
+            mimetype='multipart/x-mixed-replace; boundary=frame'
+        )
+        
+    except Exception as e:
+        print(f"❌ Live stream error: {e}")
+        return jsonify({
+            "success": False,
+            "error": f"Stream error: {str(e)}"
+        }), 500
+
+@app.route('/api/snapshot/<filename>', methods=['GET'])
+def get_snapshot(filename):
+    """
+    Serve snapshot image file
+    
+    Args:
+        filename: Snapshot filename (
+ e.g., snapshot_default_20260331_143022.jpg)
+    
+    Example:
+        GET /api/snapshot/snapshot_default_20260331_143022.jpg
+    """
+    try:
+        # Security: Only allow alphanumeric and underscores in filename
+        if not all(c.isalnum() or c in '._-' for c in filename):
+            return jsonify({
+                "success": False,
+                "error": "Invalid filename"
+            }), 400
+        
+        filepath = rtsp_manager.get_snapshot_file(filename)
+        
+        if not filepath:
+            print(f"⚠️  Snapshot not found: {filename}")
+            return jsonify({
+                "success": False,
+                "error": f"Snapshot not found: {filename}"
+            }), 404
+        
+        print(f"📸 Serving snapshot: {filename}")
+        
+        return send_file(filepath, mimetype='image/jpeg')
+        
+    except Exception as e:
+        print(f"❌ Snapshot error: {e}")
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+@app.route('/api/snapshot/capture', methods=['POST'])
+def capture_snapshot():
+    """
+    Capture a single snapshot from RTSP stream
+    
+    POST body:
+    {
+        "rtsp_url": "rtsp://192.168.18.234/live",
+        "camera_id": "cam1" (optional, default: "default")
+    }
+    
+    Returns:
+    {
+        "success": true,
+        "snapshot": {
+            "filename": "snapshot_cam1_20260331_143022.jpg",
+            "url": "/api/snapshot/snapshot_cam1_20260331_143022.jpg",
+            "file_size_bytes": 45230,
+            "timestamp": "2026-03-31T14:30:22.123456"
+        }
+    }
+    """
+    try:
+        data = request.get_json()
+        rtsp_url = data.get('rtsp_url')
+        camera_id = data.get('camera_id', 'default')
+        
+        if not rtsp_url:
+            return jsonify({
+                "success": False,
+                "error": "Missing rtsp_url parameter"
+            }), 400
+        
+        if not rtsp_url.startswith('rtsp://'):
+            return jsonify({
+                "success": False,
+                "error": "Invalid RTSP URL - must start with rtsp://"
+            }), 400
+        
+        print(f"\n🎬 SNAPSHOT CAPTURE REQUEST: {rtsp_url}")
+        
+        snapshot_info = rtsp_manager.capture_snapshot(rtsp_url, camera_id)
+        
+        if snapshot_info.get('success'):
+            return jsonify({
+                "success": True,
+                "snapshot": snapshot_info
+            }), 200
+        else:
+            return jsonify({
+                "success": False,
+                "error": snapshot_info.get('error', 'Capture failed')
+            }), 500
+        
+    except Exception as e:
+        print(f"❌ Capture error: {e}")
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+@app.route('/api/snapshots', methods=['GET'])
+def list_snapshots():
+    """
+    List available snapshots
+    
+    Query params:
+        limit: Maximum number to return (default: 10)
+    
+    Returns:
+    {
+        "success": true,
+        "snapshots": [
+            {
+                "filename": "snapshot_cam1_20260331_143022.jpg",
+                "url": "/api/snapshot/snapshot_cam1_20260331_143022.jpg",
+                "file_size_bytes": 45230,
+                "created": "2026-03-31T14:30:22.123456"
+            }
+        ]
+    }
+    """
+    try:
+        limit = int(request.args.get('limit', 10))
+        snapshots = rtsp_manager.list_snapshots(limit=limit)
+        
+        return jsonify({
+            "success": True,
+            "count": len(snapshots),
+            "snapshots": snapshots
+        }), 200
+        
+    except Exception as e:
+        print(f"❌ List snapshots error: {e}")
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+@app.route('/api/rtsp/validate', methods=['POST'])
+def validate_rtsp():
+    """
+    Validate RTSP URL accessibility
+    
+    POST body:
+    {
+        "rtsp_url": "rtsp://192.168.18.234/live"
+    }
+    
+    Returns:
+    {
+        "success": true,
+        "accessible": true,
+        "latency_ms": 45.2,
+        "stream_config": {...}
+    }
+    """
+    try:
+        data = request.get_json()
+        rtsp_url = data.get('rtsp_url')
+        
+        if not rtsp_url:
+            return jsonify({
+                "success": False,
+                "error": "Missing rtsp_url"
+            }), 400
+        
+        print(f"\n🔍 RTSP VALIDATION: {rtsp_url}")
+        
+        validation = rtsp_manager.validate_rtsp_url(rtsp_url)
+        config = rtsp_manager.get_stream_config(rtsp_url)
+        
+        return jsonify({
+            "success": True,
+            "accessible": validation['accessible'],
+            "latency_ms": validation['latency_ms'],
+            "validation": validation,
+            "stream_config": config
+        }), 200
+        
+    except Exception as e:
+        print(f"❌ Validation error: {e}")
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
 # ============== ERROR HANDLERS ==============
 
 @app.errorhandler(404)
@@ -481,7 +716,12 @@ def not_found(error):
             "/api/scan/comprehensive",
             "/api/scan/history",
             "/api/scan/latest",
-            "/api/scan/clear"
+            "/api/scan/clear",
+            "/live-stream",
+            "/api/snapshot/<filename>",
+            "/api/snapshot/capture",
+            "/api/snapshots",
+            "/api/rtsp/validate"
         ]
     }), 404
 
