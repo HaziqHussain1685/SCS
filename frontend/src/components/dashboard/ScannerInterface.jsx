@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Zap,
   Search,
@@ -16,10 +16,39 @@ const ScannerInterface = ({ onScanResults, onScanStart }) => {
   const [error, setError] = useState(null);
   const [fullScan, setFullScan] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
+  const [scanMessage, setScanMessage] = useState('Initializing scan...');
+  const [pollInterval, setPollInterval] = useState(null);
 
   const validateIP = (ip) => {
     const ipRegex = /^(\d{1,3}\.){3}\d{1,3}$/;
     return ipRegex.test(ip);
+  };
+
+  // Poll timeline endpoint for real-time progress
+  const pollScanProgress = (intervalId) => {
+    fetch('http://localhost:5000/api/scan/timeline')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.timeline) {
+          // Calculate progress based on completed stages
+          const completedStages = data.timeline.filter(s => s.status === 'completed').length;
+          const totalStages = data.timeline.length;
+          const baseProgress = (completedStages / totalStages) * 100;
+          
+          // Add extra for in-progress stage
+          let finalProgress = baseProgress;
+          const currentStage = data.timeline.find(s => s.status === 'in_progress');
+          if (currentStage) {
+            finalProgress = baseProgress + 5; // Add 5% for current stage
+            setScanMessage(currentStage.label);
+          } else {
+            setScanMessage('Initializing scan...');
+          }
+          
+          setScanProgress(Math.min(finalProgress, 95));
+        }
+      })
+      .catch(err => console.log('Poll error:', err.message));
   };
 
   const handleScan = async () => {
@@ -31,9 +60,14 @@ const ScannerInterface = ({ onScanResults, onScanStart }) => {
     setIsLoading(true);
     setError(null);
     onScanStart();
+    setScanProgress(5);
+    setScanMessage('Initializing scan...');
+
+    // Start polling timeline every 500ms
+    const interval = setInterval(() => pollScanProgress(interval), 500);
+    setPollInterval(interval);
 
     try {
-      setScanProgress(10);
       const response = await fetch('http://localhost:5000/api/scan/comprehensive', {
         method: 'POST',
         headers: {
@@ -45,25 +79,32 @@ const ScannerInterface = ({ onScanResults, onScanStart }) => {
         }),
       });
 
-      setScanProgress(50);
-
       if (!response.ok) {
         throw new Error(`Scan failed: ${response.statusText}`);
       }
 
       const data = await response.json();
-      setScanProgress(90);
 
       if (data.success) {
-        onScanResults(data.data);
         setScanProgress(100);
+        setScanMessage('Scan completed!');
+        
+        // Poll one more time to ensure we're at 100%
+        await new Promise(resolve => setTimeout(resolve, 500));
+        clearInterval(interval);
+        
+        onScanResults(data.data);
       } else {
         throw new Error(data.error || 'Scan failed');
       }
     } catch (err) {
       setError(err.message);
-      setIsLoading(false);
       setScanProgress(0);
+      setScanMessage('Scan failed');
+      clearInterval(interval);
+    } finally {
+      setIsLoading(false);
+      clearInterval(interval);
     }
   };
 
@@ -197,7 +238,7 @@ const ScannerInterface = ({ onScanResults, onScanStart }) => {
                   style={{ width: `${scanProgress}%` }}
                 ></div>
               </div>
-              <p className="text-xs text-slate-400 mt-2">{scanProgress}% - Initializing scan...</p>
+              <p className="text-xs text-slate-400 mt-2">{Math.floor(scanProgress)}% - {scanMessage}</p>
             </div>
           )}
 

@@ -13,6 +13,7 @@ from camera_detector import CameraDetector
 from vulnerability_analyzer import VulnerabilityAnalyzer
 from risk_scorer import RiskScorer
 from device_status_checker import DeviceStatusChecker
+from scan_status_tracker import get_tracker
 
 class IoTCameraScanner:
     """
@@ -40,6 +41,10 @@ class IoTCameraScanner:
         Returns:
             Complete scan report with findings and recommendations
         """
+        # Get tracker and initialize scan
+        tracker = get_tracker()
+        tracker.start_scan()
+        
         self.target_ip = target_ip
         scan_start_time = datetime.now()
         
@@ -68,12 +73,14 @@ class IoTCameraScanner:
         
         try:
             # Stage 0: Check device status (online/offline)
+            tracker.start_stage('connectivity', 'Checking device connectivity')
             print("[Stage 0/5] Checking device accessibility...")
             device_status = DeviceStatusChecker.check_device_status(target_ip)
             report["device_status"] = device_status
             
             if device_status['status'] == 'ONLINE':
                 print(f"✓ Device is ONLINE (detected via: {device_status['method_used']})")
+                tracker.complete_stage('connectivity', 'Device is online and reachable')
                 if device_status.get('port_open'):
                     print(f"  Responding on port: {device_status['port_open']}")
                 if device_status.get('latency_ms'):
@@ -82,8 +89,10 @@ class IoTCameraScanner:
                 print(f"⚠ Device appears OFFLINE (no response)")
                 print(f"  The device may be powered off, not connected to network,")
                 print(f"  or blocking ICMP/port access. Continuing with scan...")
+                tracker.complete_stage('connectivity', 'Device appears offline but continuing')
             
             # Stage 1: Port scan (quick or full based on flag)
+            tracker.start_stage('port_scan', 'Scanning for open ports')
             if full_scan:
                 print("\n[Stage 1/5] Running FULL port scan (all 65535 ports)...")
                 nmap_results = self.nmap_wrapper.run_full_port_scan(target_ip)
@@ -95,14 +104,18 @@ class IoTCameraScanner:
             
             if "error" in nmap_results:
                 print(f"❌ Scan failed: {nmap_results['error']}")
+                tracker.fail_stage('port_scan', f"Scan error: {nmap_results['error']}")
                 report["metadata"]["status"] = "FAILED"
                 report["metadata"]["error"] = nmap_results.get('error', 'Unknown error')
                 return report
             
+            tracker.complete_stage('port_scan', f"Found {len(nmap_results.get('open_ports', []))} open ports")
+            
             open_ports = nmap_results.get('open_ports', [])
             print(f"✓ Found {len(open_ports)} open ports")
             
-            # Stage 2: Detect if it's a camera
+            # Stage 2: Detect if it's a camera and identify services
+            tracker.start_stage('service_detection', 'Identifying services and versions')
             print("\n[Stage 2/6] Identifying device type...")
             device_info = self.camera_detector.detect_from_scan(nmap_results)
             report["device_info"] = device_info
@@ -153,7 +166,10 @@ class IoTCameraScanner:
             if weak_security_results.get('scripts'):
                 print(f"✓ Weak security scan complete")
             
+            tracker.complete_stage('service_detection', f"Identified {len(device_info.get('detected_services', []))} services")
+            
             # Stage 7: Analyze vulnerabilities (includes RTSP proof-of-concept if available)
+            tracker.start_stage('vulnerability_analysis', 'Analyzing security vulnerabilities')
             print("\n[Stage 7/7] Analyzing security vulnerabilities...")
             vulnerabilities = self.vuln_analyzer.analyze(nmap_results, target_ip, test_rtsp=True)
             report["vulnerabilities"] = vulnerabilities
@@ -182,7 +198,10 @@ class IoTCameraScanner:
             else:
                 print("✓ No vulnerabilities detected")
             
+            tracker.complete_stage('vulnerability_analysis', f"Found {len(vulnerabilities)} vulnerabilities")
+            
             # Stage 8: Calculate risk
+            tracker.start_stage('report_generation', 'Generating final report')
             print("\nCalculating risk score...")
             risk_assessment = self.risk_scorer.calculate_overall_risk(vulnerabilities)
             report["risk_assessment"] = risk_assessment
@@ -202,6 +221,9 @@ class IoTCameraScanner:
             report["metadata"]["scan_duration_seconds"] = (scan_end_time - scan_start_time).total_seconds()
             report["metadata"]["scan_end_time"] = scan_end_time.isoformat()
             
+            # Mark report generation as complete
+            tracker.complete_stage('report_generation', 'Scan report generated successfully')
+            
             print(f"\n{'='*80}")
             print("✅ SCAN COMPLETED SUCCESSFULLY")
             print(f"Total time: {report['metadata']['scan_duration_seconds']:.1f} seconds")
@@ -213,6 +235,7 @@ class IoTCameraScanner:
             print(f"\n❌ Error during scan: {str(e)}")
             report["metadata"]["status"] = "ERROR"
             report["metadata"]["error"] = str(e)
+            tracker.fail_stage('report_generation', str(e))
             return report
     
     def save_report(self, report: Dict[str, Any], filename: str) -> bool:
