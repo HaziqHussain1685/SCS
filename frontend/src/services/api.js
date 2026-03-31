@@ -47,6 +47,39 @@ export const scannerAPI = {
     return response.data;
   },
 
+  // ============== PING / REACHABILITY ==============
+  
+  // Check if a single device is reachable
+  pingDevice: async (ip) => {
+    try {
+      const response = await api.post('/ping', { ip });
+      return response.data;
+    } catch (err) {
+      return {
+        success: false,
+        error: err.message,
+        data: { status: 'error', reachable: false }
+      };
+    }
+  },
+
+  // Check multiple devices
+  pingBatch: async (ips) => {
+    try {
+      const response = await api.post('/ping/batch', { ips });
+      return response.data;
+    } catch (err) {
+      return {
+        success: false,
+        error: err.message,
+        results: [],
+        summary: { total: 0, online: 0, offline: 0 }
+      };
+    }
+  },
+
+  // ============== SCANNING ==============
+
   // Run comprehensive scan (nmap + ONVIF)
   runComprehensiveScan: async (target = '192.168.18.234') => {
     const response = await api.post('/scan/comprehensive', { target });

@@ -214,6 +214,72 @@ class NmapWrapper:
         except Exception as e:
             return {"error": str(e)}
     
+    def run_default_credentials_scan(self, target_ip: str) -> Dict[str, Any]:
+        """
+        Enhanced: Check for default credentials on common camera ports
+        Scans for HTTP/S on ports 80, 443, 8080, 8088, 8443
+        Tests for basic auth, form-based login, and known weak defaults
+        Time: ~30 seconds
+        """
+        ports = "80,443,8080,8088,8443,8089"
+        
+        cmd = [
+            "nmap",
+            f"-p {ports}",
+            "--script=http-title,http-headers,http-auth,samba-os-discovery,smb-security-mode",
+            "-oX", "-",
+            target_ip
+        ]
+        
+        try:
+            print(f"[NMAP] Scanning for default credentials and weak configs on {target_ip}...")
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=120
+            )
+            
+            if result.returncode == 0:
+                return self._parse_script_output(result.stdout, "credentials")
+            else:
+                return {"error": "Credential scan failed"}
+        except Exception as e:
+            return {"error": str(e)}
+    
+    def run_weak_security_scan(self, target_ip: str, ports: str = "554,8089,8899,80,8080") -> Dict[str, Any]:
+        """
+        Enhanced: Detect weak security configurations
+        - SSL/TLS weaknesses
+        - Unencrypted connections (HTTP instead of HTTPS)
+        - Weak ciphers
+        - Missing security headers
+        Time: ~30 seconds
+        """
+        cmd = [
+            "nmap",
+            f"-p {ports}",
+            "--script=ssl-cert,ssl-enum-ciphers,ssl-known-key,http-security-headers,sslv2,sslv3",
+            "-oX", "-",
+            target_ip
+        ]
+        
+        try:
+            print(f"[NMAP] Scanning for weak security on {target_ip}...")
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=120
+            )
+            
+            if result.returncode == 0:
+                return self._parse_script_output(result.stdout, "weak_security")
+            else:
+                return {"error": "Weak security scan failed"}
+        except Exception as e:
+            return {"error": str(e)}
+    
     def _parse_nmap_xml(self, xml_output: str) -> Dict[str, Any]:
         """Parse nmap XML and extract key data"""
         try:

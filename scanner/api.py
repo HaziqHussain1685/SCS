@@ -10,6 +10,8 @@ from scanner_main import IoTCameraScanner
 from datetime import datetime
 import json
 import os
+import subprocess
+import platform
 
 app = Flask(__name__)
 CORS(app)
@@ -32,7 +34,68 @@ def save_history(history):
     with open(HISTORY_FILE, 'w') as f:
         json.dump(history, f, indent=2)
 
-# ============== HEALTH & STATUS ==============
+def ping_device(ip_address: str, timeout: int = 2) -> dict:
+    """
+    Ping a device to check if it's reachable
+    
+    Args:
+        ip_address: IP address to ping
+        timeout: Timeout in seconds
+    
+    Returns:
+        {
+            'status': 'online' or 'offline' or 'error',
+            'ip': ip_address,
+            'reachable': bool,
+            'latency_ms': float or None,
+            'timestamp': ISO timestamp
+        }
+    """
+    try:
+        # Determine ping command based on OS
+        param = '-n' if platform.system().lower() == 'windows' else '-c'
+        
+        # Run ping command
+        result = subprocess.run(
+            ['ping', param, '1', '-w' if platform.system().lower() == 'windows' else '-W', str(timeout * 1000), ip_address],
+            capture_output=True,
+            text=True,
+            timeout=timeout + 1
+        )
+        
+        is_reachable = result.returncode == 0
+        
+        # Try to extract latency from response
+        latency_ms = None
+        if is_reachable:
+            try:
+                # Windows format: "time=34ms"
+                # Linux format: "time=34.5 ms"
+                if 'time=' in result.stdout:
+                    time_str = result.stdout.split('time=')[1].split('ms')[0].strip()
+                    latency_ms = float(time_str)
+            except:
+                latency_ms = None
+        
+        return {
+            'status': 'online' if is_reachable else 'offline',
+            'ip': ip_address,
+            'reachable': is_reachable,
+            'latency_ms': latency_ms,
+            'timestamp': datetime.now().isoformat()
+        }
+    
+    except Exception as e:
+        return {
+            'status': 'error',
+            'ip': ip_address,
+            'reachable': False,
+            'latency_ms': None,
+            'error': str(e),
+            'timestamp': datetime.now().isoformat()
+        }
+
+
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
@@ -52,6 +115,123 @@ def health_status():
         "scanner": "nmap-based",
         "timestamp": datetime.now().isoformat()
     }), 200
+
+# ============== DEVICE REACHABILITY (PING) ==============
+
+@app.route('/api/ping', methods=['POST'])
+def ping_single():
+    """
+    Check if a single device is reachable via ping
+    
+    Request:
+        {
+            "ip": "192.168.18.234"
+        }
+    
+    Response:
+        {
+            "success": true,
+            "status": "online|offline",
+            "ip": "192.168.18.234",
+            "reachable": true|false,
+            "latency_ms": 25.5,
+            "timestamp": "2026-03-31T10:30:00"
+        }
+    """
+    try:
+        data = request.get_json()
+        ip_address = data.get('ip')
+        
+        if not ip_address:
+            return jsonify({
+                "success": False,
+                "error": "Missing 'ip' parameter"
+            }), 400
+        
+        # Validate IP format (basic)
+        parts = ip_address.split('.')
+        if len(parts) != 4:
+            return jsonify({
+                "success": False,
+                "error": "Invalid IP format"
+            }), 400
+        
+        result = ping_device(ip_address)
+        
+        return jsonify({
+            "success": True,
+            "data": result
+        }), 200
+    
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+@app.route('/api/ping/batch', methods=['POST'])
+def ping_batch():
+    """
+    Check reachability for multiple devices
+    
+    Request:
+        {
+            "ips": ["192.168.18.234", "192.168.18.235", ...]
+        }
+    
+    Response:
+        {
+            "success": true,
+            "results": [
+                { "ip": "192.168.18.234", "status": "online", "reachable": true, "latency_ms": 25.5 },
+                { "ip": "192.168.18.235", "status": "offline", "reachable": false, "latency_ms": null },
+                ...
+            ],
+            "summary": {
+                "total": 2,
+                "online": 1,
+                "offline": 1
+            }
+        }
+    """
+    try:
+        data = request.get_json()
+        ips = data.get('ips', [])
+        
+        if not ips:
+            return jsonify({
+                "success": False,
+                "error": "Missing 'ips' parameter"
+            }), 400
+        
+        results = []
+        online_count = 0
+        offline_count = 0
+        
+        for ip in ips:
+            result = ping_device(ip)
+            results.append(result)
+            
+            if result['status'] == 'online':
+                online_count += 1
+            else:
+                offline_count += 1
+        
+        return jsonify({
+            "success": True,
+            "results": results,
+            "summary": {
+                "total": len(ips),
+                "online": online_count,
+                "offline": offline_count
+            }
+        }), 200
+    
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
 
 # ============== SCANNING ENDPOINTS ==============
 
@@ -154,7 +334,10 @@ def comprehensive_scan():
                 "is_camera": results["device_info"].get("is_camera", False),
                 "camera_type": results["device_info"].get("camera_type_guess", "Unknown"),
                 "confidence": results["device_info"].get("confidence", 0),
-                "status": "online",
+                "status": results.get("device_status", {}).get("status", "UNKNOWN"),
+                "status_method": results.get("device_status", {}).get("method_used", "unknown"),
+                "latency_ms": results.get("device_status", {}).get("latency_ms"),
+                "last_seen": results.get("device_status", {}).get("timestamp"),
                 "open_ports": results["scan_results"].get("ports", {}).get("open_ports", []),
                 "services_detected": len(results["scan_results"].get("ports", {}).get("open_ports", []))
             },
@@ -173,6 +356,9 @@ def comprehensive_scan():
             # Risk assessment
             "overall_risk_score": results.get("risk_assessment", {}).get("score", 0),
             "overall_risk_level": results.get("risk_assessment", {}).get("level", "UNKNOWN"),
+            
+            # RTSP Proof-of-Concept (if available)
+            "rtsp_proof_of_concept": results.get("rtsp_proof_of_concept", None),
             
             # All findings
             "all_findings": results.get("vulnerabilities", []),
@@ -287,6 +473,9 @@ def not_found(error):
         "error": "Endpoint not found",
         "available_endpoints": [
             "/api/health",
+            "/api/health/status",
+            "/api/ping",
+            "/api/ping/batch",
             "/api/scan",
             "/api/scan/nmap",
             "/api/scan/comprehensive",
@@ -315,12 +504,21 @@ if __name__ == '__main__':
     print("✓ CORS: Enabled for localhost:3000")
     print(f"\n📍 Available endpoints:")
     print(f"  GET  /api/health         - Health check")
+    print(f"  GET  /api/health/status  - API status")
+    print(f"  POST /api/ping           - Check device reachability (single IP)")
+    print(f"  POST /api/ping/batch     - Check multiple IPs reachability")
     print(f"  POST /api/scan           - Run scan")
     print(f"  POST /api/scan/nmap      - Run nmap scan")
     print(f"  GET  /api/scan/history   - Get all scans")
     print(f"  GET  /api/scan/latest    - Get latest scan")
     print(f"  DELETE /api/scan/clear   - Clear history")
-    print(f"\n📝 Example request:")
+    print(f"\n📝 Example requests:")
+    print(f'  # Ping single device')
+    print(f'  curl -X POST http://localhost:5000/api/ping \\')
+    print(f'    -H "Content-Type: application/json" \\')
+    print(f'    -d \'{{"ip": "192.168.18.234"}}\'')
+    print(f'')
+    print(f'  # Run scan')
     print(f'  curl -X POST http://localhost:5000/api/scan \\')
     print(f'    -H "Content-Type: application/json" \\')
     print(f'    -d \'{{"target": "192.168.18.234"}}\'')

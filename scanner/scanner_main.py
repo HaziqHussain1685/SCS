@@ -12,6 +12,7 @@ from nmap_wrapper import NmapWrapper
 from camera_detector import CameraDetector
 from vulnerability_analyzer import VulnerabilityAnalyzer
 from risk_scorer import RiskScorer
+from device_status_checker import DeviceStatusChecker
 
 class IoTCameraScanner:
     """
@@ -66,12 +67,28 @@ class IoTCameraScanner:
         }
         
         try:
+            # Stage 0: Check device status (online/offline)
+            print("[Stage 0/5] Checking device accessibility...")
+            device_status = DeviceStatusChecker.check_device_status(target_ip)
+            report["device_status"] = device_status
+            
+            if device_status['status'] == 'ONLINE':
+                print(f"✓ Device is ONLINE (detected via: {device_status['method_used']})")
+                if device_status.get('port_open'):
+                    print(f"  Responding on port: {device_status['port_open']}")
+                if device_status.get('latency_ms'):
+                    print(f"  Latency: {device_status['latency_ms']:.1f}ms")
+            else:
+                print(f"⚠ Device appears OFFLINE (no response)")
+                print(f"  The device may be powered off, not connected to network,")
+                print(f"  or blocking ICMP/port access. Continuing with scan...")
+            
             # Stage 1: Port scan (quick or full based on flag)
             if full_scan:
-                print("[Stage 1/5] Running FULL port scan (all 65535 ports)...")
+                print("\n[Stage 1/5] Running FULL port scan (all 65535 ports)...")
                 nmap_results = self.nmap_wrapper.run_full_port_scan(target_ip)
             else:
-                print("[Stage 1/5] Running quick port scan (common ports)...")
+                print("\n[Stage 1/5] Running quick port scan (common ports)...")
                 nmap_results = self.nmap_wrapper.run_quick_port_scan(target_ip)
             
             report["scan_results"]["ports"] = nmap_results
@@ -86,7 +103,7 @@ class IoTCameraScanner:
             print(f"✓ Found {len(open_ports)} open ports")
             
             # Stage 2: Detect if it's a camera
-            print("\n[Stage 2/5] Identifying device type...")
+            print("\n[Stage 2/6] Identifying device type...")
             device_info = self.camera_detector.detect_from_scan(nmap_results)
             report["device_info"] = device_info
             
@@ -99,7 +116,7 @@ class IoTCameraScanner:
                 print(f"  Confidence: {device_info['confidence']}%")
             
             # Stage 3: RTSP enumeration (if RTSP port found)
-            print("\n[Stage 3/5] Running RTSP enumeration...")
+            print("\n[Stage 3/6] Running RTSP enumeration...")
             if any(p['port'] == 554 for p in open_ports):
                 rtsp_results = self.nmap_wrapper.run_rtsp_enumeration(target_ip)
                 report["scan_results"]["rtsp"] = rtsp_results
@@ -109,14 +126,14 @@ class IoTCameraScanner:
                 print(f"⊘ RTSP (port 554) not found, skipping enumeration")
             
             # Stage 4: Web panel discovery
-            print("\n[Stage 4/5] Discovering web admin panels...")
+            print("\n[Stage 4/6] Discovering web admin panels...")
             web_results = self.nmap_wrapper.run_web_panel_discovery(target_ip)
             report["scan_results"]["web"] = web_results
             if web_results.get('scripts'):
                 print(f"✓ Web panel discovery complete ({len(web_results['scripts'])} panels)")
             
             # Stage 5: ONVIF detection
-            print("\n[Stage 5/5] Detecting ONVIF device management...")
+            print("\n[Stage 5/6] Detecting ONVIF device management...")
             if any(p['port'] in [8899, 49153] for p in open_ports):
                 onvif_results = self.nmap_wrapper.run_onvif_detection(target_ip)
                 report["scan_results"]["onvif"] = onvif_results
@@ -124,19 +141,48 @@ class IoTCameraScanner:
             else:
                 print(f"⊘ ONVIF ports not found, skipping detection")
             
-            # Stage 6: Analyze vulnerabilities
-            print("\n[Stage 6/6] Analyzing security vulnerabilities...")
-            vulnerabilities = self.vuln_analyzer.analyze(nmap_results, target_ip)
+            # Stage 6: Default credentials and weak security
+            print("\n[Stage 6/6] Checking for default credentials and weak security...")
+            creds_results = self.nmap_wrapper.run_default_credentials_scan(target_ip)
+            report["scan_results"]["credentials"] = creds_results
+            if creds_results.get('scripts'):
+                print(f"✓ Default credentials scan complete")
+            
+            weak_security_results = self.nmap_wrapper.run_weak_security_scan(target_ip)
+            report["scan_results"]["weak_security"] = weak_security_results
+            if weak_security_results.get('scripts'):
+                print(f"✓ Weak security scan complete")
+            
+            # Stage 7: Analyze vulnerabilities (includes RTSP proof-of-concept if available)
+            print("\n[Stage 7/7] Analyzing security vulnerabilities...")
+            vulnerabilities = self.vuln_analyzer.analyze(nmap_results, target_ip, test_rtsp=True)
             report["vulnerabilities"] = vulnerabilities
+            
+            # Extract RTSP proof-of-concept data if available
+            rtsp_proof = None
+            for vuln in vulnerabilities:
+                if vuln.get("proof_of_concept"):
+                    rtsp_proof = vuln["proof_of_concept"]
+                    break
+            
+            if rtsp_proof:
+                report["rtsp_proof_of_concept"] = rtsp_proof
+                if rtsp_proof.get("accessible"):
+                    print(f"\n🔴 CRITICAL: RTSP VULNERABILITY CONFIRMED")
+                    print(f"  Accessible streams: {rtsp_proof.get('streams_found', 0)}")
+                    print(f"  Live frames captured: {len(rtsp_proof.get('snapshots', []))}")
+                    if rtsp_proof.get('snapshots'):
+                        for snapshot in rtsp_proof['snapshots'][:1]:  # Show first one
+                            print(f"  Snapshot: {snapshot.get('snapshot_filename', 'unknown')}")
             
             if vulnerabilities:
                 print(f"✓ Found {len(vulnerabilities)} vulnerabilities")
-                for vuln in vulnerabilities:
+                for vuln in vulnerabilities[:5]:  # Show top 5
                     print(f"  - {vuln['title']} ({vuln['severity']})")
             else:
                 print("✓ No vulnerabilities detected")
             
-            # Stage 7: Calculate risk
+            # Stage 8: Calculate risk
             print("\nCalculating risk score...")
             risk_assessment = self.risk_scorer.calculate_overall_risk(vulnerabilities)
             report["risk_assessment"] = risk_assessment
@@ -147,7 +193,7 @@ class IoTCameraScanner:
             print(f"  - Medium: {risk_assessment['breakdown']['medium']}")
             print(f"  - Low: {risk_assessment['breakdown']['low']}")
             
-            # Stage 8: Generate recommendations
+            # Stage 9: Generate recommendations
             report["recommendations"] = risk_assessment.get("recommendations", [])
             
             # Calculate actual scan duration
