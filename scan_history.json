@@ -1950,5 +1950,1697 @@
     },
     "scan_duration_seconds": 217.129796,
     "scan_mode": "FULL"
+  },
+  {
+    "target_ip": "192.168.18.234",
+    "timestamp": "2026-03-31T18:18:51.060952",
+    "scan_type": "NMAP_COMPREHENSIVE",
+    "status": "COMPLETE",
+    "device_profile": {
+      "is_camera": true,
+      "camera_type": "IP Camera with RTSP + ONVIF Management",
+      "confidence": 90,
+      "status": "ONLINE",
+      "status_method": "ping",
+      "latency_ms": 51.0,
+      "last_seen": "2026-03-31T18:18:51.329079",
+      "open_ports": [
+        {
+          "port": 554,
+          "protocol": "tcp",
+          "service": "rtsp",
+          "version": ""
+        },
+        {
+          "port": 8089,
+          "protocol": "tcp",
+          "service": "unknown",
+          "version": ""
+        },
+        {
+          "port": 8899,
+          "protocol": "tcp",
+          "service": "ospf-lite",
+          "version": ""
+        }
+      ],
+      "services_detected": 3
+    },
+    "summary": {
+      "total_scanners": 1,
+      "scanners_completed": 1,
+      "vulnerabilities_found": 6,
+      "critical_issues": 2,
+      "high_issues": 2,
+      "medium_issues": 1,
+      "low_issues": 1
+    },
+    "overall_risk_score": 9,
+    "overall_risk_level": "CRITICAL",
+    "rtsp_proof_of_concept": {
+      "tested": true,
+      "accessible": true,
+      "streams_found": 0,
+      "snapshots": [],
+      "attack_scenario_confirmed": null,
+      "severity": "CRITICAL"
+    },
+    "all_findings": [
+      {
+        "id": "VULN_RTSP_001",
+        "type": "RTSP_EXPOSURE",
+        "severity": "CRITICAL",
+        "severity_weight": 10,
+        "cvss_score": 9.1,
+        "title": "\u26a0 UNAUTHORIZED RTSP STREAM ACCESS CONFIRMED - FRAMES CAPTURED",
+        "description": "CRITICAL: Live camera stream is ACTIVELY ACCESSIBLE without any authentication. This vulnerability has been CONFIRMED by capturing actual video frames from the camera. Any attacker on the network can immediately view live surveillance feed.",
+        "attack_scenario": "An attacker on the same network runs: 'vlc rtsp://{target_ip}/stream1' and gains live access to camera footage. They can record streams, analyze security footage, or use it for reconnaissance before physical attacks.",
+        "severity_justification": "Rated HIGH because: (1) Direct access to security camera feeds compromises privacy and security, (2) Recording footage enables planning for theft/attacks, (3) Easy exploitation requires no credentials, (4) Affects confidentiality directly.",
+        "affected_port": 554,
+        "affected_service": "RTSP",
+        "impact": "Unauthorized video stream access, privacy breach, security reconnaissance",
+        "remediation": [
+          "1. Connect to camera admin interface (192.168.x.x:8089 or web port)",
+          "2. Navigate to Settings \u2192 Streaming or Settings \u2192 RTSP Configuration",
+          "3. Enable 'RTSP Authentication' or 'Require Login for RTSP'",
+          "4. Set a strong password (min 12 chars: uppercase, lowercase, numbers, symbols)",
+          "5. Configure firewall rules: restrict port 554 to trusted IPs only",
+          "6. Consider disabling RTSP if not needed; use ONVIF/HTTP instead for control",
+          "7. Enable encryption: RTSPS (RTSP over TLS) if supported",
+          "8. Verify: Test with 'nc -zv {target_ip} 554' (should close connection)",
+          "9. Document change and restart camera to apply settings"
+        ],
+        "effort": "LOW",
+        "priority": "IMMEDIATE",
+        "verification": "Connect with: vlc rtsp://{target_ip}/stream - should prompt for credentials",
+        "testing_code": "vlc rtsp://192.168.18.234/stream1",
+        "related_cves": [
+          "CVE-2021-42367",
+          "CVE-2020-6889"
+        ],
+        "proof_of_concept": {
+          "tested": true,
+          "accessible": true,
+          "streams_found": 0,
+          "snapshots": [],
+          "attack_scenario_confirmed": null,
+          "severity": "CRITICAL"
+        }
+      },
+      {
+        "id": "VULN_ONVIF_001",
+        "type": "ONVIF_EXPOSURE",
+        "severity": "CRITICAL",
+        "severity_weight": 10,
+        "cvss_score": 9.3,
+        "title": "ONVIF Device Management Exposed",
+        "description": "Port 8899 (ONVIF - Open Network Video Interface Forum) is exposed. ONVIF allows complete camera control including PTZ (pan/tilt/zoom), credential modification, and configuration changes. Unauthenticated access means anyone can completely compromise the camera.",
+        "attack_scenario": "An attacker connects to ONVIF interface and: (1) Changes admin credentials, (2) Disables security features, (3) Redirects stream output, (4) Performs reconnaissance with PTZ controls, (5) Locks out legitimate users. The attacker gains complete control.",
+        "severity_justification": "Rated CRITICAL because: (1) Complete camera control possible, (2) Allows credential reset, (3) Affects integrity, availability, and confidentiality, (4) Device becomes unmanageable to owner, (5) Used as pivot point for broader network attack.",
+        "affected_port": 8899,
+        "affected_service": "ONVIF",
+        "impact": "Complete device compromise, credential hijacking, system lockout, network pivot point",
+        "remediation": [
+          "1. IMMEDIATELY change admin credentials from camera web interface",
+          "2. Access camera admin panel (usually port 80, 8080, or 8089)",
+          "3. Navigate to Settings \u2192 Device/ONVIF \u2192 Authentication",
+          "4. Enable 'ONVIF Authentication' and set strong credentials",
+          "5. Restrict ONVIF port {port} in firewall: 'ufw allow from 192.168.1.0/24 to any port {port}'",
+          "6. Update camera firmware to latest version (check manufacturer)",
+          "7. Disable ONVIF if not required: Settings \u2192 Services \u2192 ONVIF \u2192 Disable",
+          "8. If ONVIF required: Move to separate VLAN with access control",
+          "9. Monitor: Check for port access with 'netstat -an | grep {port}'",
+          "10. Configure NVR/VMS to use ONVIF only on trusted network"
+        ],
+        "effort": "MEDIUM",
+        "priority": "CRITICAL - DO FIRST",
+        "verification": "Run: 'apt install gsoap - optional' then nmap --script onvif-discovery to verify disabled",
+        "related_cves": [
+          "CVE-2019-9010",
+          "CVE-2020-27402"
+        ]
+      },
+      {
+        "id": "VULN_HTTP_8089",
+        "type": "UNENCRYPTED_WEB",
+        "severity": "HIGH",
+        "severity_weight": 6,
+        "cvss_score": 7.2,
+        "title": "Unencrypted Web Interface on Port 8089",
+        "description": "Port 8089 offers HTTP (unencrypted) access to camera management interface. All credentials, configuration, and commands are sent in PLAINTEXT over the network. An attacker with network access can intercept credentials using packet sniffing tools.",
+        "attack_scenario": "An attacker on the network runs Wireshark and captures HTTP traffic to port 8089. When admin logs in, username and password appear in plaintext. Attacker replays credentials or modifies requests to change settings.",
+        "severity_justification": "Rated HIGH because: (1) Credentials transmitted in plaintext, (2) Man-in-the-middle attacks possible, (3) No encryption on management interface, (4) HTTPS not available.",
+        "affected_port": 8089,
+        "affected_service": "unknown",
+        "impact": "Credential interception, man-in-the-middle attacks, unauthorized configuration changes",
+        "remediation": [
+          "1. Access admin panel: http://192.168.18.234:8089",
+          "2. Navigate to Settings \u2192 Security \u2192 HTTPS or SSL/TLS",
+          "3. If available: Enable HTTPS / SSL and generate/install certificate",
+          "4. Set HTTPS Port (usually 443 or 8443)",
+          "5. Configure redirect: HTTP \u2192 HTTPS (to force encryption)",
+          "6. If HTTPS unavailable: Use firewall rules to restrict port {port} to trusted IPs only",
+          "7. Configure network firewall: only allow management access from admin workstation",
+          "8. Use VPN for remote management: Never expose port {port} to internet",
+          "9. Verify: curl -kv https://192.168.18.234 should connect securely",
+          "10. Update camera firmware for better security support"
+        ],
+        "effort": "MEDIUM",
+        "priority": "HIGH",
+        "verification": "curl http://192.168.18.234:8089 should NOT transmit credentials in plaintext",
+        "related_cves": [
+          "CVE-2021-3129",
+          "CVE-2020-5410"
+        ]
+      },
+      {
+        "id": "VULN_DEFAULT_CREDS",
+        "type": "DEFAULT_CREDENTIALS",
+        "severity": "HIGH",
+        "severity_weight": 6,
+        "cvss_score": 8.1,
+        "title": "Default Credentials Likely in Use",
+        "description": "Camera has exposed management interfaces (web, ONVIF). If not changed from factory defaults, common credentials apply: admin/admin, admin/12345, etc. Most cameras ship with default credentials that are publicly known and documented.",
+        "attack_scenario": "Attacker scans network, finds open port 8089. Tries common camera credentials: admin/12345 \u2192 SUCCESS. Gains full administrative access and modifies camera settings, credentials, or disables recording.",
+        "severity_justification": "Rated HIGH because: (1) Default credentials are public knowledge, (2) No authentication bypass needed, (3) Immediate administrative access, (4) Affects all 3 security aspects (CIA).",
+        "affected_port": "Multiple",
+        "affected_service": "Management Interfaces",
+        "impact": "Unauthorized administrative access, complete camera compromise",
+        "remediation": [
+          "1. Connect to admin interface at first setup",
+          "2. Immediately change admin password from default to strong credential",
+          "3. Minimum: 12 characters, mix of uppercase/lowercase/numbers/symbols",
+          "4. Example strong password: 'Ca$#Sec2024!Mon' (never reuse)",
+          "5. Create separate read-only user account for monitoring if supported",
+          "6. Do NOT use common credentials: admin123, password, 123456, etc.",
+          "7. Document new credentials securely (password manager, not sticky notes)",
+          "8. If camera supports disable default accounts: disable admin, create new account",
+          "9. Test: Verify old credentials no longer work",
+          "10. Repeat for any other default accounts (guest, test, etc.)"
+        ],
+        "effort": "LOW",
+        "priority": "CRITICAL",
+        "verification": "Attempt login with: admin/admin, admin/12345, admin/password - should fail",
+        "related_cves": [
+          "CVE-2021-33044"
+        ]
+      },
+      {
+        "id": "VULN_WEB_SEC_001",
+        "type": "WEAK_WEB_SECURITY",
+        "severity": "MEDIUM",
+        "severity_weight": 3,
+        "cvss_score": 5.7,
+        "title": "Weak Web Security Configuration",
+        "description": "Camera web interface likely lacks security headers and best practices. Missing headers like X-Frame-Options, X-Content-Type-Options, Content-Security-Policy allow various web-based attacks including clickjacking and XSS.",
+        "attack_scenario": "An attacker creates a phishing page embedding an iframe to the camera admin panel. When admin visits the page, the embedded panel allows credential theft or settings modification. Alternatively, attacker injects malicious scripts into cached pages.",
+        "severity_justification": "Rated MEDIUM because: (1) Affects web interface security, (2) Can be exploited client-side, (3) Requires user interaction usually, (4) Layered defense partially effective.",
+        "affected_port": 8089,
+        "affected_service": "Web Interface",
+        "impact": "Clickjacking, cross-site scripting (XSS), session hijacking",
+        "remediation": [
+          "1. Admin should configure security headers at camera level if available",
+          "2. Settings \u2192 Security \u2192 Response Headers or similar",
+          "3. Enable: X-Frame-Options: SAMEORIGIN",
+          "4. Enable: X-Content-Type-Options: nosniff",
+          "5. Enable: X-XSS-Protection: 1; mode=block",
+          "6. If unavailable in camera: Configure reverse proxy (nginx) for headers",
+          "7. Example nginx config: add_header X-Frame-Options SAMEORIGIN;",
+          "8. Disable autocomplete on login form if possible",
+          "9. Implement rate limiting on login attempts",
+          "10. Update firmware to version with enhanced security"
+        ],
+        "effort": "MEDIUM",
+        "priority": "MEDIUM",
+        "verification": "curl -i http://camera:port | grep -E 'X-Frame|X-Content|CSP'",
+        "related_cves": [
+          "CVE-2021-26920"
+        ]
+      },
+      {
+        "id": "VULN_UNKNOWN_SERVICES",
+        "type": "UNKNOWN_SERVICE",
+        "severity": "LOW",
+        "severity_weight": 1,
+        "cvss_score": 2.5,
+        "title": "1 Unknown Services Running",
+        "description": "Identified 1 open port(s) with unknown service identification. Cannot determine purpose or verify if legitimate. May indicate custom protocols, hidden services, or unidentified vulnerabilities.",
+        "attack_scenario": "Unknown services are black boxes. Attacker probes them for unknown vulnerabilities that may not be publicly disclosed, making exploitation harder to detect/prevent.",
+        "severity_justification": "Rated LOW: Just information gathering flag. Not inherent vulnerability, but indicates need for investigation.",
+        "affected_port": "Multiple",
+        "affected_service": "Unknown",
+        "impact": "Unidentified security risks, reconnaissance opportunity",
+        "remediation": [
+          "1. Identify each unknown service manually",
+          "2. Connect manually: nc -v camera_ip port",
+          "3. Identify banner/response strings",
+          "4. Search banner in public databases for service ID",
+          "5. Verify service is required and legitimate",
+          "6. If unnecessary: Disable service",
+          "7. Document all services in network inventory",
+          "8. Run: nmap -sV --version-all to improve detection",
+          "9. Keep firmware updated for better service identification"
+        ],
+        "effort": "LOW",
+        "priority": "LOW"
+      }
+    ],
+    "recommendations": [
+      "\u26a0\ufe0f  URGENT: Fix 2 critical vulnerability/vulnerabilities immediately",
+      "\ud83d\udd34 Fix 2 high-severity issue(s) this week",
+      "\ud83d\udfe1 Schedule fixes for 1 medium-severity issue(s)",
+      "\u2705 After fixes, run this scan again to verify improvements",
+      "\ud83d\udccb Document all changes made",
+      "\ud83d\udd04 Set up monthly security scans"
+    ],
+    "scanners": {
+      "nmap": {
+        "status": "completed",
+        "data": {
+          "ports": {
+            "open_ports": [
+              {
+                "port": 554,
+                "protocol": "tcp",
+                "service": "rtsp",
+                "version": ""
+              },
+              {
+                "port": 8089,
+                "protocol": "tcp",
+                "service": "unknown",
+                "version": ""
+              },
+              {
+                "port": 8899,
+                "protocol": "tcp",
+                "service": "ospf-lite",
+                "version": ""
+              }
+            ],
+            "services": {
+              "554": "rtsp",
+              "8089": "unknown",
+              "8899": "ospf-lite"
+            },
+            "scripts": {},
+            "raw_xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE nmaprun>\n<?xml-stylesheet href=\"file:///C:/Program Files (x86)/Nmap/nmap.xsl\" type=\"text/xsl\"?>\n<!-- Nmap 7.98 scan initiated Tue Mar 31 18:18:51 2026 as: nmap -sV -T4 &quot;-p 554,8089,8899,80,8080,8888,443,49153&quot; -&#45;open -oX - 192.168.18.234 -->\n<nmaprun scanner=\"nmap\" args=\"nmap -sV -T4 &quot;-p 554,8089,8899,80,8080,8888,443,49153&quot; -&#45;open -oX - 192.168.18.234\" start=\"1774963131\" startstr=\"Tue Mar 31 18:18:51 2026\" version=\"7.98\" xmloutputversion=\"1.05\">\n<scaninfo type=\"syn\" protocol=\"tcp\" numservices=\"8\" services=\"80,443,554,8080,8089,8888,8899,49153\"/>\n<verbose level=\"0\"/>\n<debugging level=\"0\"/>\n<hosthint><status state=\"up\" reason=\"arp-response\" reason_ttl=\"0\"/>\n<address addr=\"192.168.18.234\" addrtype=\"ipv4\"/>\n<address addr=\"2C:D8:DE:54:02:6D\" addrtype=\"mac\" vendor=\"AltoBeam\"/>\n<hostnames>\n</hostnames>\n</hosthint>\n<host starttime=\"1774963132\" endtime=\"1774963206\"><status state=\"up\" reason=\"arp-response\" reason_ttl=\"0\"/>\n<address addr=\"192.168.18.234\" addrtype=\"ipv4\"/>\n<address addr=\"2C:D8:DE:54:02:6D\" addrtype=\"mac\" vendor=\"AltoBeam\"/>\n<hostnames>\n</hostnames>\n<ports><extraports state=\"closed\" count=\"5\">\n<extrareasons reason=\"reset\" count=\"5\" proto=\"tcp\" ports=\"80,443,8080,8888,49153\"/>\n</extraports>\n<port protocol=\"tcp\" portid=\"554\"><state state=\"open\" reason=\"syn-ack\" reason_ttl=\"255\"/><service name=\"rtsp\" servicefp=\"SF-Port554-TCP:V=7.98%I=7%D=3/31%Time=69CBC9CC%P=i686-pc-windows-windows%r(RTSPRequest,54,&quot;RTSP/1\\.0\\x20200\\x20OK\\r\\nCSeq:\\x20\\r\\nPublic:\\x20OPTIONS,\\x20DESCRIBE,\\x20SETUP,\\x20TEARDOWN,\\x20PLAY,\\x20PAUSE\\r\\n\\r\\n&quot;)%r(HTTPOptions,54,&quot;RTSP/1\\.0\\x20200\\x20OK\\r\\nCSeq:\\x20\\r\\nPublic:\\x20OPTIONS,\\x20DESCRIBE,\\x20SETUP,\\x20TEARDOWN,\\x20PLAY,\\x20PAUSE\\r\\n\\r\\n&quot;)%r(SIPOptions,5E,&quot;RTSP/1\\.0\\x20200\\x20OK\\r\\nCSeq:\\x2042\\x20OPTIONS\\r\\nPublic:\\x20OPTIONS,\\x20DESCRIBE,\\x20SETUP,\\x20TEARDOWN,\\x20PLAY,\\x20PAUSE\\r\\n\\r\\n&quot;);\" method=\"probed\" conf=\"10\"/></port>\n<port protocol=\"tcp\" portid=\"8089\"><state state=\"open\" reason=\"syn-ack\" reason_ttl=\"255\"/><service name=\"unknown\" servicefp=\"SF-Port8089-TCP:V=7.98%I=7%D=3/31%Time=69CBC9F2%P=i686-pc-windows-windows%r(LANDesk-RC,47,&quot;\\x18\\x08\\x038\\x01\\0\\0\\0\\0\\0\\0\\x007\\0\\0\\0{\\&quot;id\\&quot;:0,\\&quot;chn\\&quot;:0,\\&quot;ts\\&quot;:1774963185,\\&quot;result\\&quot;:{\\&quot;code\\&quot;:1102}}&quot;);\" method=\"table\" conf=\"3\"/></port>\n<port protocol=\"tcp\" portid=\"8899\"><state state=\"open\" reason=\"syn-ack\" reason_ttl=\"255\"/><service name=\"ospf-lite\" method=\"table\" conf=\"3\"/></port>\n</ports>\n<times srtt=\"32144\" rttvar=\"45570\" to=\"214424\"/>\n</host>\n<runstats><finished time=\"1774963206\" timestr=\"Tue Mar 31 18:20:06 2026\" summary=\"Nmap done at Tue Mar 31 18:20:06 2026; 1 IP address (1 host up) scanned in 74.81 seconds\" elapsed=\"74.81\" exit=\"success\"/><hosts up=\"1\" down=\"0\" total=\"1\"/>\n</runstats>\n</nmaprun>\n",
+            "status": "success",
+            "timestamp": "2026-03-31T18:20:06.294661"
+          },
+          "rtsp": {
+            "type": "rtsp",
+            "scripts": {
+              "rtsp-methods": "OPTIONS, DESCRIBE, SETUP, TEARDOWN, PLAY, PAUSE",
+              "rtsp-url-brute": "\n  discovered: \n    rtsp://192.168.18.234/\n    rtsp://192.168.18.234/0\n    rtsp://192.168.18.234/0/video1\n    rtsp://192.168.18.234/1\n    rtsp://192.168.18.234/4\n    rtsp://192.168.18.234/CAM_ID.password.mp2\n    rtsp://192.168.18.234/CH001.sdp\n    rtsp://192.168.18.234/GetData.cgi\n    rtsp://192.168.18.234/H264\n    rtsp://192.168.18.234/HighResolutionVideo\n    rtsp://192.168.18.234/HighResolutionvideo\n    rtsp://192.168.18.234/Image.jpg\n    rtsp://192.168.18.234/LowResolutionVideo\n    rtsp://192.168.18.234/MJPEG.cgi\n    rtsp://192.168.18.234/MediaInput/h264\n    rtsp://192.168.18.234/MediaInput/h264/stream_1\n    rtsp://192.168.18.234/MediaInput/mpeg4\n    rtsp://192.168.18.234/ONVIF/MediaInput\n    rtsp://192.168.18.234/ONVIF/channel1\n    rtsp://192.168.18.234/PSIA/Streaming/channels/0?videoCodecType=H.264\n    rtsp://192.168.18.234/PSIA/Streaming/channels/1?videoCodecType=MPEG4\n    rtsp://192.168.18.234/PSIA/Streaming/channels/h264\n    rtsp://192.168.18.234/PSIA/Streaming/channels/1\n    rtsp://192.168.18.234/Possible\n    rtsp://192.168.18.234/1.AMP\n    rtsp://192.168.18.234/1/1:1/main\n    rtsp://192.168.18.234/1/stream1\n    rtsp://192.168.18.234/1/cif\n    rtsp://192.168.18.234/ROH/channel/11\n    rtsp://192.168.18.234/Streaming/Channels/1\n    rtsp://192.168.18.234/Streaming/Channels/101\n    rtsp://192.168.18.234/Streaming/Channels/102\n    rtsp://192.168.18.234/Streaming/channels/101\n    rtsp://192.168.18.234/Video?Codec=MPEG4&Width=720&Height=576&Fps=30\n    rtsp://192.168.18.234/VideoInput/1/h264/1\n    rtsp://192.168.18.234/access_code\n    rtsp://192.168.18.234/access_name_for_stream_1_to_5\n    rtsp://192.168.18.234/Streaming/Channels/103\n    rtsp://192.168.18.234/Streaming/Channels/2\n    rtsp://192.168.18.234/av0_0\n    rtsp://192.168.18.234/av0_1\n    rtsp://192.168.18.234/av2\n    rtsp://192.168.18.234/avn=2\n    rtsp://192.168.18.234/axis-media/media.amp?videocodec=h264&resolution=640x480\n    rtsp://192.168.18.234/axis-media/media.amp\n    rtsp://192.168.18.234/cam\n    rtsp://192.168.18.234/cam/realmonitor\n    rtsp://192.168.18.234/cam/realmonitor?channel=1&subtype=00\n    rtsp://192.168.18.234/cam0_0\n    rtsp://192.168.18.234/cam/realmonitor?channel=1&subtype=1\n    rtsp://192.168.18.234/cam/realmonitor?channel=1&subtype=01\n    rtsp://192.168.18.234/cam0_1\n    rtsp://192.168.18.234/cam1/h264\n    rtsp://192.168.18.234/cam1/mjpeg\n    rtsp://192.168.18.234/cam1/mpeg4\n    rtsp://192.168.18.234/cam1/onvif-h264\n    rtsp://192.168.18.234/cam4/mpeg4\n    rtsp://192.168.18.234/camera.stm\n    rtsp://192.168.18.234/cgi-bin/viewer/video.jpg?resolution=640x480\n    rtsp://192.168.18.234/ch0\n    rtsp://192.168.18.234/ch0.h264\n    rtsp://192.168.18.234/ch001.sdp\n    rtsp://192.168.18.234/ch01.264\n    rtsp://192.168.18.234/ch0_0.h264\n    rtsp://192.168.18.234/ch0_unicast_firststream\n    rtsp://192.168.18.234/channel1\n    rtsp://192.168.18.234/dms.jpg\n    rtsp://192.168.18.234/dms?nowprofileid=2\n    rtsp://192.168.18.234/h264\n    rtsp://192.168.18.234/h264.sdp\n    rtsp://192.168.18.234/h264/ch1/sub/\n    rtsp://192.168.18.234/h264/media.amp\n    rtsp://192.168.18.234/h264Preview_01_main\n    rtsp://192.168.18.234/h264Preview_01_sub\n    rtsp://192.168.18.234/h264_vga.sdp\n    rtsp://192.168.18.234/image.jpg\n    rtsp://192.168.18.234/image.mpg\n    rtsp://192.168.18.234/image/jpeg.cgi\n    rtsp://192.168.18.234/img/media.sav\n    rtsp://192.168.18.234/img/video.asf\n    rtsp://192.168.18.234/img/video.sav\n    rtsp://192.168.18.234/ioImage/1\n    rtsp://192.168.18.234/ipcam.sdp\n    rtsp://192.168.18.234/ipcam/stream.cgi?nowprofileid=2\n    rtsp://192.168.18.234/ipcam_h264.sdp\n    rtsp://192.168.18.234/cam1/h264/multicast\n    rtsp://192.168.18.234/12\n    rtsp://192.168.18.234/live\n    rtsp://192.168.18.234/live.sdp\n    rtsp://192.168.18.234/jpg/image.jpg?size=3\n    rtsp://192.168.18.234/11\n    rtsp://192.168.18.234/ch0_unicast_secondstream\n    rtsp://192.168.18.234/live/ch00_1\n    rtsp://192.168.18.234/live/ch1\n    rtsp://192.168.18.234/live/ch2\n    rtsp://192.168.18.234/live/av0\n    rtsp://192.168.18.234/live/h264\n    rtsp://192.168.18.234/live/mpeg4\n    rtsp://192.168.18.234/live0.264\n    rtsp://192.168.18.234/live1.264\n    rtsp://192.168.18.234/live1.sdp\n    rtsp://192.168.18.234/live2.sdp\n    rtsp://192.168.18.234/live3.sdp\n    rtsp://192.168.18.234/live_h264.sdp\n    rtsp://192.168.18.234/live_mpeg4.sdp\n    rtsp://192.168.18.234/livestream/\n    rtsp://192.168.18.234/media\n    rtsp://192.168.18.234/livestream\n    rtsp://192.168.18.234/media.amp\n    rtsp://192.168.18.234/media/media.amp\n    rtsp://192.168.18.234/media/video1\n    rtsp://192.168.18.234/media/video3\n    rtsp://192.168.18.234/medias1\n    rtsp://192.168.18.234/mjpeg.cgi\n    rtsp://192.168.18.234/mjpeg/media.smp\n    rtsp://192.168.18.234/media/video2\n    rtsp://192.168.18.234/mpeg4\n    rtsp://192.168.18.234/mpeg4/1/media.amp\n    rtsp://192.168.18.234/mpeg4/media.amp\n    rtsp://192.168.18.234/mpeg4/media.amp?resolution=640x480\n    rtsp://192.168.18.234/mpeg4/media.smp\n    rtsp://192.168.18.234/mp4\n    rtsp://192.168.18.234/mpeg4unicast\n    rtsp://192.168.18.234/live/ch00_0\n    rtsp://192.168.18.234/mpg4/rtsp.amp\n    rtsp://192.168.18.234/multicaststream\n    rtsp://192.168.18.234/now.mp4\n    rtsp://192.168.18.234/nph-h264.cgi\n    rtsp://192.168.18.234/nphMpeg4/g726-640x\n    rtsp://192.168.18.234/nphMpeg4/nil-320x240\n    rtsp://192.168.18.234/onvif-media/media.amp\n    rtsp://192.168.18.234/onvif1\n    rtsp://192.168.18.234/onvif2\n    rtsp://192.168.18.234/onvif/live/2\n    rtsp://192.168.18.234/play1.sdp\n    rtsp://192.168.18.234/nphMpeg4/g726-640x480\n    rtsp://192.168.18.234/Streaming/Unicast/channels/101\n    rtsp://192.168.18.234/live/ch0\n    rtsp://192.168.18.234/recognizer\n    rtsp://192.168.18.234/rtsp_tunnel\n    rtsp://192.168.18.234/rtpvideo1.sdp\n    rtsp://192.168.18.234/stream1\n    rtsp://192.168.18.234/rtsph264\n    rtsp://192.168.18.234/streaming/mjpeg\n    rtsp://192.168.18.234/profile\n    rtsp://192.168.18.234/synthesizer\n    rtsp://192.168.18.234/tcp/av0_0\n    rtsp://192.168.18.234/unicast/c1/s1/live\n    rtsp://192.168.18.234/rtsph2641080p\n    rtsp://192.168.18.234/stream2\n    rtsp://192.168.18.234/user.pin.mp2\n    rtsp://192.168.18.234/user_defined\n    rtsp://192.168.18.234/video.3gp\n    rtsp://192.168.18.234/video.cgi\n    rtsp://192.168.18.234/video\n    rtsp://192.168.18.234/ucast/11\n    rtsp://192.168.18.234/mpeg4cif\n    rtsp://192.168.18.234/video.mjpg\n    rtsp://192.168.18.234/video.h264\n    rtsp://192.168.18.234/video.mp4\n    rtsp://192.168.18.234/video.pro1\n    rtsp://192.168.18.234/video.pro2\n    rtsp://192.168.18.234/video/mjpg.cgi\n    rtsp://192.168.18.234/video1\n    rtsp://192.168.18.234/video1+audio1\n    rtsp://192.168.18.234/video2.mjpg\n    rtsp://192.168.18.234/videoMain\n    rtsp://192.168.18.234/videoinput_1:0/h264_1/onvif.stm\n    rtsp://192.168.18.234/videostream.cgi?rate=0\n    rtsp://192.168.18.234/vis\n    rtsp://192.168.18.234/wfov\n    rtsp://192.168.18.234/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp?real_stream\n    rtsp://192.168.18.234/play2.sdp\n    rtsp://192.168.18.234/video.cgi?resolution=VGA\n    rtsp://192.168.18.234/video.cgi?resolution=vga\n    rtsp://192.168.18.234/video.pro3"
+            },
+            "status": "success",
+            "timestamp": "2026-03-31T18:20:13.547099"
+          },
+          "web": {
+            "type": "web",
+            "scripts": {},
+            "status": "success",
+            "timestamp": "2026-03-31T18:20:14.434219"
+          },
+          "onvif": {
+            "error": "ONVIF detection failed"
+          },
+          "credentials": {
+            "error": "Credential scan failed"
+          },
+          "weak_security": {
+            "error": "Weak security scan failed"
+          }
+        },
+        "timestamp": "2026-03-31T18:18:51.060952"
+      }
+    },
+    "scan_duration_seconds": 90.318418,
+    "scan_mode": "QUICK"
+  },
+  {
+    "target_ip": "192.168.18.234",
+    "timestamp": "2026-03-31T18:18:57.112001",
+    "scan_type": "NMAP_COMPREHENSIVE",
+    "status": "COMPLETE",
+    "device_profile": {
+      "is_camera": true,
+      "camera_type": "IP Camera with RTSP + ONVIF Management",
+      "confidence": 90,
+      "status": "ONLINE",
+      "status_method": "ping",
+      "latency_ms": 8.0,
+      "last_seen": "2026-03-31T18:18:57.142232",
+      "open_ports": [
+        {
+          "port": 554,
+          "protocol": "tcp",
+          "service": "rtsp",
+          "version": ""
+        },
+        {
+          "port": 8089,
+          "protocol": "tcp",
+          "service": "unknown",
+          "version": ""
+        },
+        {
+          "port": 8899,
+          "protocol": "tcp",
+          "service": "ospf-lite",
+          "version": ""
+        }
+      ],
+      "services_detected": 3
+    },
+    "summary": {
+      "total_scanners": 1,
+      "scanners_completed": 1,
+      "vulnerabilities_found": 6,
+      "critical_issues": 2,
+      "high_issues": 2,
+      "medium_issues": 1,
+      "low_issues": 1
+    },
+    "overall_risk_score": 9,
+    "overall_risk_level": "CRITICAL",
+    "rtsp_proof_of_concept": {
+      "tested": true,
+      "accessible": true,
+      "streams_found": 0,
+      "snapshots": [],
+      "attack_scenario_confirmed": null,
+      "severity": "CRITICAL"
+    },
+    "all_findings": [
+      {
+        "id": "VULN_RTSP_001",
+        "type": "RTSP_EXPOSURE",
+        "severity": "CRITICAL",
+        "severity_weight": 10,
+        "cvss_score": 9.1,
+        "title": "\u26a0 UNAUTHORIZED RTSP STREAM ACCESS CONFIRMED - FRAMES CAPTURED",
+        "description": "CRITICAL: Live camera stream is ACTIVELY ACCESSIBLE without any authentication. This vulnerability has been CONFIRMED by capturing actual video frames from the camera. Any attacker on the network can immediately view live surveillance feed.",
+        "attack_scenario": "An attacker on the same network runs: 'vlc rtsp://{target_ip}/stream1' and gains live access to camera footage. They can record streams, analyze security footage, or use it for reconnaissance before physical attacks.",
+        "severity_justification": "Rated HIGH because: (1) Direct access to security camera feeds compromises privacy and security, (2) Recording footage enables planning for theft/attacks, (3) Easy exploitation requires no credentials, (4) Affects confidentiality directly.",
+        "affected_port": 554,
+        "affected_service": "RTSP",
+        "impact": "Unauthorized video stream access, privacy breach, security reconnaissance",
+        "remediation": [
+          "1. Connect to camera admin interface (192.168.x.x:8089 or web port)",
+          "2. Navigate to Settings \u2192 Streaming or Settings \u2192 RTSP Configuration",
+          "3. Enable 'RTSP Authentication' or 'Require Login for RTSP'",
+          "4. Set a strong password (min 12 chars: uppercase, lowercase, numbers, symbols)",
+          "5. Configure firewall rules: restrict port 554 to trusted IPs only",
+          "6. Consider disabling RTSP if not needed; use ONVIF/HTTP instead for control",
+          "7. Enable encryption: RTSPS (RTSP over TLS) if supported",
+          "8. Verify: Test with 'nc -zv {target_ip} 554' (should close connection)",
+          "9. Document change and restart camera to apply settings"
+        ],
+        "effort": "LOW",
+        "priority": "IMMEDIATE",
+        "verification": "Connect with: vlc rtsp://{target_ip}/stream - should prompt for credentials",
+        "testing_code": "vlc rtsp://192.168.18.234/stream1",
+        "related_cves": [
+          "CVE-2021-42367",
+          "CVE-2020-6889"
+        ],
+        "proof_of_concept": {
+          "tested": true,
+          "accessible": true,
+          "streams_found": 0,
+          "snapshots": [],
+          "attack_scenario_confirmed": null,
+          "severity": "CRITICAL"
+        }
+      },
+      {
+        "id": "VULN_ONVIF_001",
+        "type": "ONVIF_EXPOSURE",
+        "severity": "CRITICAL",
+        "severity_weight": 10,
+        "cvss_score": 9.3,
+        "title": "ONVIF Device Management Exposed",
+        "description": "Port 8899 (ONVIF - Open Network Video Interface Forum) is exposed. ONVIF allows complete camera control including PTZ (pan/tilt/zoom), credential modification, and configuration changes. Unauthenticated access means anyone can completely compromise the camera.",
+        "attack_scenario": "An attacker connects to ONVIF interface and: (1) Changes admin credentials, (2) Disables security features, (3) Redirects stream output, (4) Performs reconnaissance with PTZ controls, (5) Locks out legitimate users. The attacker gains complete control.",
+        "severity_justification": "Rated CRITICAL because: (1) Complete camera control possible, (2) Allows credential reset, (3) Affects integrity, availability, and confidentiality, (4) Device becomes unmanageable to owner, (5) Used as pivot point for broader network attack.",
+        "affected_port": 8899,
+        "affected_service": "ONVIF",
+        "impact": "Complete device compromise, credential hijacking, system lockout, network pivot point",
+        "remediation": [
+          "1. IMMEDIATELY change admin credentials from camera web interface",
+          "2. Access camera admin panel (usually port 80, 8080, or 8089)",
+          "3. Navigate to Settings \u2192 Device/ONVIF \u2192 Authentication",
+          "4. Enable 'ONVIF Authentication' and set strong credentials",
+          "5. Restrict ONVIF port {port} in firewall: 'ufw allow from 192.168.1.0/24 to any port {port}'",
+          "6. Update camera firmware to latest version (check manufacturer)",
+          "7. Disable ONVIF if not required: Settings \u2192 Services \u2192 ONVIF \u2192 Disable",
+          "8. If ONVIF required: Move to separate VLAN with access control",
+          "9. Monitor: Check for port access with 'netstat -an | grep {port}'",
+          "10. Configure NVR/VMS to use ONVIF only on trusted network"
+        ],
+        "effort": "MEDIUM",
+        "priority": "CRITICAL - DO FIRST",
+        "verification": "Run: 'apt install gsoap - optional' then nmap --script onvif-discovery to verify disabled",
+        "related_cves": [
+          "CVE-2019-9010",
+          "CVE-2020-27402"
+        ]
+      },
+      {
+        "id": "VULN_HTTP_8089",
+        "type": "UNENCRYPTED_WEB",
+        "severity": "HIGH",
+        "severity_weight": 6,
+        "cvss_score": 7.2,
+        "title": "Unencrypted Web Interface on Port 8089",
+        "description": "Port 8089 offers HTTP (unencrypted) access to camera management interface. All credentials, configuration, and commands are sent in PLAINTEXT over the network. An attacker with network access can intercept credentials using packet sniffing tools.",
+        "attack_scenario": "An attacker on the network runs Wireshark and captures HTTP traffic to port 8089. When admin logs in, username and password appear in plaintext. Attacker replays credentials or modifies requests to change settings.",
+        "severity_justification": "Rated HIGH because: (1) Credentials transmitted in plaintext, (2) Man-in-the-middle attacks possible, (3) No encryption on management interface, (4) HTTPS not available.",
+        "affected_port": 8089,
+        "affected_service": "unknown",
+        "impact": "Credential interception, man-in-the-middle attacks, unauthorized configuration changes",
+        "remediation": [
+          "1. Access admin panel: http://192.168.18.234:8089",
+          "2. Navigate to Settings \u2192 Security \u2192 HTTPS or SSL/TLS",
+          "3. If available: Enable HTTPS / SSL and generate/install certificate",
+          "4. Set HTTPS Port (usually 443 or 8443)",
+          "5. Configure redirect: HTTP \u2192 HTTPS (to force encryption)",
+          "6. If HTTPS unavailable: Use firewall rules to restrict port {port} to trusted IPs only",
+          "7. Configure network firewall: only allow management access from admin workstation",
+          "8. Use VPN for remote management: Never expose port {port} to internet",
+          "9. Verify: curl -kv https://192.168.18.234 should connect securely",
+          "10. Update camera firmware for better security support"
+        ],
+        "effort": "MEDIUM",
+        "priority": "HIGH",
+        "verification": "curl http://192.168.18.234:8089 should NOT transmit credentials in plaintext",
+        "related_cves": [
+          "CVE-2021-3129",
+          "CVE-2020-5410"
+        ]
+      },
+      {
+        "id": "VULN_DEFAULT_CREDS",
+        "type": "DEFAULT_CREDENTIALS",
+        "severity": "HIGH",
+        "severity_weight": 6,
+        "cvss_score": 8.1,
+        "title": "Default Credentials Likely in Use",
+        "description": "Camera has exposed management interfaces (web, ONVIF). If not changed from factory defaults, common credentials apply: admin/admin, admin/12345, etc. Most cameras ship with default credentials that are publicly known and documented.",
+        "attack_scenario": "Attacker scans network, finds open port 8089. Tries common camera credentials: admin/12345 \u2192 SUCCESS. Gains full administrative access and modifies camera settings, credentials, or disables recording.",
+        "severity_justification": "Rated HIGH because: (1) Default credentials are public knowledge, (2) No authentication bypass needed, (3) Immediate administrative access, (4) Affects all 3 security aspects (CIA).",
+        "affected_port": "Multiple",
+        "affected_service": "Management Interfaces",
+        "impact": "Unauthorized administrative access, complete camera compromise",
+        "remediation": [
+          "1. Connect to admin interface at first setup",
+          "2. Immediately change admin password from default to strong credential",
+          "3. Minimum: 12 characters, mix of uppercase/lowercase/numbers/symbols",
+          "4. Example strong password: 'Ca$#Sec2024!Mon' (never reuse)",
+          "5. Create separate read-only user account for monitoring if supported",
+          "6. Do NOT use common credentials: admin123, password, 123456, etc.",
+          "7. Document new credentials securely (password manager, not sticky notes)",
+          "8. If camera supports disable default accounts: disable admin, create new account",
+          "9. Test: Verify old credentials no longer work",
+          "10. Repeat for any other default accounts (guest, test, etc.)"
+        ],
+        "effort": "LOW",
+        "priority": "CRITICAL",
+        "verification": "Attempt login with: admin/admin, admin/12345, admin/password - should fail",
+        "related_cves": [
+          "CVE-2021-33044"
+        ]
+      },
+      {
+        "id": "VULN_WEB_SEC_001",
+        "type": "WEAK_WEB_SECURITY",
+        "severity": "MEDIUM",
+        "severity_weight": 3,
+        "cvss_score": 5.7,
+        "title": "Weak Web Security Configuration",
+        "description": "Camera web interface likely lacks security headers and best practices. Missing headers like X-Frame-Options, X-Content-Type-Options, Content-Security-Policy allow various web-based attacks including clickjacking and XSS.",
+        "attack_scenario": "An attacker creates a phishing page embedding an iframe to the camera admin panel. When admin visits the page, the embedded panel allows credential theft or settings modification. Alternatively, attacker injects malicious scripts into cached pages.",
+        "severity_justification": "Rated MEDIUM because: (1) Affects web interface security, (2) Can be exploited client-side, (3) Requires user interaction usually, (4) Layered defense partially effective.",
+        "affected_port": 8089,
+        "affected_service": "Web Interface",
+        "impact": "Clickjacking, cross-site scripting (XSS), session hijacking",
+        "remediation": [
+          "1. Admin should configure security headers at camera level if available",
+          "2. Settings \u2192 Security \u2192 Response Headers or similar",
+          "3. Enable: X-Frame-Options: SAMEORIGIN",
+          "4. Enable: X-Content-Type-Options: nosniff",
+          "5. Enable: X-XSS-Protection: 1; mode=block",
+          "6. If unavailable in camera: Configure reverse proxy (nginx) for headers",
+          "7. Example nginx config: add_header X-Frame-Options SAMEORIGIN;",
+          "8. Disable autocomplete on login form if possible",
+          "9. Implement rate limiting on login attempts",
+          "10. Update firmware to version with enhanced security"
+        ],
+        "effort": "MEDIUM",
+        "priority": "MEDIUM",
+        "verification": "curl -i http://camera:port | grep -E 'X-Frame|X-Content|CSP'",
+        "related_cves": [
+          "CVE-2021-26920"
+        ]
+      },
+      {
+        "id": "VULN_UNKNOWN_SERVICES",
+        "type": "UNKNOWN_SERVICE",
+        "severity": "LOW",
+        "severity_weight": 1,
+        "cvss_score": 2.5,
+        "title": "1 Unknown Services Running",
+        "description": "Identified 1 open port(s) with unknown service identification. Cannot determine purpose or verify if legitimate. May indicate custom protocols, hidden services, or unidentified vulnerabilities.",
+        "attack_scenario": "Unknown services are black boxes. Attacker probes them for unknown vulnerabilities that may not be publicly disclosed, making exploitation harder to detect/prevent.",
+        "severity_justification": "Rated LOW: Just information gathering flag. Not inherent vulnerability, but indicates need for investigation.",
+        "affected_port": "Multiple",
+        "affected_service": "Unknown",
+        "impact": "Unidentified security risks, reconnaissance opportunity",
+        "remediation": [
+          "1. Identify each unknown service manually",
+          "2. Connect manually: nc -v camera_ip port",
+          "3. Identify banner/response strings",
+          "4. Search banner in public databases for service ID",
+          "5. Verify service is required and legitimate",
+          "6. If unnecessary: Disable service",
+          "7. Document all services in network inventory",
+          "8. Run: nmap -sV --version-all to improve detection",
+          "9. Keep firmware updated for better service identification"
+        ],
+        "effort": "LOW",
+        "priority": "LOW"
+      }
+    ],
+    "recommendations": [
+      "\u26a0\ufe0f  URGENT: Fix 2 critical vulnerability/vulnerabilities immediately",
+      "\ud83d\udd34 Fix 2 high-severity issue(s) this week",
+      "\ud83d\udfe1 Schedule fixes for 1 medium-severity issue(s)",
+      "\u2705 After fixes, run this scan again to verify improvements",
+      "\ud83d\udccb Document all changes made",
+      "\ud83d\udd04 Set up monthly security scans"
+    ],
+    "scanners": {
+      "nmap": {
+        "status": "completed",
+        "data": {
+          "ports": {
+            "open_ports": [
+              {
+                "port": 554,
+                "protocol": "tcp",
+                "service": "rtsp",
+                "version": ""
+              },
+              {
+                "port": 8089,
+                "protocol": "tcp",
+                "service": "unknown",
+                "version": ""
+              },
+              {
+                "port": 8899,
+                "protocol": "tcp",
+                "service": "ospf-lite",
+                "version": ""
+              }
+            ],
+            "services": {
+              "554": "rtsp",
+              "8089": "unknown",
+              "8899": "ospf-lite"
+            },
+            "scripts": {},
+            "raw_xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE nmaprun>\n<?xml-stylesheet href=\"file:///C:/Program Files (x86)/Nmap/nmap.xsl\" type=\"text/xsl\"?>\n<!-- Nmap 7.98 scan initiated Tue Mar 31 18:18:57 2026 as: nmap -sV -T4 &quot;-p 554,8089,8899,80,8080,8888,443,49153&quot; -&#45;open -oX - 192.168.18.234 -->\n<nmaprun scanner=\"nmap\" args=\"nmap -sV -T4 &quot;-p 554,8089,8899,80,8080,8888,443,49153&quot; -&#45;open -oX - 192.168.18.234\" start=\"1774963137\" startstr=\"Tue Mar 31 18:18:57 2026\" version=\"7.98\" xmloutputversion=\"1.05\">\n<scaninfo type=\"syn\" protocol=\"tcp\" numservices=\"8\" services=\"80,443,554,8080,8089,8888,8899,49153\"/>\n<verbose level=\"0\"/>\n<debugging level=\"0\"/>\n<hosthint><status state=\"up\" reason=\"arp-response\" reason_ttl=\"0\"/>\n<address addr=\"192.168.18.234\" addrtype=\"ipv4\"/>\n<address addr=\"2C:D8:DE:54:02:6D\" addrtype=\"mac\" vendor=\"AltoBeam\"/>\n<hostnames>\n</hostnames>\n</hosthint>\n<host starttime=\"1774963138\" endtime=\"1774963212\"><status state=\"up\" reason=\"arp-response\" reason_ttl=\"0\"/>\n<address addr=\"192.168.18.234\" addrtype=\"ipv4\"/>\n<address addr=\"2C:D8:DE:54:02:6D\" addrtype=\"mac\" vendor=\"AltoBeam\"/>\n<hostnames>\n</hostnames>\n<ports><extraports state=\"closed\" count=\"5\">\n<extrareasons reason=\"reset\" count=\"5\" proto=\"tcp\" ports=\"80,443,8080,8888,49153\"/>\n</extraports>\n<port protocol=\"tcp\" portid=\"554\"><state state=\"open\" reason=\"syn-ack\" reason_ttl=\"255\"/><service name=\"rtsp\" servicefp=\"SF-Port554-TCP:V=7.98%I=7%D=3/31%Time=69CBC9D2%P=i686-pc-windows-windows%r(RTSPRequest,54,&quot;RTSP/1\\.0\\x20200\\x20OK\\r\\nCSeq:\\x20\\r\\nPublic:\\x20OPTIONS,\\x20DESCRIBE,\\x20SETUP,\\x20TEARDOWN,\\x20PLAY,\\x20PAUSE\\r\\n\\r\\n&quot;)%r(HTTPOptions,54,&quot;RTSP/1\\.0\\x20200\\x20OK\\r\\nCSeq:\\x20\\r\\nPublic:\\x20OPTIONS,\\x20DESCRIBE,\\x20SETUP,\\x20TEARDOWN,\\x20PLAY,\\x20PAUSE\\r\\n\\r\\n&quot;)%r(SIPOptions,5E,&quot;RTSP/1\\.0\\x20200\\x20OK\\r\\nCSeq:\\x2042\\x20OPTIONS\\r\\nPublic:\\x20OPTIONS,\\x20DESCRIBE,\\x20SETUP,\\x20TEARDOWN,\\x20PLAY,\\x20PAUSE\\r\\n\\r\\n&quot;);\" method=\"probed\" conf=\"10\"/></port>\n<port protocol=\"tcp\" portid=\"8089\"><state state=\"open\" reason=\"syn-ack\" reason_ttl=\"255\"/><service name=\"unknown\" servicefp=\"SF-Port8089-TCP:V=7.98%I=7%D=3/31%Time=69CBC9F8%P=i686-pc-windows-windows%r(LANDesk-RC,47,&quot;\\x18\\x08\\x038\\x01\\0\\0\\0\\0\\0\\0\\x007\\0\\0\\0{\\&quot;id\\&quot;:0,\\&quot;chn\\&quot;:0,\\&quot;ts\\&quot;:1774963191,\\&quot;result\\&quot;:{\\&quot;code\\&quot;:1102}}&quot;);\" method=\"table\" conf=\"3\"/></port>\n<port protocol=\"tcp\" portid=\"8899\"><state state=\"open\" reason=\"syn-ack\" reason_ttl=\"255\"/><service name=\"ospf-lite\" method=\"table\" conf=\"3\"/></port>\n</ports>\n<times srtt=\"34606\" rttvar=\"43456\" to=\"208430\"/>\n</host>\n<runstats><finished time=\"1774963212\" timestr=\"Tue Mar 31 18:20:12 2026\" summary=\"Nmap done at Tue Mar 31 18:20:12 2026; 1 IP address (1 host up) scanned in 75.33 seconds\" elapsed=\"75.33\" exit=\"success\"/><hosts up=\"1\" down=\"0\" total=\"1\"/>\n</runstats>\n</nmaprun>\n",
+            "status": "success",
+            "timestamp": "2026-03-31T18:20:12.529490"
+          },
+          "rtsp": {
+            "type": "rtsp",
+            "scripts": {
+              "rtsp-url-brute": "\n  discovered: \n    rtsp://192.168.18.234/\n    rtsp://192.168.18.234/0\n    rtsp://192.168.18.234/4\n    rtsp://192.168.18.234/CAM_ID.password.mp2\n    rtsp://192.168.18.234/CH001.sdp\n    rtsp://192.168.18.234/GetData.cgi\n    rtsp://192.168.18.234/H264\n    rtsp://192.168.18.234/HighResolutionVideo\n    rtsp://192.168.18.234/HighResolutionvideo\n    rtsp://192.168.18.234/Image.jpg\n    rtsp://192.168.18.234/LowResolutionVideo\n    rtsp://192.168.18.234/MJPEG.cgi\n    rtsp://192.168.18.234/0/video1\n    rtsp://192.168.18.234/1.AMP\n    rtsp://192.168.18.234/1/stream1\n    rtsp://192.168.18.234/MediaInput/h264\n    rtsp://192.168.18.234/MediaInput/h264/stream_1\n    rtsp://192.168.18.234/MediaInput/mpeg4\n    rtsp://192.168.18.234/ONVIF/MediaInput\n    rtsp://192.168.18.234/ONVIF/channel1\n    rtsp://192.168.18.234/PSIA/Streaming/channels/1\n    rtsp://192.168.18.234/PSIA/Streaming/channels/0?videoCodecType=H.264\n    rtsp://192.168.18.234/PSIA/Streaming/channels/1?videoCodecType=MPEG4\n    rtsp://192.168.18.234/PSIA/Streaming/channels/h264\n    rtsp://192.168.18.234/Possible\n    rtsp://192.168.18.234/ROH/channel/11\n    rtsp://192.168.18.234/Streaming/Channels/1\n    rtsp://192.168.18.234/Streaming/Channels/101\n    rtsp://192.168.18.234/Streaming/Channels/102\n    rtsp://192.168.18.234/Streaming/Channels/2\n    rtsp://192.168.18.234/Streaming/Unicast/channels/101\n    rtsp://192.168.18.234/Streaming/channels/101\n    rtsp://192.168.18.234/Video?Codec=MPEG4&Width=720&Height=576&Fps=30\n    rtsp://192.168.18.234/VideoInput/1/h264/1\n    rtsp://192.168.18.234/access_code\n    rtsp://192.168.18.234/access_name_for_stream_1_to_5\n    rtsp://192.168.18.234/av0_0\n    rtsp://192.168.18.234/av0_1\n    rtsp://192.168.18.234/av2\n    rtsp://192.168.18.234/avn=2\n    rtsp://192.168.18.234/axis-media/media.amp\n    rtsp://192.168.18.234/cam\n    rtsp://192.168.18.234/axis-media/media.amp?videocodec=h264&resolution=640x480\n    rtsp://192.168.18.234/cam/realmonitor\n    rtsp://192.168.18.234/cam/realmonitor?channel=1&subtype=00\n    rtsp://192.168.18.234/cam/realmonitor?channel=1&subtype=01\n    rtsp://192.168.18.234/Streaming/Channels/103\n    rtsp://192.168.18.234/cam1/h264\n    rtsp://192.168.18.234/cam1/h264/multicast\n    rtsp://192.168.18.234/cam1/mpeg4\n    rtsp://192.168.18.234/cam1/mjpeg\n    rtsp://192.168.18.234/12\n    rtsp://192.168.18.234/11\n    rtsp://192.168.18.234/1/1:1/main\n    rtsp://192.168.18.234/cam1/onvif-h264\n    rtsp://192.168.18.234/cam4/mpeg4\n    rtsp://192.168.18.234/camera.stm\n    rtsp://192.168.18.234/cgi-bin/viewer/video.jpg?resolution=640x480\n    rtsp://192.168.18.234/ch0\n    rtsp://192.168.18.234/ch0.h264\n    rtsp://192.168.18.234/ch001.sdp\n    rtsp://192.168.18.234/ch01.264\n    rtsp://192.168.18.234/ch0_0.h264\n    rtsp://192.168.18.234/ch0_unicast_firststream\n    rtsp://192.168.18.234/cam/realmonitor?channel=1&subtype=1\n    rtsp://192.168.18.234/ch0_unicast_secondstream\n    rtsp://192.168.18.234/channel1\n    rtsp://192.168.18.234/cam0_0\n    rtsp://192.168.18.234/cam0_1\n    rtsp://192.168.18.234/dms.jpg\n    rtsp://192.168.18.234/dms?nowprofileid=2\n    rtsp://192.168.18.234/h264.sdp\n    rtsp://192.168.18.234/h264Preview_01_main\n    rtsp://192.168.18.234/h264/ch1/sub/\n    rtsp://192.168.18.234/h264_vga.sdp\n    rtsp://192.168.18.234/h264/media.amp\n    rtsp://192.168.18.234/h264Preview_01_sub\n    rtsp://192.168.18.234/h264\n    rtsp://192.168.18.234/image.mpg\n    rtsp://192.168.18.234/image.jpg\n    rtsp://192.168.18.234/image/jpeg.cgi\n    rtsp://192.168.18.234/img/media.sav\n    rtsp://192.168.18.234/img/video.asf\n    rtsp://192.168.18.234/img/video.sav\n    rtsp://192.168.18.234/ipcam/stream.cgi?nowprofileid=2\n    rtsp://192.168.18.234/ipcam_h264.sdp\n    rtsp://192.168.18.234/jpg/image.jpg?size=3\n    rtsp://192.168.18.234/live\n    rtsp://192.168.18.234/live.sdp\n    rtsp://192.168.18.234/live/av0\n    rtsp://192.168.18.234/ioImage/1\n    rtsp://192.168.18.234/live/ch0\n    rtsp://192.168.18.234/live/ch00_0\n    rtsp://192.168.18.234/live/ch00_1\n    rtsp://192.168.18.234/live/ch1\n    rtsp://192.168.18.234/live/ch2\n    rtsp://192.168.18.234/live/mpeg4\n    rtsp://192.168.18.234/live1.264\n    rtsp://192.168.18.234/live0.264\n    rtsp://192.168.18.234/live1.sdp\n    rtsp://192.168.18.234/live/h264\n    rtsp://192.168.18.234/live2.sdp\n    rtsp://192.168.18.234/live3.sdp\n    rtsp://192.168.18.234/live_h264.sdp\n    rtsp://192.168.18.234/live_mpeg4.sdp\n    rtsp://192.168.18.234/livestream\n    rtsp://192.168.18.234/livestream/\n    rtsp://192.168.18.234/media\n    rtsp://192.168.18.234/media/media.amp\n    rtsp://192.168.18.234/media/video1\n    rtsp://192.168.18.234/media/video2\n    rtsp://192.168.18.234/media/video3\n    rtsp://192.168.18.234/medias1\n    rtsp://192.168.18.234/mjpeg.cgi\n    rtsp://192.168.18.234/mjpeg/media.smp\n    rtsp://192.168.18.234/ipcam.sdp\n    rtsp://192.168.18.234/mp4\n    rtsp://192.168.18.234/mpeg4\n    rtsp://192.168.18.234/mpeg4/1/media.amp\n    rtsp://192.168.18.234/mpeg4/media.amp\n    rtsp://192.168.18.234/mpeg4/media.amp?resolution=640x480\n    rtsp://192.168.18.234/mpeg4/media.smp\n    rtsp://192.168.18.234/mpeg4cif\n    rtsp://192.168.18.234/mpeg4unicast\n    rtsp://192.168.18.234/mpg4/rtsp.amp\n    rtsp://192.168.18.234/multicaststream\n    rtsp://192.168.18.234/now.mp4\n    rtsp://192.168.18.234/nph-h264.cgi\n    rtsp://192.168.18.234/nphMpeg4/g726-640x\n    rtsp://192.168.18.234/nphMpeg4/g726-640x480\n    rtsp://192.168.18.234/nphMpeg4/nil-320x240\n    rtsp://192.168.18.234/onvif-media/media.amp\n    rtsp://192.168.18.234/onvif/live/2\n    rtsp://192.168.18.234/onvif1\n    rtsp://192.168.18.234/onvif2\n    rtsp://192.168.18.234/play2.sdp\n    rtsp://192.168.18.234/play1.sdp\n    rtsp://192.168.18.234/profile\n    rtsp://192.168.18.234/rtpvideo1.sdp\n    rtsp://192.168.18.234/rtsp_tunnel\n    rtsp://192.168.18.234/media.amp\n    rtsp://192.168.18.234/recognizer\n    rtsp://192.168.18.234/rtsph2641080p\n    rtsp://192.168.18.234/stream1\n    rtsp://192.168.18.234/stream2\n    rtsp://192.168.18.234/streaming/mjpeg\n    rtsp://192.168.18.234/synthesizer\n    rtsp://192.168.18.234/tcp/av0_0\n    rtsp://192.168.18.234/unicast/c1/s1/live\n    rtsp://192.168.18.234/user.pin.mp2\n    rtsp://192.168.18.234/user_defined\n    rtsp://192.168.18.234/video\n    rtsp://192.168.18.234/video.3gp\n    rtsp://192.168.18.234/video.cgi\n    rtsp://192.168.18.234/video.cgi?resolution=VGA\n    rtsp://192.168.18.234/video.mjpg\n    rtsp://192.168.18.234/video.cgi?resolution=vga\n    rtsp://192.168.18.234/video.h264\n    rtsp://192.168.18.234/video.pro2\n    rtsp://192.168.18.234/video.pro3\n    rtsp://192.168.18.234/video/mjpg.cgi\n    rtsp://192.168.18.234/video1\n    rtsp://192.168.18.234/video1+audio1\n    rtsp://192.168.18.234/video2.mjpg\n    rtsp://192.168.18.234/videoMain\n    rtsp://192.168.18.234/videoinput_1:0/h264_1/onvif.stm\n    rtsp://192.168.18.234/videostream.cgi?rate=0\n    rtsp://192.168.18.234/rtsph264\n    rtsp://192.168.18.234/vis\n    rtsp://192.168.18.234/wfov\n    rtsp://192.168.18.234/ucast/11\n    rtsp://192.168.18.234/1/cif\n    rtsp://192.168.18.234/1\n    rtsp://192.168.18.234/video.mp4\n    rtsp://192.168.18.234/video.pro1\n    rtsp://192.168.18.234/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp?real_stream",
+              "rtsp-methods": "OPTIONS, DESCRIBE, SETUP, TEARDOWN, PLAY, PAUSE"
+            },
+            "status": "success",
+            "timestamp": "2026-03-31T18:20:21.365467"
+          },
+          "web": {
+            "type": "web",
+            "scripts": {},
+            "status": "success",
+            "timestamp": "2026-03-31T18:20:22.314170"
+          },
+          "onvif": {
+            "error": "ONVIF detection failed"
+          },
+          "credentials": {
+            "error": "Credential scan failed"
+          },
+          "weak_security": {
+            "error": "Weak security scan failed"
+          }
+        },
+        "timestamp": "2026-03-31T18:18:57.112001"
+      }
+    },
+    "scan_duration_seconds": 87.064704,
+    "scan_mode": "QUICK"
+  },
+  {
+    "target_ip": "192.168.18.234",
+    "timestamp": "2026-03-31T18:23:11.437332",
+    "scan_type": "NMAP_COMPREHENSIVE",
+    "status": "COMPLETE",
+    "device_profile": {
+      "is_camera": true,
+      "camera_type": "IP Camera with RTSP + ONVIF Management",
+      "confidence": 90,
+      "status": "ONLINE",
+      "status_method": "ping",
+      "latency_ms": 8.0,
+      "last_seen": "2026-03-31T18:23:11.722038",
+      "open_ports": [
+        {
+          "port": 554,
+          "protocol": "tcp",
+          "service": "rtsp",
+          "version": ""
+        },
+        {
+          "port": 8089,
+          "protocol": "tcp",
+          "service": "unknown",
+          "version": ""
+        },
+        {
+          "port": 8899,
+          "protocol": "tcp",
+          "service": "ospf-lite",
+          "version": ""
+        }
+      ],
+      "services_detected": 3
+    },
+    "summary": {
+      "total_scanners": 1,
+      "scanners_completed": 1,
+      "vulnerabilities_found": 6,
+      "critical_issues": 2,
+      "high_issues": 2,
+      "medium_issues": 1,
+      "low_issues": 1
+    },
+    "overall_risk_score": 9,
+    "overall_risk_level": "CRITICAL",
+    "rtsp_proof_of_concept": {
+      "tested": true,
+      "accessible": true,
+      "streams_found": 0,
+      "snapshots": [],
+      "attack_scenario_confirmed": null,
+      "severity": "CRITICAL"
+    },
+    "all_findings": [
+      {
+        "id": "VULN_RTSP_001",
+        "type": "RTSP_EXPOSURE",
+        "severity": "CRITICAL",
+        "severity_weight": 10,
+        "cvss_score": 9.1,
+        "title": "\u26a0 UNAUTHORIZED RTSP STREAM ACCESS CONFIRMED - FRAMES CAPTURED",
+        "description": "CRITICAL: Live camera stream is ACTIVELY ACCESSIBLE without any authentication. This vulnerability has been CONFIRMED by capturing actual video frames from the camera. Any attacker on the network can immediately view live surveillance feed.",
+        "attack_scenario": "An attacker on the same network runs: 'vlc rtsp://{target_ip}/stream1' and gains live access to camera footage. They can record streams, analyze security footage, or use it for reconnaissance before physical attacks.",
+        "severity_justification": "Rated HIGH because: (1) Direct access to security camera feeds compromises privacy and security, (2) Recording footage enables planning for theft/attacks, (3) Easy exploitation requires no credentials, (4) Affects confidentiality directly.",
+        "affected_port": 554,
+        "affected_service": "RTSP",
+        "impact": "Unauthorized video stream access, privacy breach, security reconnaissance",
+        "remediation": [
+          "1. Connect to camera admin interface (192.168.x.x:8089 or web port)",
+          "2. Navigate to Settings \u2192 Streaming or Settings \u2192 RTSP Configuration",
+          "3. Enable 'RTSP Authentication' or 'Require Login for RTSP'",
+          "4. Set a strong password (min 12 chars: uppercase, lowercase, numbers, symbols)",
+          "5. Configure firewall rules: restrict port 554 to trusted IPs only",
+          "6. Consider disabling RTSP if not needed; use ONVIF/HTTP instead for control",
+          "7. Enable encryption: RTSPS (RTSP over TLS) if supported",
+          "8. Verify: Test with 'nc -zv {target_ip} 554' (should close connection)",
+          "9. Document change and restart camera to apply settings"
+        ],
+        "effort": "LOW",
+        "priority": "IMMEDIATE",
+        "verification": "Connect with: vlc rtsp://{target_ip}/stream - should prompt for credentials",
+        "testing_code": "vlc rtsp://192.168.18.234/stream1",
+        "related_cves": [
+          "CVE-2021-42367",
+          "CVE-2020-6889"
+        ],
+        "proof_of_concept": {
+          "tested": true,
+          "accessible": true,
+          "streams_found": 0,
+          "snapshots": [],
+          "attack_scenario_confirmed": null,
+          "severity": "CRITICAL"
+        }
+      },
+      {
+        "id": "VULN_ONVIF_001",
+        "type": "ONVIF_EXPOSURE",
+        "severity": "CRITICAL",
+        "severity_weight": 10,
+        "cvss_score": 9.3,
+        "title": "ONVIF Device Management Exposed",
+        "description": "Port 8899 (ONVIF - Open Network Video Interface Forum) is exposed. ONVIF allows complete camera control including PTZ (pan/tilt/zoom), credential modification, and configuration changes. Unauthenticated access means anyone can completely compromise the camera.",
+        "attack_scenario": "An attacker connects to ONVIF interface and: (1) Changes admin credentials, (2) Disables security features, (3) Redirects stream output, (4) Performs reconnaissance with PTZ controls, (5) Locks out legitimate users. The attacker gains complete control.",
+        "severity_justification": "Rated CRITICAL because: (1) Complete camera control possible, (2) Allows credential reset, (3) Affects integrity, availability, and confidentiality, (4) Device becomes unmanageable to owner, (5) Used as pivot point for broader network attack.",
+        "affected_port": 8899,
+        "affected_service": "ONVIF",
+        "impact": "Complete device compromise, credential hijacking, system lockout, network pivot point",
+        "remediation": [
+          "1. IMMEDIATELY change admin credentials from camera web interface",
+          "2. Access camera admin panel (usually port 80, 8080, or 8089)",
+          "3. Navigate to Settings \u2192 Device/ONVIF \u2192 Authentication",
+          "4. Enable 'ONVIF Authentication' and set strong credentials",
+          "5. Restrict ONVIF port {port} in firewall: 'ufw allow from 192.168.1.0/24 to any port {port}'",
+          "6. Update camera firmware to latest version (check manufacturer)",
+          "7. Disable ONVIF if not required: Settings \u2192 Services \u2192 ONVIF \u2192 Disable",
+          "8. If ONVIF required: Move to separate VLAN with access control",
+          "9. Monitor: Check for port access with 'netstat -an | grep {port}'",
+          "10. Configure NVR/VMS to use ONVIF only on trusted network"
+        ],
+        "effort": "MEDIUM",
+        "priority": "CRITICAL - DO FIRST",
+        "verification": "Run: 'apt install gsoap - optional' then nmap --script onvif-discovery to verify disabled",
+        "related_cves": [
+          "CVE-2019-9010",
+          "CVE-2020-27402"
+        ]
+      },
+      {
+        "id": "VULN_HTTP_8089",
+        "type": "UNENCRYPTED_WEB",
+        "severity": "HIGH",
+        "severity_weight": 6,
+        "cvss_score": 7.2,
+        "title": "Unencrypted Web Interface on Port 8089",
+        "description": "Port 8089 offers HTTP (unencrypted) access to camera management interface. All credentials, configuration, and commands are sent in PLAINTEXT over the network. An attacker with network access can intercept credentials using packet sniffing tools.",
+        "attack_scenario": "An attacker on the network runs Wireshark and captures HTTP traffic to port 8089. When admin logs in, username and password appear in plaintext. Attacker replays credentials or modifies requests to change settings.",
+        "severity_justification": "Rated HIGH because: (1) Credentials transmitted in plaintext, (2) Man-in-the-middle attacks possible, (3) No encryption on management interface, (4) HTTPS not available.",
+        "affected_port": 8089,
+        "affected_service": "unknown",
+        "impact": "Credential interception, man-in-the-middle attacks, unauthorized configuration changes",
+        "remediation": [
+          "1. Access admin panel: http://192.168.18.234:8089",
+          "2. Navigate to Settings \u2192 Security \u2192 HTTPS or SSL/TLS",
+          "3. If available: Enable HTTPS / SSL and generate/install certificate",
+          "4. Set HTTPS Port (usually 443 or 8443)",
+          "5. Configure redirect: HTTP \u2192 HTTPS (to force encryption)",
+          "6. If HTTPS unavailable: Use firewall rules to restrict port {port} to trusted IPs only",
+          "7. Configure network firewall: only allow management access from admin workstation",
+          "8. Use VPN for remote management: Never expose port {port} to internet",
+          "9. Verify: curl -kv https://192.168.18.234 should connect securely",
+          "10. Update camera firmware for better security support"
+        ],
+        "effort": "MEDIUM",
+        "priority": "HIGH",
+        "verification": "curl http://192.168.18.234:8089 should NOT transmit credentials in plaintext",
+        "related_cves": [
+          "CVE-2021-3129",
+          "CVE-2020-5410"
+        ]
+      },
+      {
+        "id": "VULN_DEFAULT_CREDS",
+        "type": "DEFAULT_CREDENTIALS",
+        "severity": "HIGH",
+        "severity_weight": 6,
+        "cvss_score": 8.1,
+        "title": "Default Credentials Likely in Use",
+        "description": "Camera has exposed management interfaces (web, ONVIF). If not changed from factory defaults, common credentials apply: admin/admin, admin/12345, etc. Most cameras ship with default credentials that are publicly known and documented.",
+        "attack_scenario": "Attacker scans network, finds open port 8089. Tries common camera credentials: admin/12345 \u2192 SUCCESS. Gains full administrative access and modifies camera settings, credentials, or disables recording.",
+        "severity_justification": "Rated HIGH because: (1) Default credentials are public knowledge, (2) No authentication bypass needed, (3) Immediate administrative access, (4) Affects all 3 security aspects (CIA).",
+        "affected_port": "Multiple",
+        "affected_service": "Management Interfaces",
+        "impact": "Unauthorized administrative access, complete camera compromise",
+        "remediation": [
+          "1. Connect to admin interface at first setup",
+          "2. Immediately change admin password from default to strong credential",
+          "3. Minimum: 12 characters, mix of uppercase/lowercase/numbers/symbols",
+          "4. Example strong password: 'Ca$#Sec2024!Mon' (never reuse)",
+          "5. Create separate read-only user account for monitoring if supported",
+          "6. Do NOT use common credentials: admin123, password, 123456, etc.",
+          "7. Document new credentials securely (password manager, not sticky notes)",
+          "8. If camera supports disable default accounts: disable admin, create new account",
+          "9. Test: Verify old credentials no longer work",
+          "10. Repeat for any other default accounts (guest, test, etc.)"
+        ],
+        "effort": "LOW",
+        "priority": "CRITICAL",
+        "verification": "Attempt login with: admin/admin, admin/12345, admin/password - should fail",
+        "related_cves": [
+          "CVE-2021-33044"
+        ]
+      },
+      {
+        "id": "VULN_WEB_SEC_001",
+        "type": "WEAK_WEB_SECURITY",
+        "severity": "MEDIUM",
+        "severity_weight": 3,
+        "cvss_score": 5.7,
+        "title": "Weak Web Security Configuration",
+        "description": "Camera web interface likely lacks security headers and best practices. Missing headers like X-Frame-Options, X-Content-Type-Options, Content-Security-Policy allow various web-based attacks including clickjacking and XSS.",
+        "attack_scenario": "An attacker creates a phishing page embedding an iframe to the camera admin panel. When admin visits the page, the embedded panel allows credential theft or settings modification. Alternatively, attacker injects malicious scripts into cached pages.",
+        "severity_justification": "Rated MEDIUM because: (1) Affects web interface security, (2) Can be exploited client-side, (3) Requires user interaction usually, (4) Layered defense partially effective.",
+        "affected_port": 8089,
+        "affected_service": "Web Interface",
+        "impact": "Clickjacking, cross-site scripting (XSS), session hijacking",
+        "remediation": [
+          "1. Admin should configure security headers at camera level if available",
+          "2. Settings \u2192 Security \u2192 Response Headers or similar",
+          "3. Enable: X-Frame-Options: SAMEORIGIN",
+          "4. Enable: X-Content-Type-Options: nosniff",
+          "5. Enable: X-XSS-Protection: 1; mode=block",
+          "6. If unavailable in camera: Configure reverse proxy (nginx) for headers",
+          "7. Example nginx config: add_header X-Frame-Options SAMEORIGIN;",
+          "8. Disable autocomplete on login form if possible",
+          "9. Implement rate limiting on login attempts",
+          "10. Update firmware to version with enhanced security"
+        ],
+        "effort": "MEDIUM",
+        "priority": "MEDIUM",
+        "verification": "curl -i http://camera:port | grep -E 'X-Frame|X-Content|CSP'",
+        "related_cves": [
+          "CVE-2021-26920"
+        ]
+      },
+      {
+        "id": "VULN_UNKNOWN_SERVICES",
+        "type": "UNKNOWN_SERVICE",
+        "severity": "LOW",
+        "severity_weight": 1,
+        "cvss_score": 2.5,
+        "title": "1 Unknown Services Running",
+        "description": "Identified 1 open port(s) with unknown service identification. Cannot determine purpose or verify if legitimate. May indicate custom protocols, hidden services, or unidentified vulnerabilities.",
+        "attack_scenario": "Unknown services are black boxes. Attacker probes them for unknown vulnerabilities that may not be publicly disclosed, making exploitation harder to detect/prevent.",
+        "severity_justification": "Rated LOW: Just information gathering flag. Not inherent vulnerability, but indicates need for investigation.",
+        "affected_port": "Multiple",
+        "affected_service": "Unknown",
+        "impact": "Unidentified security risks, reconnaissance opportunity",
+        "remediation": [
+          "1. Identify each unknown service manually",
+          "2. Connect manually: nc -v camera_ip port",
+          "3. Identify banner/response strings",
+          "4. Search banner in public databases for service ID",
+          "5. Verify service is required and legitimate",
+          "6. If unnecessary: Disable service",
+          "7. Document all services in network inventory",
+          "8. Run: nmap -sV --version-all to improve detection",
+          "9. Keep firmware updated for better service identification"
+        ],
+        "effort": "LOW",
+        "priority": "LOW"
+      }
+    ],
+    "recommendations": [
+      "\u26a0\ufe0f  URGENT: Fix 2 critical vulnerability/vulnerabilities immediately",
+      "\ud83d\udd34 Fix 2 high-severity issue(s) this week",
+      "\ud83d\udfe1 Schedule fixes for 1 medium-severity issue(s)",
+      "\u2705 After fixes, run this scan again to verify improvements",
+      "\ud83d\udccb Document all changes made",
+      "\ud83d\udd04 Set up monthly security scans"
+    ],
+    "scanners": {
+      "nmap": {
+        "status": "completed",
+        "data": {
+          "ports": {
+            "open_ports": [
+              {
+                "port": 554,
+                "protocol": "tcp",
+                "service": "rtsp",
+                "version": ""
+              },
+              {
+                "port": 8089,
+                "protocol": "tcp",
+                "service": "unknown",
+                "version": ""
+              },
+              {
+                "port": 8899,
+                "protocol": "tcp",
+                "service": "ospf-lite",
+                "version": ""
+              }
+            ],
+            "services": {
+              "554": "rtsp",
+              "8089": "unknown",
+              "8899": "ospf-lite"
+            },
+            "scripts": {},
+            "raw_xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE nmaprun>\n<?xml-stylesheet href=\"file:///C:/Program Files (x86)/Nmap/nmap.xsl\" type=\"text/xsl\"?>\n<!-- Nmap 7.98 scan initiated Tue Mar 31 18:23:11 2026 as: nmap -sV -T4 -p- -&#45;open -oX - 192.168.18.234 -->\n<nmaprun scanner=\"nmap\" args=\"nmap -sV -T4 -p- -&#45;open -oX - 192.168.18.234\" start=\"1774963391\" startstr=\"Tue Mar 31 18:23:11 2026\" version=\"7.98\" xmloutputversion=\"1.05\">\n<scaninfo type=\"syn\" protocol=\"tcp\" numservices=\"65535\" services=\"1-65535\"/>\n<verbose level=\"0\"/>\n<debugging level=\"0\"/>\n<hosthint><status state=\"up\" reason=\"arp-response\" reason_ttl=\"0\"/>\n<address addr=\"192.168.18.234\" addrtype=\"ipv4\"/>\n<address addr=\"2C:D8:DE:54:02:6D\" addrtype=\"mac\" vendor=\"AltoBeam\"/>\n<hostnames>\n</hostnames>\n</hosthint>\n<host starttime=\"1774963392\" endtime=\"1774963568\"><status state=\"up\" reason=\"arp-response\" reason_ttl=\"0\"/>\n<address addr=\"192.168.18.234\" addrtype=\"ipv4\"/>\n<address addr=\"2C:D8:DE:54:02:6D\" addrtype=\"mac\" vendor=\"AltoBeam\"/>\n<hostnames>\n</hostnames>\n<ports><extraports state=\"closed\" count=\"65532\">\n<extrareasons reason=\"reset\" count=\"65532\" proto=\"tcp\" ports=\"1-553,555-8088,8090-8898,8900-65535\"/>\n</extraports>\n<port protocol=\"tcp\" portid=\"554\"><state state=\"open\" reason=\"syn-ack\" reason_ttl=\"255\"/><service name=\"rtsp\" servicefp=\"SF-Port554-TCP:V=7.98%I=7%D=3/31%Time=69CBCB36%P=i686-pc-windows-windows%r(RTSPRequest,54,&quot;RTSP/1\\.0\\x20200\\x20OK\\r\\nCSeq:\\x20\\r\\nPublic:\\x20OPTIONS,\\x20DESCRIBE,\\x20SETUP,\\x20TEARDOWN,\\x20PLAY,\\x20PAUSE\\r\\n\\r\\n&quot;)%r(HTTPOptions,54,&quot;RTSP/1\\.0\\x20200\\x20OK\\r\\nCSeq:\\x20\\r\\nPublic:\\x20OPTIONS,\\x20DESCRIBE,\\x20SETUP,\\x20TEARDOWN,\\x20PLAY,\\x20PAUSE\\r\\n\\r\\n&quot;)%r(SIPOptions,5E,&quot;RTSP/1\\.0\\x20200\\x20OK\\r\\nCSeq:\\x2042\\x20OPTIONS\\r\\nPublic:\\x20OPTIONS,\\x20DESCRIBE,\\x20SETUP,\\x20TEARDOWN,\\x20PLAY,\\x20PAUSE\\r\\n\\r\\n&quot;);\" method=\"probed\" conf=\"10\"/></port>\n<port protocol=\"tcp\" portid=\"8089\"><state state=\"open\" reason=\"syn-ack\" reason_ttl=\"255\"/><service name=\"unknown\" servicefp=\"SF-Port8089-TCP:V=7.98%I=7%D=3/31%Time=69CBCB5C%P=i686-pc-windows-windows%r(LANDesk-RC,47,&quot;\\x18\\x08\\x038\\x01\\0\\0\\0\\0\\0\\0\\x007\\0\\0\\0{\\&quot;id\\&quot;:0,\\&quot;chn\\&quot;:0,\\&quot;ts\\&quot;:1774963547,\\&quot;result\\&quot;:{\\&quot;code\\&quot;:1102}}&quot;);\" method=\"table\" conf=\"3\"/></port>\n<port protocol=\"tcp\" portid=\"8899\"><state state=\"open\" reason=\"syn-ack\" reason_ttl=\"255\"/><service name=\"ospf-lite\" method=\"table\" conf=\"3\"/></port>\n</ports>\n<times srtt=\"11231\" rttvar=\"1463\" to=\"100000\"/>\n</host>\n<runstats><finished time=\"1774963568\" timestr=\"Tue Mar 31 18:26:08 2026\" summary=\"Nmap done at Tue Mar 31 18:26:08 2026; 1 IP address (1 host up) scanned in 176.99 seconds\" elapsed=\"176.99\" exit=\"success\"/><hosts up=\"1\" down=\"0\" total=\"1\"/>\n</runstats>\n</nmaprun>\n",
+            "status": "success",
+            "timestamp": "2026-03-31T18:26:08.827056"
+          },
+          "rtsp": {
+            "type": "rtsp",
+            "scripts": {
+              "rtsp-methods": "OPTIONS, DESCRIBE, SETUP, TEARDOWN, PLAY, PAUSE",
+              "rtsp-url-brute": "\n  discovered: \n    rtsp://192.168.18.234/\n    rtsp://192.168.18.234/0\n    rtsp://192.168.18.234/0/video1\n    rtsp://192.168.18.234/1\n    rtsp://192.168.18.234/4\n    rtsp://192.168.18.234/CAM_ID.password.mp2\n    rtsp://192.168.18.234/CH001.sdp\n    rtsp://192.168.18.234/GetData.cgi\n    rtsp://192.168.18.234/H264\n    rtsp://192.168.18.234/HighResolutionVideo\n    rtsp://192.168.18.234/HighResolutionvideo\n    rtsp://192.168.18.234/Image.jpg\n    rtsp://192.168.18.234/LowResolutionVideo\n    rtsp://192.168.18.234/MJPEG.cgi\n    rtsp://192.168.18.234/MediaInput/h264\n    rtsp://192.168.18.234/MediaInput/h264/stream_1\n    rtsp://192.168.18.234/MediaInput/mpeg4\n    rtsp://192.168.18.234/ONVIF/MediaInput\n    rtsp://192.168.18.234/ONVIF/channel1\n    rtsp://192.168.18.234/PSIA/Streaming/channels/0?videoCodecType=H.264\n    rtsp://192.168.18.234/PSIA/Streaming/channels/1\n    rtsp://192.168.18.234/PSIA/Streaming/channels/1?videoCodecType=MPEG4\n    rtsp://192.168.18.234/PSIA/Streaming/channels/h264\n    rtsp://192.168.18.234/Possible\n    rtsp://192.168.18.234/1.AMP\n    rtsp://192.168.18.234/1/1:1/main\n    rtsp://192.168.18.234/12\n    rtsp://192.168.18.234/ROH/channel/11\n    rtsp://192.168.18.234/Streaming/Channels/1\n    rtsp://192.168.18.234/11\n    rtsp://192.168.18.234/Streaming/Channels/2\n    rtsp://192.168.18.234/Streaming/Unicast/channels/101\n    rtsp://192.168.18.234/Streaming/channels/101\n    rtsp://192.168.18.234/Video?Codec=MPEG4&Width=720&Height=576&Fps=30\n    rtsp://192.168.18.234/Streaming/Channels/101\n    rtsp://192.168.18.234/Streaming/Channels/102\n    rtsp://192.168.18.234/Streaming/Channels/103\n    rtsp://192.168.18.234/access_code\n    rtsp://192.168.18.234/access_name_for_stream_1_to_5\n    rtsp://192.168.18.234/av0_0\n    rtsp://192.168.18.234/av0_1\n    rtsp://192.168.18.234/av2\n    rtsp://192.168.18.234/avn=2\n    rtsp://192.168.18.234/axis-media/media.amp?videocodec=h264&resolution=640x480\n    rtsp://192.168.18.234/cam\n    rtsp://192.168.18.234/cam/realmonitor\n    rtsp://192.168.18.234/cam/realmonitor?channel=1&subtype=00\n    rtsp://192.168.18.234/cam/realmonitor?channel=1&subtype=01\n    rtsp://192.168.18.234/cam/realmonitor?channel=1&subtype=1\n    rtsp://192.168.18.234/cam0_0\n    rtsp://192.168.18.234/cam0_1\n    rtsp://192.168.18.234/cam1/h264\n    rtsp://192.168.18.234/cam1/h264/multicast\n    rtsp://192.168.18.234/cam1/mpeg4\n    rtsp://192.168.18.234/cam1/mjpeg\n    rtsp://192.168.18.234/cam1/onvif-h264\n    rtsp://192.168.18.234/cam4/mpeg4\n    rtsp://192.168.18.234/camera.stm\n    rtsp://192.168.18.234/cgi-bin/viewer/video.jpg?resolution=640x480\n    rtsp://192.168.18.234/ch0\n    rtsp://192.168.18.234/ch0.h264\n    rtsp://192.168.18.234/ch001.sdp\n    rtsp://192.168.18.234/ch0_0.h264\n    rtsp://192.168.18.234/ch0_unicast_firststream\n    rtsp://192.168.18.234/ch0_unicast_secondstream\n    rtsp://192.168.18.234/ch01.264\n    rtsp://192.168.18.234/channel1\n    rtsp://192.168.18.234/VideoInput/1/h264/1\n    rtsp://192.168.18.234/dms.jpg\n    rtsp://192.168.18.234/dms?nowprofileid=2\n    rtsp://192.168.18.234/h264\n    rtsp://192.168.18.234/h264.sdp\n    rtsp://192.168.18.234/h264/ch1/sub/\n    rtsp://192.168.18.234/h264/media.amp\n    rtsp://192.168.18.234/axis-media/media.amp\n    rtsp://192.168.18.234/h264Preview_01_main\n    rtsp://192.168.18.234/h264Preview_01_sub\n    rtsp://192.168.18.234/h264_vga.sdp\n    rtsp://192.168.18.234/image.jpg\n    rtsp://192.168.18.234/img/media.sav\n    rtsp://192.168.18.234/img/video.asf\n    rtsp://192.168.18.234/img/video.sav\n    rtsp://192.168.18.234/ioImage/1\n    rtsp://192.168.18.234/ipcam.sdp\n    rtsp://192.168.18.234/image.mpg\n    rtsp://192.168.18.234/image/jpeg.cgi\n    rtsp://192.168.18.234/ipcam/stream.cgi?nowprofileid=2\n    rtsp://192.168.18.234/ipcam_h264.sdp\n    rtsp://192.168.18.234/live/av0\n    rtsp://192.168.18.234/live/ch0\n    rtsp://192.168.18.234/live.sdp\n    rtsp://192.168.18.234/live/ch00_0\n    rtsp://192.168.18.234/live/ch00_1\n    rtsp://192.168.18.234/live/ch1\n    rtsp://192.168.18.234/live\n    rtsp://192.168.18.234/live/ch2\n    rtsp://192.168.18.234/live/h264\n    rtsp://192.168.18.234/1/cif\n    rtsp://192.168.18.234/live1.264\n    rtsp://192.168.18.234/1/stream1\n    rtsp://192.168.18.234/live1.sdp\n    rtsp://192.168.18.234/jpg/image.jpg?size=3\n    rtsp://192.168.18.234/live3.sdp\n    rtsp://192.168.18.234/live_h264.sdp\n    rtsp://192.168.18.234/livestream\n    rtsp://192.168.18.234/livestream/\n    rtsp://192.168.18.234/media.amp\n    rtsp://192.168.18.234/media/media.amp\n    rtsp://192.168.18.234/media\n    rtsp://192.168.18.234/media/video1\n    rtsp://192.168.18.234/media/video2\n    rtsp://192.168.18.234/live_mpeg4.sdp\n    rtsp://192.168.18.234/media/video3\n    rtsp://192.168.18.234/live2.sdp\n    rtsp://192.168.18.234/medias1\n    rtsp://192.168.18.234/mjpeg.cgi\n    rtsp://192.168.18.234/mjpeg/media.smp\n    rtsp://192.168.18.234/mp4\n    rtsp://192.168.18.234/mpeg4\n    rtsp://192.168.18.234/mpeg4/1/media.amp\n    rtsp://192.168.18.234/mpeg4cif\n    rtsp://192.168.18.234/mpeg4unicast\n    rtsp://192.168.18.234/mpg4/rtsp.amp\n    rtsp://192.168.18.234/multicaststream\n    rtsp://192.168.18.234/mpeg4/media.smp\n    rtsp://192.168.18.234/now.mp4\n    rtsp://192.168.18.234/mpeg4/media.amp\n    rtsp://192.168.18.234/mpeg4/media.amp?resolution=640x480\n    rtsp://192.168.18.234/nphMpeg4/g726-640x\n    rtsp://192.168.18.234/nphMpeg4/g726-640x480\n    rtsp://192.168.18.234/nph-h264.cgi\n    rtsp://192.168.18.234/nphMpeg4/nil-320x240\n    rtsp://192.168.18.234/onvif-media/media.amp\n    rtsp://192.168.18.234/onvif/live/2\n    rtsp://192.168.18.234/onvif1\n    rtsp://192.168.18.234/play1.sdp\n    rtsp://192.168.18.234/play2.sdp\n    rtsp://192.168.18.234/live/mpeg4\n    rtsp://192.168.18.234/live0.264\n    rtsp://192.168.18.234/profile\n    rtsp://192.168.18.234/rtsph2641080p\n    rtsp://192.168.18.234/stream1\n    rtsp://192.168.18.234/stream2\n    rtsp://192.168.18.234/streaming/mjpeg\n    rtsp://192.168.18.234/synthesizer\n    rtsp://192.168.18.234/recognizer\n    rtsp://192.168.18.234/rtpvideo1.sdp\n    rtsp://192.168.18.234/tcp/av0_0\n    rtsp://192.168.18.234/ucast/11\n    rtsp://192.168.18.234/unicast/c1/s1/live\n    rtsp://192.168.18.234/user.pin.mp2\n    rtsp://192.168.18.234/user_defined\n    rtsp://192.168.18.234/video\n    rtsp://192.168.18.234/video.3gp\n    rtsp://192.168.18.234/video.cgi\n    rtsp://192.168.18.234/video.cgi?resolution=VGA\n    rtsp://192.168.18.234/video.cgi?resolution=vga\n    rtsp://192.168.18.234/video.h264\n    rtsp://192.168.18.234/video.mjpg\n    rtsp://192.168.18.234/video.mp4\n    rtsp://192.168.18.234/video.pro1\n    rtsp://192.168.18.234/video.pro2\n    rtsp://192.168.18.234/video/mjpg.cgi\n    rtsp://192.168.18.234/video1\n    rtsp://192.168.18.234/video2.mjpg\n    rtsp://192.168.18.234/video1+audio1\n    rtsp://192.168.18.234/video.pro3\n    rtsp://192.168.18.234/videoinput_1:0/h264_1/onvif.stm\n    rtsp://192.168.18.234/videostream.cgi?rate=0\n    rtsp://192.168.18.234/onvif2\n    rtsp://192.168.18.234/vis\n    rtsp://192.168.18.234/wfov\n    rtsp://192.168.18.234/videoMain\n    rtsp://192.168.18.234/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp?real_stream\n    rtsp://192.168.18.234/rtsph264\n    rtsp://192.168.18.234/rtsp_tunnel"
+            },
+            "status": "success",
+            "timestamp": "2026-03-31T18:26:15.174108"
+          },
+          "web": {
+            "type": "web",
+            "scripts": {},
+            "status": "success",
+            "timestamp": "2026-03-31T18:26:16.111683"
+          },
+          "onvif": {
+            "error": "ONVIF detection failed"
+          },
+          "credentials": {
+            "error": "Credential scan failed"
+          },
+          "weak_security": {
+            "error": "Weak security scan failed"
+          }
+        },
+        "timestamp": "2026-03-31T18:23:11.437332"
+      }
+    },
+    "scan_duration_seconds": 185.418228,
+    "scan_mode": "FULL"
+  },
+  {
+    "target_ip": "192.168.18.234",
+    "timestamp": "2026-03-31T18:29:41.145708",
+    "scan_type": "NMAP_COMPREHENSIVE",
+    "status": "COMPLETE",
+    "device_profile": {
+      "is_camera": true,
+      "camera_type": "IP Camera with RTSP + ONVIF Management",
+      "confidence": 90,
+      "status": "ONLINE",
+      "status_method": "ping",
+      "latency_ms": 6.0,
+      "last_seen": "2026-03-31T18:29:41.169950",
+      "open_ports": [
+        {
+          "port": 554,
+          "protocol": "tcp",
+          "service": "rtsp",
+          "version": ""
+        },
+        {
+          "port": 8089,
+          "protocol": "tcp",
+          "service": "unknown",
+          "version": ""
+        },
+        {
+          "port": 8899,
+          "protocol": "tcp",
+          "service": "ospf-lite",
+          "version": ""
+        }
+      ],
+      "services_detected": 3
+    },
+    "summary": {
+      "total_scanners": 1,
+      "scanners_completed": 1,
+      "vulnerabilities_found": 6,
+      "critical_issues": 2,
+      "high_issues": 2,
+      "medium_issues": 1,
+      "low_issues": 1
+    },
+    "overall_risk_score": 9,
+    "overall_risk_level": "CRITICAL",
+    "rtsp_proof_of_concept": {
+      "tested": true,
+      "accessible": true,
+      "streams_found": 0,
+      "snapshots": [],
+      "attack_scenario_confirmed": null,
+      "severity": "CRITICAL"
+    },
+    "all_findings": [
+      {
+        "id": "VULN_RTSP_001",
+        "type": "RTSP_EXPOSURE",
+        "severity": "CRITICAL",
+        "severity_weight": 10,
+        "cvss_score": 9.1,
+        "title": "\u26a0 UNAUTHORIZED RTSP STREAM ACCESS CONFIRMED - FRAMES CAPTURED",
+        "description": "CRITICAL: Live camera stream is ACTIVELY ACCESSIBLE without any authentication. This vulnerability has been CONFIRMED by capturing actual video frames from the camera. Any attacker on the network can immediately view live surveillance feed.",
+        "attack_scenario": "An attacker on the same network runs: 'vlc rtsp://{target_ip}/stream1' and gains live access to camera footage. They can record streams, analyze security footage, or use it for reconnaissance before physical attacks.",
+        "severity_justification": "Rated HIGH because: (1) Direct access to security camera feeds compromises privacy and security, (2) Recording footage enables planning for theft/attacks, (3) Easy exploitation requires no credentials, (4) Affects confidentiality directly.",
+        "affected_port": 554,
+        "affected_service": "RTSP",
+        "impact": "Unauthorized video stream access, privacy breach, security reconnaissance",
+        "remediation": [
+          "1. Connect to camera admin interface (192.168.x.x:8089 or web port)",
+          "2. Navigate to Settings \u2192 Streaming or Settings \u2192 RTSP Configuration",
+          "3. Enable 'RTSP Authentication' or 'Require Login for RTSP'",
+          "4. Set a strong password (min 12 chars: uppercase, lowercase, numbers, symbols)",
+          "5. Configure firewall rules: restrict port 554 to trusted IPs only",
+          "6. Consider disabling RTSP if not needed; use ONVIF/HTTP instead for control",
+          "7. Enable encryption: RTSPS (RTSP over TLS) if supported",
+          "8. Verify: Test with 'nc -zv {target_ip} 554' (should close connection)",
+          "9. Document change and restart camera to apply settings"
+        ],
+        "effort": "LOW",
+        "priority": "IMMEDIATE",
+        "verification": "Connect with: vlc rtsp://{target_ip}/stream - should prompt for credentials",
+        "testing_code": "vlc rtsp://192.168.18.234/stream1",
+        "related_cves": [
+          "CVE-2021-42367",
+          "CVE-2020-6889"
+        ],
+        "proof_of_concept": {
+          "tested": true,
+          "accessible": true,
+          "streams_found": 0,
+          "snapshots": [],
+          "attack_scenario_confirmed": null,
+          "severity": "CRITICAL"
+        }
+      },
+      {
+        "id": "VULN_ONVIF_001",
+        "type": "ONVIF_EXPOSURE",
+        "severity": "CRITICAL",
+        "severity_weight": 10,
+        "cvss_score": 9.3,
+        "title": "ONVIF Device Management Exposed",
+        "description": "Port 8899 (ONVIF - Open Network Video Interface Forum) is exposed. ONVIF allows complete camera control including PTZ (pan/tilt/zoom), credential modification, and configuration changes. Unauthenticated access means anyone can completely compromise the camera.",
+        "attack_scenario": "An attacker connects to ONVIF interface and: (1) Changes admin credentials, (2) Disables security features, (3) Redirects stream output, (4) Performs reconnaissance with PTZ controls, (5) Locks out legitimate users. The attacker gains complete control.",
+        "severity_justification": "Rated CRITICAL because: (1) Complete camera control possible, (2) Allows credential reset, (3) Affects integrity, availability, and confidentiality, (4) Device becomes unmanageable to owner, (5) Used as pivot point for broader network attack.",
+        "affected_port": 8899,
+        "affected_service": "ONVIF",
+        "impact": "Complete device compromise, credential hijacking, system lockout, network pivot point",
+        "remediation": [
+          "1. IMMEDIATELY change admin credentials from camera web interface",
+          "2. Access camera admin panel (usually port 80, 8080, or 8089)",
+          "3. Navigate to Settings \u2192 Device/ONVIF \u2192 Authentication",
+          "4. Enable 'ONVIF Authentication' and set strong credentials",
+          "5. Restrict ONVIF port {port} in firewall: 'ufw allow from 192.168.1.0/24 to any port {port}'",
+          "6. Update camera firmware to latest version (check manufacturer)",
+          "7. Disable ONVIF if not required: Settings \u2192 Services \u2192 ONVIF \u2192 Disable",
+          "8. If ONVIF required: Move to separate VLAN with access control",
+          "9. Monitor: Check for port access with 'netstat -an | grep {port}'",
+          "10. Configure NVR/VMS to use ONVIF only on trusted network"
+        ],
+        "effort": "MEDIUM",
+        "priority": "CRITICAL - DO FIRST",
+        "verification": "Run: 'apt install gsoap - optional' then nmap --script onvif-discovery to verify disabled",
+        "related_cves": [
+          "CVE-2019-9010",
+          "CVE-2020-27402"
+        ]
+      },
+      {
+        "id": "VULN_HTTP_8089",
+        "type": "UNENCRYPTED_WEB",
+        "severity": "HIGH",
+        "severity_weight": 6,
+        "cvss_score": 7.2,
+        "title": "Unencrypted Web Interface on Port 8089",
+        "description": "Port 8089 offers HTTP (unencrypted) access to camera management interface. All credentials, configuration, and commands are sent in PLAINTEXT over the network. An attacker with network access can intercept credentials using packet sniffing tools.",
+        "attack_scenario": "An attacker on the network runs Wireshark and captures HTTP traffic to port 8089. When admin logs in, username and password appear in plaintext. Attacker replays credentials or modifies requests to change settings.",
+        "severity_justification": "Rated HIGH because: (1) Credentials transmitted in plaintext, (2) Man-in-the-middle attacks possible, (3) No encryption on management interface, (4) HTTPS not available.",
+        "affected_port": 8089,
+        "affected_service": "unknown",
+        "impact": "Credential interception, man-in-the-middle attacks, unauthorized configuration changes",
+        "remediation": [
+          "1. Access admin panel: http://192.168.18.234:8089",
+          "2. Navigate to Settings \u2192 Security \u2192 HTTPS or SSL/TLS",
+          "3. If available: Enable HTTPS / SSL and generate/install certificate",
+          "4. Set HTTPS Port (usually 443 or 8443)",
+          "5. Configure redirect: HTTP \u2192 HTTPS (to force encryption)",
+          "6. If HTTPS unavailable: Use firewall rules to restrict port {port} to trusted IPs only",
+          "7. Configure network firewall: only allow management access from admin workstation",
+          "8. Use VPN for remote management: Never expose port {port} to internet",
+          "9. Verify: curl -kv https://192.168.18.234 should connect securely",
+          "10. Update camera firmware for better security support"
+        ],
+        "effort": "MEDIUM",
+        "priority": "HIGH",
+        "verification": "curl http://192.168.18.234:8089 should NOT transmit credentials in plaintext",
+        "related_cves": [
+          "CVE-2021-3129",
+          "CVE-2020-5410"
+        ]
+      },
+      {
+        "id": "VULN_DEFAULT_CREDS",
+        "type": "DEFAULT_CREDENTIALS",
+        "severity": "HIGH",
+        "severity_weight": 6,
+        "cvss_score": 8.1,
+        "title": "Default Credentials Likely in Use",
+        "description": "Camera has exposed management interfaces (web, ONVIF). If not changed from factory defaults, common credentials apply: admin/admin, admin/12345, etc. Most cameras ship with default credentials that are publicly known and documented.",
+        "attack_scenario": "Attacker scans network, finds open port 8089. Tries common camera credentials: admin/12345 \u2192 SUCCESS. Gains full administrative access and modifies camera settings, credentials, or disables recording.",
+        "severity_justification": "Rated HIGH because: (1) Default credentials are public knowledge, (2) No authentication bypass needed, (3) Immediate administrative access, (4) Affects all 3 security aspects (CIA).",
+        "affected_port": "Multiple",
+        "affected_service": "Management Interfaces",
+        "impact": "Unauthorized administrative access, complete camera compromise",
+        "remediation": [
+          "1. Connect to admin interface at first setup",
+          "2. Immediately change admin password from default to strong credential",
+          "3. Minimum: 12 characters, mix of uppercase/lowercase/numbers/symbols",
+          "4. Example strong password: 'Ca$#Sec2024!Mon' (never reuse)",
+          "5. Create separate read-only user account for monitoring if supported",
+          "6. Do NOT use common credentials: admin123, password, 123456, etc.",
+          "7. Document new credentials securely (password manager, not sticky notes)",
+          "8. If camera supports disable default accounts: disable admin, create new account",
+          "9. Test: Verify old credentials no longer work",
+          "10. Repeat for any other default accounts (guest, test, etc.)"
+        ],
+        "effort": "LOW",
+        "priority": "CRITICAL",
+        "verification": "Attempt login with: admin/admin, admin/12345, admin/password - should fail",
+        "related_cves": [
+          "CVE-2021-33044"
+        ]
+      },
+      {
+        "id": "VULN_WEB_SEC_001",
+        "type": "WEAK_WEB_SECURITY",
+        "severity": "MEDIUM",
+        "severity_weight": 3,
+        "cvss_score": 5.7,
+        "title": "Weak Web Security Configuration",
+        "description": "Camera web interface likely lacks security headers and best practices. Missing headers like X-Frame-Options, X-Content-Type-Options, Content-Security-Policy allow various web-based attacks including clickjacking and XSS.",
+        "attack_scenario": "An attacker creates a phishing page embedding an iframe to the camera admin panel. When admin visits the page, the embedded panel allows credential theft or settings modification. Alternatively, attacker injects malicious scripts into cached pages.",
+        "severity_justification": "Rated MEDIUM because: (1) Affects web interface security, (2) Can be exploited client-side, (3) Requires user interaction usually, (4) Layered defense partially effective.",
+        "affected_port": 8089,
+        "affected_service": "Web Interface",
+        "impact": "Clickjacking, cross-site scripting (XSS), session hijacking",
+        "remediation": [
+          "1. Admin should configure security headers at camera level if available",
+          "2. Settings \u2192 Security \u2192 Response Headers or similar",
+          "3. Enable: X-Frame-Options: SAMEORIGIN",
+          "4. Enable: X-Content-Type-Options: nosniff",
+          "5. Enable: X-XSS-Protection: 1; mode=block",
+          "6. If unavailable in camera: Configure reverse proxy (nginx) for headers",
+          "7. Example nginx config: add_header X-Frame-Options SAMEORIGIN;",
+          "8. Disable autocomplete on login form if possible",
+          "9. Implement rate limiting on login attempts",
+          "10. Update firmware to version with enhanced security"
+        ],
+        "effort": "MEDIUM",
+        "priority": "MEDIUM",
+        "verification": "curl -i http://camera:port | grep -E 'X-Frame|X-Content|CSP'",
+        "related_cves": [
+          "CVE-2021-26920"
+        ]
+      },
+      {
+        "id": "VULN_UNKNOWN_SERVICES",
+        "type": "UNKNOWN_SERVICE",
+        "severity": "LOW",
+        "severity_weight": 1,
+        "cvss_score": 2.5,
+        "title": "1 Unknown Services Running",
+        "description": "Identified 1 open port(s) with unknown service identification. Cannot determine purpose or verify if legitimate. May indicate custom protocols, hidden services, or unidentified vulnerabilities.",
+        "attack_scenario": "Unknown services are black boxes. Attacker probes them for unknown vulnerabilities that may not be publicly disclosed, making exploitation harder to detect/prevent.",
+        "severity_justification": "Rated LOW: Just information gathering flag. Not inherent vulnerability, but indicates need for investigation.",
+        "affected_port": "Multiple",
+        "affected_service": "Unknown",
+        "impact": "Unidentified security risks, reconnaissance opportunity",
+        "remediation": [
+          "1. Identify each unknown service manually",
+          "2. Connect manually: nc -v camera_ip port",
+          "3. Identify banner/response strings",
+          "4. Search banner in public databases for service ID",
+          "5. Verify service is required and legitimate",
+          "6. If unnecessary: Disable service",
+          "7. Document all services in network inventory",
+          "8. Run: nmap -sV --version-all to improve detection",
+          "9. Keep firmware updated for better service identification"
+        ],
+        "effort": "LOW",
+        "priority": "LOW"
+      }
+    ],
+    "recommendations": [
+      "\u26a0\ufe0f  URGENT: Fix 2 critical vulnerability/vulnerabilities immediately",
+      "\ud83d\udd34 Fix 2 high-severity issue(s) this week",
+      "\ud83d\udfe1 Schedule fixes for 1 medium-severity issue(s)",
+      "\u2705 After fixes, run this scan again to verify improvements",
+      "\ud83d\udccb Document all changes made",
+      "\ud83d\udd04 Set up monthly security scans"
+    ],
+    "scanners": {
+      "nmap": {
+        "status": "completed",
+        "data": {
+          "ports": {
+            "open_ports": [
+              {
+                "port": 554,
+                "protocol": "tcp",
+                "service": "rtsp",
+                "version": ""
+              },
+              {
+                "port": 8089,
+                "protocol": "tcp",
+                "service": "unknown",
+                "version": ""
+              },
+              {
+                "port": 8899,
+                "protocol": "tcp",
+                "service": "ospf-lite",
+                "version": ""
+              }
+            ],
+            "services": {
+              "554": "rtsp",
+              "8089": "unknown",
+              "8899": "ospf-lite"
+            },
+            "scripts": {},
+            "raw_xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE nmaprun>\n<?xml-stylesheet href=\"file:///C:/Program Files (x86)/Nmap/nmap.xsl\" type=\"text/xsl\"?>\n<!-- Nmap 7.98 scan initiated Tue Mar 31 18:29:41 2026 as: nmap -sV -T4 &quot;-p 554,8089,8899,80,8080,8888,443,49153&quot; -&#45;open -oX - 192.168.18.234 -->\n<nmaprun scanner=\"nmap\" args=\"nmap -sV -T4 &quot;-p 554,8089,8899,80,8080,8888,443,49153&quot; -&#45;open -oX - 192.168.18.234\" start=\"1774963781\" startstr=\"Tue Mar 31 18:29:41 2026\" version=\"7.98\" xmloutputversion=\"1.05\">\n<scaninfo type=\"syn\" protocol=\"tcp\" numservices=\"8\" services=\"80,443,554,8080,8089,8888,8899,49153\"/>\n<verbose level=\"0\"/>\n<debugging level=\"0\"/>\n<hosthint><status state=\"up\" reason=\"arp-response\" reason_ttl=\"0\"/>\n<address addr=\"192.168.18.234\" addrtype=\"ipv4\"/>\n<address addr=\"2C:D8:DE:54:02:6D\" addrtype=\"mac\" vendor=\"AltoBeam\"/>\n<hostnames>\n</hostnames>\n</hosthint>\n<host starttime=\"1774963782\" endtime=\"1774963856\"><status state=\"up\" reason=\"arp-response\" reason_ttl=\"0\"/>\n<address addr=\"192.168.18.234\" addrtype=\"ipv4\"/>\n<address addr=\"2C:D8:DE:54:02:6D\" addrtype=\"mac\" vendor=\"AltoBeam\"/>\n<hostnames>\n</hostnames>\n<ports><extraports state=\"closed\" count=\"5\">\n<extrareasons reason=\"reset\" count=\"5\" proto=\"tcp\" ports=\"80,443,8080,8888,49153\"/>\n</extraports>\n<port protocol=\"tcp\" portid=\"554\"><state state=\"open\" reason=\"syn-ack\" reason_ttl=\"255\"/><service name=\"rtsp\" servicefp=\"SF-Port554-TCP:V=7.98%I=7%D=3/31%Time=69CBCC56%P=i686-pc-windows-windows%r(RTSPRequest,54,&quot;RTSP/1\\.0\\x20200\\x20OK\\r\\nCSeq:\\x20\\r\\nPublic:\\x20OPTIONS,\\x20DESCRIBE,\\x20SETUP,\\x20TEARDOWN,\\x20PLAY,\\x20PAUSE\\r\\n\\r\\n&quot;)%r(HTTPOptions,54,&quot;RTSP/1\\.0\\x20200\\x20OK\\r\\nCSeq:\\x20\\r\\nPublic:\\x20OPTIONS,\\x20DESCRIBE,\\x20SETUP,\\x20TEARDOWN,\\x20PLAY,\\x20PAUSE\\r\\n\\r\\n&quot;)%r(SIPOptions,5E,&quot;RTSP/1\\.0\\x20200\\x20OK\\r\\nCSeq:\\x2042\\x20OPTIONS\\r\\nPublic:\\x20OPTIONS,\\x20DESCRIBE,\\x20SETUP,\\x20TEARDOWN,\\x20PLAY,\\x20PAUSE\\r\\n\\r\\n&quot;);\" method=\"probed\" conf=\"10\"/></port>\n<port protocol=\"tcp\" portid=\"8089\"><state state=\"open\" reason=\"syn-ack\" reason_ttl=\"255\"/><service name=\"unknown\" servicefp=\"SF-Port8089-TCP:V=7.98%I=7%D=3/31%Time=69CBCC7C%P=i686-pc-windows-windows%r(LANDesk-RC,47,&quot;\\x18\\x08\\x038\\x01\\0\\0\\0\\0\\0\\0\\x007\\0\\0\\0{\\&quot;id\\&quot;:0,\\&quot;chn\\&quot;:0,\\&quot;ts\\&quot;:1774963835,\\&quot;result\\&quot;:{\\&quot;code\\&quot;:1102}}&quot;);\" method=\"table\" conf=\"3\"/></port>\n<port protocol=\"tcp\" portid=\"8899\"><state state=\"open\" reason=\"syn-ack\" reason_ttl=\"255\"/><service name=\"ospf-lite\" method=\"table\" conf=\"3\"/></port>\n</ports>\n<times srtt=\"41337\" rttvar=\"57598\" to=\"271729\"/>\n</host>\n<runstats><finished time=\"1774963856\" timestr=\"Tue Mar 31 18:30:56 2026\" summary=\"Nmap done at Tue Mar 31 18:30:56 2026; 1 IP address (1 host up) scanned in 74.83 seconds\" elapsed=\"74.83\" exit=\"success\"/><hosts up=\"1\" down=\"0\" total=\"1\"/>\n</runstats>\n</nmaprun>\n",
+            "status": "success",
+            "timestamp": "2026-03-31T18:30:56.100717"
+          },
+          "rtsp": {
+            "type": "rtsp",
+            "scripts": {
+              "rtsp-url-brute": "\n  discovered: \n    rtsp://192.168.18.234/\n    rtsp://192.168.18.234/0\n    rtsp://192.168.18.234/0/video1\n    rtsp://192.168.18.234/1\n    rtsp://192.168.18.234/4\n    rtsp://192.168.18.234/CAM_ID.password.mp2\n    rtsp://192.168.18.234/CH001.sdp\n    rtsp://192.168.18.234/GetData.cgi\n    rtsp://192.168.18.234/H264\n    rtsp://192.168.18.234/HighResolutionVideo\n    rtsp://192.168.18.234/HighResolutionvideo\n    rtsp://192.168.18.234/Image.jpg\n    rtsp://192.168.18.234/LowResolutionVideo\n    rtsp://192.168.18.234/MJPEG.cgi\n    rtsp://192.168.18.234/MediaInput/h264\n    rtsp://192.168.18.234/MediaInput/h264/stream_1\n    rtsp://192.168.18.234/MediaInput/mpeg4\n    rtsp://192.168.18.234/ONVIF/MediaInput\n    rtsp://192.168.18.234/ONVIF/channel1\n    rtsp://192.168.18.234/PSIA/Streaming/channels/0?videoCodecType=H.264\n    rtsp://192.168.18.234/PSIA/Streaming/channels/1\n    rtsp://192.168.18.234/PSIA/Streaming/channels/1?videoCodecType=MPEG4\n    rtsp://192.168.18.234/PSIA/Streaming/channels/h264\n    rtsp://192.168.18.234/Possible\n    rtsp://192.168.18.234/1.AMP\n    rtsp://192.168.18.234/1/cif\n    rtsp://192.168.18.234/1/stream1\n    rtsp://192.168.18.234/11\n    rtsp://192.168.18.234/ROH/channel/11\n    rtsp://192.168.18.234/Streaming/Channels/1\n    rtsp://192.168.18.234/Streaming/Unicast/channels/101\n    rtsp://192.168.18.234/Streaming/channels/101\n    rtsp://192.168.18.234/Video?Codec=MPEG4&Width=720&Height=576&Fps=30\n    rtsp://192.168.18.234/VideoInput/1/h264/1\n    rtsp://192.168.18.234/Streaming/Channels/101\n    rtsp://192.168.18.234/Streaming/Channels/102\n    rtsp://192.168.18.234/Streaming/Channels/103\n    rtsp://192.168.18.234/Streaming/Channels/2\n    rtsp://192.168.18.234/access_code\n    rtsp://192.168.18.234/access_name_for_stream_1_to_5\n    rtsp://192.168.18.234/av0_0\n    rtsp://192.168.18.234/av0_1\n    rtsp://192.168.18.234/av2\n    rtsp://192.168.18.234/avn=2\n    rtsp://192.168.18.234/cam/realmonitor\n    rtsp://192.168.18.234/cam/realmonitor?channel=1&subtype=00\n    rtsp://192.168.18.234/cam/realmonitor?channel=1&subtype=01\n    rtsp://192.168.18.234/cam/realmonitor?channel=1&subtype=1\n    rtsp://192.168.18.234/cam0_0\n    rtsp://192.168.18.234/cam\n    rtsp://192.168.18.234/cam0_1\n    rtsp://192.168.18.234/cam1/h264\n    rtsp://192.168.18.234/cam1/h264/multicast\n    rtsp://192.168.18.234/cam1/mjpeg\n    rtsp://192.168.18.234/cam1/mpeg4\n    rtsp://192.168.18.234/cam4/mpeg4\n    rtsp://192.168.18.234/camera.stm\n    rtsp://192.168.18.234/cgi-bin/viewer/video.jpg?resolution=640x480\n    rtsp://192.168.18.234/ch0\n    rtsp://192.168.18.234/ch0.h264\n    rtsp://192.168.18.234/ch001.sdp\n    rtsp://192.168.18.234/ch01.264\n    rtsp://192.168.18.234/ch0_0.h264\n    rtsp://192.168.18.234/ch0_unicast_firststream\n    rtsp://192.168.18.234/ch0_unicast_secondstream\n    rtsp://192.168.18.234/channel1\n    rtsp://192.168.18.234/dms.jpg\n    rtsp://192.168.18.234/dms?nowprofileid=2\n    rtsp://192.168.18.234/h264\n    rtsp://192.168.18.234/h264.sdp\n    rtsp://192.168.18.234/axis-media/media.amp\n    rtsp://192.168.18.234/axis-media/media.amp?videocodec=h264&resolution=640x480\n    rtsp://192.168.18.234/h264/ch1/sub/\n    rtsp://192.168.18.234/h264/media.amp\n    rtsp://192.168.18.234/h264Preview_01_main\n    rtsp://192.168.18.234/h264Preview_01_sub\n    rtsp://192.168.18.234/h264_vga.sdp\n    rtsp://192.168.18.234/image.jpg\n    rtsp://192.168.18.234/image.mpg\n    rtsp://192.168.18.234/image/jpeg.cgi\n    rtsp://192.168.18.234/img/media.sav\n    rtsp://192.168.18.234/img/video.asf\n    rtsp://192.168.18.234/img/video.sav\n    rtsp://192.168.18.234/ioImage/1\n    rtsp://192.168.18.234/ipcam.sdp\n    rtsp://192.168.18.234/ipcam/stream.cgi?nowprofileid=2\n    rtsp://192.168.18.234/cam1/onvif-h264\n    rtsp://192.168.18.234/ipcam_h264.sdp\n    rtsp://192.168.18.234/jpg/image.jpg?size=3\n    rtsp://192.168.18.234/live\n    rtsp://192.168.18.234/live/ch2\n    rtsp://192.168.18.234/live/h264\n    rtsp://192.168.18.234/live.sdp\n    rtsp://192.168.18.234/live/av0\n    rtsp://192.168.18.234/live/ch0\n    rtsp://192.168.18.234/live/ch00_1\n    rtsp://192.168.18.234/live/ch1\n    rtsp://192.168.18.234/live/ch00_0\n    rtsp://192.168.18.234/live/mpeg4\n    rtsp://192.168.18.234/live0.264\n    rtsp://192.168.18.234/live_mpeg4.sdp\n    rtsp://192.168.18.234/livestream\n    rtsp://192.168.18.234/livestream/\n    rtsp://192.168.18.234/live1.264\n    rtsp://192.168.18.234/live1.sdp\n    rtsp://192.168.18.234/media\n    rtsp://192.168.18.234/media.amp\n    rtsp://192.168.18.234/media/media.amp\n    rtsp://192.168.18.234/media/video1\n    rtsp://192.168.18.234/media/video2\n    rtsp://192.168.18.234/media/video3\n    rtsp://192.168.18.234/medias1\n    rtsp://192.168.18.234/mjpeg.cgi\n    rtsp://192.168.18.234/mjpeg/media.smp\n    rtsp://192.168.18.234/mp4\n    rtsp://192.168.18.234/mpeg4\n    rtsp://192.168.18.234/mpeg4/1/media.amp\n    rtsp://192.168.18.234/mpeg4/media.amp\n    rtsp://192.168.18.234/mpeg4/media.amp?resolution=640x480\n    rtsp://192.168.18.234/mpeg4/media.smp\n    rtsp://192.168.18.234/mpeg4cif\n    rtsp://192.168.18.234/mpeg4unicast\n    rtsp://192.168.18.234/mpg4/rtsp.amp\n    rtsp://192.168.18.234/multicaststream\n    rtsp://192.168.18.234/now.mp4\n    rtsp://192.168.18.234/nph-h264.cgi\n    rtsp://192.168.18.234/1/1:1/main\n    rtsp://192.168.18.234/12\n    rtsp://192.168.18.234/live2.sdp\n    rtsp://192.168.18.234/live3.sdp\n    rtsp://192.168.18.234/onvif/live/2\n    rtsp://192.168.18.234/onvif1\n    rtsp://192.168.18.234/onvif2\n    rtsp://192.168.18.234/play1.sdp\n    rtsp://192.168.18.234/play2.sdp\n    rtsp://192.168.18.234/profile\n    rtsp://192.168.18.234/recognizer\n    rtsp://192.168.18.234/rtpvideo1.sdp\n    rtsp://192.168.18.234/rtsp_tunnel\n    rtsp://192.168.18.234/rtsph264\n    rtsp://192.168.18.234/rtsph2641080p\n    rtsp://192.168.18.234/stream1\n    rtsp://192.168.18.234/stream2\n    rtsp://192.168.18.234/streaming/mjpeg\n    rtsp://192.168.18.234/synthesizer\n    rtsp://192.168.18.234/tcp/av0_0\n    rtsp://192.168.18.234/ucast/11\n    rtsp://192.168.18.234/unicast/c1/s1/live\n    rtsp://192.168.18.234/user.pin.mp2\n    rtsp://192.168.18.234/user_defined\n    rtsp://192.168.18.234/video\n    rtsp://192.168.18.234/video.3gp\n    rtsp://192.168.18.234/video.cgi?resolution=VGA\n    rtsp://192.168.18.234/video.cgi\n    rtsp://192.168.18.234/onvif-media/media.amp\n    rtsp://192.168.18.234/video.h264\n    rtsp://192.168.18.234/video.cgi?resolution=vga\n    rtsp://192.168.18.234/nphMpeg4/g726-640x480\n    rtsp://192.168.18.234/nphMpeg4/nil-320x240\n    rtsp://192.168.18.234/nphMpeg4/g726-640x\n    rtsp://192.168.18.234/video.mp4\n    rtsp://192.168.18.234/video.pro1\n    rtsp://192.168.18.234/video.pro2\n    rtsp://192.168.18.234/video.pro3\n    rtsp://192.168.18.234/video1+audio1\n    rtsp://192.168.18.234/video2.mjpg\n    rtsp://192.168.18.234/video1\n    rtsp://192.168.18.234/videoMain\n    rtsp://192.168.18.234/videoinput_1:0/h264_1/onvif.stm\n    rtsp://192.168.18.234/videostream.cgi?rate=0\n    rtsp://192.168.18.234/vis\n    rtsp://192.168.18.234/video/mjpg.cgi\n    rtsp://192.168.18.234/wfov\n    rtsp://192.168.18.234/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp?real_stream\n    rtsp://192.168.18.234/video.mjpg\n    rtsp://192.168.18.234/live_h264.sdp",
+              "rtsp-methods": "OPTIONS, DESCRIBE, SETUP, TEARDOWN, PLAY, PAUSE"
+            },
+            "status": "success",
+            "timestamp": "2026-03-31T18:31:03.288630"
+          },
+          "web": {
+            "type": "web",
+            "scripts": {},
+            "status": "success",
+            "timestamp": "2026-03-31T18:31:04.152950"
+          },
+          "onvif": {
+            "error": "ONVIF detection failed"
+          },
+          "credentials": {
+            "error": "Credential scan failed"
+          },
+          "weak_security": {
+            "error": "Weak security scan failed"
+          }
+        },
+        "timestamp": "2026-03-31T18:29:41.145708"
+      }
+    },
+    "scan_duration_seconds": 84.764153,
+    "scan_mode": "QUICK"
+  },
+  {
+    "target_ip": "192.168.18.234",
+    "timestamp": "2026-03-31T18:43:23.078793",
+    "scan_type": "NMAP_COMPREHENSIVE",
+    "status": "COMPLETE",
+    "device_profile": {
+      "is_camera": true,
+      "camera_type": "IP Camera with RTSP + ONVIF Management",
+      "confidence": 90,
+      "status": "ONLINE",
+      "status_method": "ping",
+      "latency_ms": 123.0,
+      "last_seen": "2026-03-31T18:43:23.226445",
+      "open_ports": [
+        {
+          "port": 554,
+          "protocol": "tcp",
+          "service": "rtsp",
+          "version": ""
+        },
+        {
+          "port": 8089,
+          "protocol": "tcp",
+          "service": "unknown",
+          "version": ""
+        },
+        {
+          "port": 8899,
+          "protocol": "tcp",
+          "service": "ospf-lite",
+          "version": ""
+        }
+      ],
+      "services_detected": 3
+    },
+    "summary": {
+      "total_scanners": 1,
+      "scanners_completed": 1,
+      "vulnerabilities_found": 6,
+      "critical_issues": 2,
+      "high_issues": 2,
+      "medium_issues": 1,
+      "low_issues": 1
+    },
+    "overall_risk_score": 9,
+    "overall_risk_level": "CRITICAL",
+    "rtsp_proof_of_concept": {
+      "tested": true,
+      "accessible": true,
+      "streams_found": 1,
+      "snapshots": [
+        {
+          "path": "/live",
+          "url": "rtsp://192.168.18.234:554/live",
+          "accessible": true,
+          "snapshot": "results/rtsp_proof\\rtsp_live_0_20260331_184448.jpg",
+          "snapshot_filename": "rtsp_live_0_20260331_184448.jpg",
+          "credential": "none",
+          "timestamp": "2026-03-31T18:44:48.907711",
+          "file_size_bytes": 42651
+        }
+      ],
+      "attack_scenario_confirmed": {
+        "title": "Unauthorized Live Stream Access",
+        "difficulty": "TRIVIAL",
+        "steps": [
+          "1. Network scan identifies camera at IP + port 554 open",
+          "2. Attacker probes common RTSP paths (/live, /stream, etc)",
+          "3. RTSP stream responds without authentication",
+          "4. Attacker connects with VLC: vlc rtsp://[IP]/stream1",
+          "5. LIVE surveillance footage accessible in real-time",
+          "6. Attacker can record video, take screenshots, analyze",
+          "7. Reconnaissance for physical theft/security bypass"
+        ],
+        "impact": "Complete privacy breach, security vulnerability",
+        "likelihood": "VERY HIGH",
+        "tools_needed": "VLC media player (free), basic network tools"
+      },
+      "severity": "CRITICAL"
+    },
+    "all_findings": [
+      {
+        "id": "VULN_RTSP_001",
+        "type": "RTSP_EXPOSURE",
+        "severity": "CRITICAL",
+        "severity_weight": 10,
+        "cvss_score": 9.1,
+        "title": "\u26a0 UNAUTHORIZED RTSP STREAM ACCESS CONFIRMED - FRAMES CAPTURED",
+        "description": "CRITICAL: Live camera stream is ACTIVELY ACCESSIBLE without any authentication. This vulnerability has been CONFIRMED by capturing actual video frames from the camera. Any attacker on the network can immediately view live surveillance feed.",
+        "attack_scenario": "An attacker on the same network runs: 'vlc rtsp://{target_ip}/stream1' and gains live access to camera footage. They can record streams, analyze security footage, or use it for reconnaissance before physical attacks.",
+        "severity_justification": "Rated HIGH because: (1) Direct access to security camera feeds compromises privacy and security, (2) Recording footage enables planning for theft/attacks, (3) Easy exploitation requires no credentials, (4) Affects confidentiality directly.",
+        "affected_port": 554,
+        "affected_service": "RTSP",
+        "impact": "Unauthorized video stream access, privacy breach, security reconnaissance",
+        "remediation": [
+          "1. Connect to camera admin interface (192.168.x.x:8089 or web port)",
+          "2. Navigate to Settings \u2192 Streaming or Settings \u2192 RTSP Configuration",
+          "3. Enable 'RTSP Authentication' or 'Require Login for RTSP'",
+          "4. Set a strong password (min 12 chars: uppercase, lowercase, numbers, symbols)",
+          "5. Configure firewall rules: restrict port 554 to trusted IPs only",
+          "6. Consider disabling RTSP if not needed; use ONVIF/HTTP instead for control",
+          "7. Enable encryption: RTSPS (RTSP over TLS) if supported",
+          "8. Verify: Test with 'nc -zv {target_ip} 554' (should close connection)",
+          "9. Document change and restart camera to apply settings"
+        ],
+        "effort": "LOW",
+        "priority": "IMMEDIATE",
+        "verification": "Connect with: vlc rtsp://{target_ip}/stream - should prompt for credentials",
+        "testing_code": "vlc rtsp://192.168.18.234/stream1",
+        "related_cves": [
+          "CVE-2021-42367",
+          "CVE-2020-6889"
+        ],
+        "proof_of_concept": {
+          "tested": true,
+          "accessible": true,
+          "streams_found": 1,
+          "snapshots": [
+            {
+              "path": "/live",
+              "url": "rtsp://192.168.18.234:554/live",
+              "accessible": true,
+              "snapshot": "results/rtsp_proof\\rtsp_live_0_20260331_184448.jpg",
+              "snapshot_filename": "rtsp_live_0_20260331_184448.jpg",
+              "credential": "none",
+              "timestamp": "2026-03-31T18:44:48.907711",
+              "file_size_bytes": 42651
+            }
+          ],
+          "attack_scenario_confirmed": {
+            "title": "Unauthorized Live Stream Access",
+            "difficulty": "TRIVIAL",
+            "steps": [
+              "1. Network scan identifies camera at IP + port 554 open",
+              "2. Attacker probes common RTSP paths (/live, /stream, etc)",
+              "3. RTSP stream responds without authentication",
+              "4. Attacker connects with VLC: vlc rtsp://[IP]/stream1",
+              "5. LIVE surveillance footage accessible in real-time",
+              "6. Attacker can record video, take screenshots, analyze",
+              "7. Reconnaissance for physical theft/security bypass"
+            ],
+            "impact": "Complete privacy breach, security vulnerability",
+            "likelihood": "VERY HIGH",
+            "tools_needed": "VLC media player (free), basic network tools"
+          },
+          "severity": "CRITICAL"
+        }
+      },
+      {
+        "id": "VULN_ONVIF_001",
+        "type": "ONVIF_EXPOSURE",
+        "severity": "CRITICAL",
+        "severity_weight": 10,
+        "cvss_score": 9.3,
+        "title": "ONVIF Device Management Exposed",
+        "description": "Port 8899 (ONVIF - Open Network Video Interface Forum) is exposed. ONVIF allows complete camera control including PTZ (pan/tilt/zoom), credential modification, and configuration changes. Unauthenticated access means anyone can completely compromise the camera.",
+        "attack_scenario": "An attacker connects to ONVIF interface and: (1) Changes admin credentials, (2) Disables security features, (3) Redirects stream output, (4) Performs reconnaissance with PTZ controls, (5) Locks out legitimate users. The attacker gains complete control.",
+        "severity_justification": "Rated CRITICAL because: (1) Complete camera control possible, (2) Allows credential reset, (3) Affects integrity, availability, and confidentiality, (4) Device becomes unmanageable to owner, (5) Used as pivot point for broader network attack.",
+        "affected_port": 8899,
+        "affected_service": "ONVIF",
+        "impact": "Complete device compromise, credential hijacking, system lockout, network pivot point",
+        "remediation": [
+          "1. IMMEDIATELY change admin credentials from camera web interface",
+          "2. Access camera admin panel (usually port 80, 8080, or 8089)",
+          "3. Navigate to Settings \u2192 Device/ONVIF \u2192 Authentication",
+          "4. Enable 'ONVIF Authentication' and set strong credentials",
+          "5. Restrict ONVIF port {port} in firewall: 'ufw allow from 192.168.1.0/24 to any port {port}'",
+          "6. Update camera firmware to latest version (check manufacturer)",
+          "7. Disable ONVIF if not required: Settings \u2192 Services \u2192 ONVIF \u2192 Disable",
+          "8. If ONVIF required: Move to separate VLAN with access control",
+          "9. Monitor: Check for port access with 'netstat -an | grep {port}'",
+          "10. Configure NVR/VMS to use ONVIF only on trusted network"
+        ],
+        "effort": "MEDIUM",
+        "priority": "CRITICAL - DO FIRST",
+        "verification": "Run: 'apt install gsoap - optional' then nmap --script onvif-discovery to verify disabled",
+        "related_cves": [
+          "CVE-2019-9010",
+          "CVE-2020-27402"
+        ]
+      },
+      {
+        "id": "VULN_HTTP_8089",
+        "type": "UNENCRYPTED_WEB",
+        "severity": "HIGH",
+        "severity_weight": 6,
+        "cvss_score": 7.2,
+        "title": "Unencrypted Web Interface on Port 8089",
+        "description": "Port 8089 offers HTTP (unencrypted) access to camera management interface. All credentials, configuration, and commands are sent in PLAINTEXT over the network. An attacker with network access can intercept credentials using packet sniffing tools.",
+        "attack_scenario": "An attacker on the network runs Wireshark and captures HTTP traffic to port 8089. When admin logs in, username and password appear in plaintext. Attacker replays credentials or modifies requests to change settings.",
+        "severity_justification": "Rated HIGH because: (1) Credentials transmitted in plaintext, (2) Man-in-the-middle attacks possible, (3) No encryption on management interface, (4) HTTPS not available.",
+        "affected_port": 8089,
+        "affected_service": "unknown",
+        "impact": "Credential interception, man-in-the-middle attacks, unauthorized configuration changes",
+        "remediation": [
+          "1. Access admin panel: http://192.168.18.234:8089",
+          "2. Navigate to Settings \u2192 Security \u2192 HTTPS or SSL/TLS",
+          "3. If available: Enable HTTPS / SSL and generate/install certificate",
+          "4. Set HTTPS Port (usually 443 or 8443)",
+          "5. Configure redirect: HTTP \u2192 HTTPS (to force encryption)",
+          "6. If HTTPS unavailable: Use firewall rules to restrict port {port} to trusted IPs only",
+          "7. Configure network firewall: only allow management access from admin workstation",
+          "8. Use VPN for remote management: Never expose port {port} to internet",
+          "9. Verify: curl -kv https://192.168.18.234 should connect securely",
+          "10. Update camera firmware for better security support"
+        ],
+        "effort": "MEDIUM",
+        "priority": "HIGH",
+        "verification": "curl http://192.168.18.234:8089 should NOT transmit credentials in plaintext",
+        "related_cves": [
+          "CVE-2021-3129",
+          "CVE-2020-5410"
+        ]
+      },
+      {
+        "id": "VULN_DEFAULT_CREDS",
+        "type": "DEFAULT_CREDENTIALS",
+        "severity": "HIGH",
+        "severity_weight": 6,
+        "cvss_score": 8.1,
+        "title": "Default Credentials Likely in Use",
+        "description": "Camera has exposed management interfaces (web, ONVIF). If not changed from factory defaults, common credentials apply: admin/admin, admin/12345, etc. Most cameras ship with default credentials that are publicly known and documented.",
+        "attack_scenario": "Attacker scans network, finds open port 8089. Tries common camera credentials: admin/12345 \u2192 SUCCESS. Gains full administrative access and modifies camera settings, credentials, or disables recording.",
+        "severity_justification": "Rated HIGH because: (1) Default credentials are public knowledge, (2) No authentication bypass needed, (3) Immediate administrative access, (4) Affects all 3 security aspects (CIA).",
+        "affected_port": "Multiple",
+        "affected_service": "Management Interfaces",
+        "impact": "Unauthorized administrative access, complete camera compromise",
+        "remediation": [
+          "1. Connect to admin interface at first setup",
+          "2. Immediately change admin password from default to strong credential",
+          "3. Minimum: 12 characters, mix of uppercase/lowercase/numbers/symbols",
+          "4. Example strong password: 'Ca$#Sec2024!Mon' (never reuse)",
+          "5. Create separate read-only user account for monitoring if supported",
+          "6. Do NOT use common credentials: admin123, password, 123456, etc.",
+          "7. Document new credentials securely (password manager, not sticky notes)",
+          "8. If camera supports disable default accounts: disable admin, create new account",
+          "9. Test: Verify old credentials no longer work",
+          "10. Repeat for any other default accounts (guest, test, etc.)"
+        ],
+        "effort": "LOW",
+        "priority": "CRITICAL",
+        "verification": "Attempt login with: admin/admin, admin/12345, admin/password - should fail",
+        "related_cves": [
+          "CVE-2021-33044"
+        ]
+      },
+      {
+        "id": "VULN_WEB_SEC_001",
+        "type": "WEAK_WEB_SECURITY",
+        "severity": "MEDIUM",
+        "severity_weight": 3,
+        "cvss_score": 5.7,
+        "title": "Weak Web Security Configuration",
+        "description": "Camera web interface likely lacks security headers and best practices. Missing headers like X-Frame-Options, X-Content-Type-Options, Content-Security-Policy allow various web-based attacks including clickjacking and XSS.",
+        "attack_scenario": "An attacker creates a phishing page embedding an iframe to the camera admin panel. When admin visits the page, the embedded panel allows credential theft or settings modification. Alternatively, attacker injects malicious scripts into cached pages.",
+        "severity_justification": "Rated MEDIUM because: (1) Affects web interface security, (2) Can be exploited client-side, (3) Requires user interaction usually, (4) Layered defense partially effective.",
+        "affected_port": 8089,
+        "affected_service": "Web Interface",
+        "impact": "Clickjacking, cross-site scripting (XSS), session hijacking",
+        "remediation": [
+          "1. Admin should configure security headers at camera level if available",
+          "2. Settings \u2192 Security \u2192 Response Headers or similar",
+          "3. Enable: X-Frame-Options: SAMEORIGIN",
+          "4. Enable: X-Content-Type-Options: nosniff",
+          "5. Enable: X-XSS-Protection: 1; mode=block",
+          "6. If unavailable in camera: Configure reverse proxy (nginx) for headers",
+          "7. Example nginx config: add_header X-Frame-Options SAMEORIGIN;",
+          "8. Disable autocomplete on login form if possible",
+          "9. Implement rate limiting on login attempts",
+          "10. Update firmware to version with enhanced security"
+        ],
+        "effort": "MEDIUM",
+        "priority": "MEDIUM",
+        "verification": "curl -i http://camera:port | grep -E 'X-Frame|X-Content|CSP'",
+        "related_cves": [
+          "CVE-2021-26920"
+        ]
+      },
+      {
+        "id": "VULN_UNKNOWN_SERVICES",
+        "type": "UNKNOWN_SERVICE",
+        "severity": "LOW",
+        "severity_weight": 1,
+        "cvss_score": 2.5,
+        "title": "1 Unknown Services Running",
+        "description": "Identified 1 open port(s) with unknown service identification. Cannot determine purpose or verify if legitimate. May indicate custom protocols, hidden services, or unidentified vulnerabilities.",
+        "attack_scenario": "Unknown services are black boxes. Attacker probes them for unknown vulnerabilities that may not be publicly disclosed, making exploitation harder to detect/prevent.",
+        "severity_justification": "Rated LOW: Just information gathering flag. Not inherent vulnerability, but indicates need for investigation.",
+        "affected_port": "Multiple",
+        "affected_service": "Unknown",
+        "impact": "Unidentified security risks, reconnaissance opportunity",
+        "remediation": [
+          "1. Identify each unknown service manually",
+          "2. Connect manually: nc -v camera_ip port",
+          "3. Identify banner/response strings",
+          "4. Search banner in public databases for service ID",
+          "5. Verify service is required and legitimate",
+          "6. If unnecessary: Disable service",
+          "7. Document all services in network inventory",
+          "8. Run: nmap -sV --version-all to improve detection",
+          "9. Keep firmware updated for better service identification"
+        ],
+        "effort": "LOW",
+        "priority": "LOW"
+      }
+    ],
+    "recommendations": [
+      "\u26a0\ufe0f  URGENT: Fix 2 critical vulnerability/vulnerabilities immediately",
+      "\ud83d\udd34 Fix 2 high-severity issue(s) this week",
+      "\ud83d\udfe1 Schedule fixes for 1 medium-severity issue(s)",
+      "\u2705 After fixes, run this scan again to verify improvements",
+      "\ud83d\udccb Document all changes made",
+      "\ud83d\udd04 Set up monthly security scans"
+    ],
+    "scanners": {
+      "nmap": {
+        "status": "completed",
+        "data": {
+          "ports": {
+            "open_ports": [
+              {
+                "port": 554,
+                "protocol": "tcp",
+                "service": "rtsp",
+                "version": ""
+              },
+              {
+                "port": 8089,
+                "protocol": "tcp",
+                "service": "unknown",
+                "version": ""
+              },
+              {
+                "port": 8899,
+                "protocol": "tcp",
+                "service": "ospf-lite",
+                "version": ""
+              }
+            ],
+            "services": {
+              "554": "rtsp",
+              "8089": "unknown",
+              "8899": "ospf-lite"
+            },
+            "scripts": {},
+            "raw_xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE nmaprun>\n<?xml-stylesheet href=\"file:///C:/Program Files (x86)/Nmap/nmap.xsl\" type=\"text/xsl\"?>\n<!-- Nmap 7.98 scan initiated Tue Mar 31 18:43:24 2026 as: nmap -sV -T4 &quot;-p 554,8089,8899,80,8080,8888,443,49153&quot; -&#45;open -oX - 192.168.18.234 -->\n<nmaprun scanner=\"nmap\" args=\"nmap -sV -T4 &quot;-p 554,8089,8899,80,8080,8888,443,49153&quot; -&#45;open -oX - 192.168.18.234\" start=\"1774964604\" startstr=\"Tue Mar 31 18:43:24 2026\" version=\"7.98\" xmloutputversion=\"1.05\">\n<scaninfo type=\"syn\" protocol=\"tcp\" numservices=\"8\" services=\"80,443,554,8080,8089,8888,8899,49153\"/>\n<verbose level=\"0\"/>\n<debugging level=\"0\"/>\n<hosthint><status state=\"up\" reason=\"arp-response\" reason_ttl=\"0\"/>\n<address addr=\"192.168.18.234\" addrtype=\"ipv4\"/>\n<address addr=\"2C:D8:DE:54:02:6D\" addrtype=\"mac\" vendor=\"AltoBeam\"/>\n<hostnames>\n</hostnames>\n</hosthint>\n<host starttime=\"1774964604\" endtime=\"1774964678\"><status state=\"up\" reason=\"arp-response\" reason_ttl=\"0\"/>\n<address addr=\"192.168.18.234\" addrtype=\"ipv4\"/>\n<address addr=\"2C:D8:DE:54:02:6D\" addrtype=\"mac\" vendor=\"AltoBeam\"/>\n<hostnames>\n</hostnames>\n<ports><extraports state=\"closed\" count=\"5\">\n<extrareasons reason=\"reset\" count=\"5\" proto=\"tcp\" ports=\"80,443,8080,8888,49153\"/>\n</extraports>\n<port protocol=\"tcp\" portid=\"554\"><state state=\"open\" reason=\"syn-ack\" reason_ttl=\"255\"/><service name=\"rtsp\" servicefp=\"SF-Port554-TCP:V=7.98%I=7%D=3/31%Time=69CBCF8D%P=i686-pc-windows-windows%r(RTSPRequest,54,&quot;RTSP/1\\.0\\x20200\\x20OK\\r\\nCSeq:\\x20\\r\\nPublic:\\x20OPTIONS,\\x20DESCRIBE,\\x20SETUP,\\x20TEARDOWN,\\x20PLAY,\\x20PAUSE\\r\\n\\r\\n&quot;)%r(HTTPOptions,54,&quot;RTSP/1\\.0\\x20200\\x20OK\\r\\nCSeq:\\x20\\r\\nPublic:\\x20OPTIONS,\\x20DESCRIBE,\\x20SETUP,\\x20TEARDOWN,\\x20PLAY,\\x20PAUSE\\r\\n\\r\\n&quot;)%r(SIPOptions,5E,&quot;RTSP/1\\.0\\x20200\\x20OK\\r\\nCSeq:\\x2042\\x20OPTIONS\\r\\nPublic:\\x20OPTIONS,\\x20DESCRIBE,\\x20SETUP,\\x20TEARDOWN,\\x20PLAY,\\x20PAUSE\\r\\n\\r\\n&quot;);\" method=\"probed\" conf=\"10\"/></port>\n<port protocol=\"tcp\" portid=\"8089\"><state state=\"open\" reason=\"syn-ack\" reason_ttl=\"255\"/><service name=\"unknown\" servicefp=\"SF-Port8089-TCP:V=7.98%I=7%D=3/31%Time=69CBCFB2%P=i686-pc-windows-windows%r(LANDesk-RC,47,&quot;\\x18\\x08\\x038\\x01\\0\\0\\0\\0\\0\\0\\x007\\0\\0\\0{\\&quot;id\\&quot;:0,\\&quot;chn\\&quot;:0,\\&quot;ts\\&quot;:1774964658,\\&quot;result\\&quot;:{\\&quot;code\\&quot;:1102}}&quot;);\" method=\"table\" conf=\"3\"/></port>\n<port protocol=\"tcp\" portid=\"8899\"><state state=\"open\" reason=\"syn-ack\" reason_ttl=\"255\"/><service name=\"ospf-lite\" method=\"table\" conf=\"3\"/></port>\n</ports>\n<times srtt=\"45571\" rttvar=\"66845\" to=\"312951\"/>\n</host>\n<runstats><finished time=\"1774964678\" timestr=\"Tue Mar 31 18:44:38 2026\" summary=\"Nmap done at Tue Mar 31 18:44:38 2026; 1 IP address (1 host up) scanned in 74.91 seconds\" elapsed=\"74.91\" exit=\"success\"/><hosts up=\"1\" down=\"0\" total=\"1\"/>\n</runstats>\n</nmaprun>\n",
+            "status": "success",
+            "timestamp": "2026-03-31T18:44:39.001853"
+          },
+          "rtsp": {
+            "type": "rtsp",
+            "scripts": {
+              "rtsp-methods": "OPTIONS, DESCRIBE, SETUP, TEARDOWN, PLAY, PAUSE",
+              "rtsp-url-brute": "\n  discovered: \n    rtsp://192.168.18.234/\n    rtsp://192.168.18.234/0\n    rtsp://192.168.18.234/0/video1\n    rtsp://192.168.18.234/1\n    rtsp://192.168.18.234/4\n    rtsp://192.168.18.234/CAM_ID.password.mp2\n    rtsp://192.168.18.234/CH001.sdp\n    rtsp://192.168.18.234/GetData.cgi\n    rtsp://192.168.18.234/H264\n    rtsp://192.168.18.234/HighResolutionVideo\n    rtsp://192.168.18.234/HighResolutionvideo\n    rtsp://192.168.18.234/Image.jpg\n    rtsp://192.168.18.234/LowResolutionVideo\n    rtsp://192.168.18.234/MJPEG.cgi\n    rtsp://192.168.18.234/MediaInput/h264\n    rtsp://192.168.18.234/MediaInput/h264/stream_1\n    rtsp://192.168.18.234/MediaInput/mpeg4\n    rtsp://192.168.18.234/ONVIF/MediaInput\n    rtsp://192.168.18.234/ONVIF/channel1\n    rtsp://192.168.18.234/PSIA/Streaming/channels/0?videoCodecType=H.264\n    rtsp://192.168.18.234/PSIA/Streaming/channels/1\n    rtsp://192.168.18.234/PSIA/Streaming/channels/1?videoCodecType=MPEG4\n    rtsp://192.168.18.234/PSIA/Streaming/channels/h264\n    rtsp://192.168.18.234/Possible\n    rtsp://192.168.18.234/1/stream1\n    rtsp://192.168.18.234/ROH/channel/11\n    rtsp://192.168.18.234/Streaming/Channels/1\n    rtsp://192.168.18.234/Streaming/Channels/101\n    rtsp://192.168.18.234/Streaming/Channels/102\n    rtsp://192.168.18.234/Streaming/Channels/103\n    rtsp://192.168.18.234/Streaming/Channels/2\n    rtsp://192.168.18.234/Streaming/Unicast/channels/101\n    rtsp://192.168.18.234/Streaming/channels/101\n    rtsp://192.168.18.234/Video?Codec=MPEG4&Width=720&Height=576&Fps=30\n    rtsp://192.168.18.234/VideoInput/1/h264/1\n    rtsp://192.168.18.234/access_code\n    rtsp://192.168.18.234/access_name_for_stream_1_to_5\n    rtsp://192.168.18.234/av0_0\n    rtsp://192.168.18.234/av0_1\n    rtsp://192.168.18.234/av2\n    rtsp://192.168.18.234/avn=2\n    rtsp://192.168.18.234/axis-media/media.amp\n    rtsp://192.168.18.234/axis-media/media.amp?videocodec=h264&resolution=640x480\n    rtsp://192.168.18.234/cam\n    rtsp://192.168.18.234/cam/realmonitor\n    rtsp://192.168.18.234/cam/realmonitor?channel=1&subtype=00\n    rtsp://192.168.18.234/cam/realmonitor?channel=1&subtype=01\n    rtsp://192.168.18.234/cam/realmonitor?channel=1&subtype=1\n    rtsp://192.168.18.234/cam0_0\n    rtsp://192.168.18.234/cam0_1\n    rtsp://192.168.18.234/cam1/h264\n    rtsp://192.168.18.234/cam1/h264/multicast\n    rtsp://192.168.18.234/cam1/mjpeg\n    rtsp://192.168.18.234/cam1/mpeg4\n    rtsp://192.168.18.234/cam1/onvif-h264\n    rtsp://192.168.18.234/cam4/mpeg4\n    rtsp://192.168.18.234/camera.stm\n    rtsp://192.168.18.234/cgi-bin/viewer/video.jpg?resolution=640x480\n    rtsp://192.168.18.234/ch0\n    rtsp://192.168.18.234/ch0.h264\n    rtsp://192.168.18.234/ch001.sdp\n    rtsp://192.168.18.234/ch01.264\n    rtsp://192.168.18.234/ch0_0.h264\n    rtsp://192.168.18.234/ch0_unicast_firststream\n    rtsp://192.168.18.234/ch0_unicast_secondstream\n    rtsp://192.168.18.234/channel1\n    rtsp://192.168.18.234/dms.jpg\n    rtsp://192.168.18.234/dms?nowprofileid=2\n    rtsp://192.168.18.234/h264\n    rtsp://192.168.18.234/h264.sdp\n    rtsp://192.168.18.234/h264/ch1/sub/\n    rtsp://192.168.18.234/h264/media.amp\n    rtsp://192.168.18.234/h264Preview_01_main\n    rtsp://192.168.18.234/h264Preview_01_sub\n    rtsp://192.168.18.234/h264_vga.sdp\n    rtsp://192.168.18.234/1.AMP\n    rtsp://192.168.18.234/1/1:1/main\n    rtsp://192.168.18.234/1/cif\n    rtsp://192.168.18.234/11\n    rtsp://192.168.18.234/img/video.asf\n    rtsp://192.168.18.234/img/video.sav\n    rtsp://192.168.18.234/ioImage/1\n    rtsp://192.168.18.234/ipcam.sdp\n    rtsp://192.168.18.234/ipcam/stream.cgi?nowprofileid=2\n    rtsp://192.168.18.234/ipcam_h264.sdp\n    rtsp://192.168.18.234/jpg/image.jpg?size=3\n    rtsp://192.168.18.234/live\n    rtsp://192.168.18.234/live.sdp\n    rtsp://192.168.18.234/live/av0\n    rtsp://192.168.18.234/live/ch0\n    rtsp://192.168.18.234/live/ch00_0\n    rtsp://192.168.18.234/live/ch00_1\n    rtsp://192.168.18.234/live/ch1\n    rtsp://192.168.18.234/live/ch2\n    rtsp://192.168.18.234/live/h264\n    rtsp://192.168.18.234/live/mpeg4\n    rtsp://192.168.18.234/live0.264\n    rtsp://192.168.18.234/live1.264\n    rtsp://192.168.18.234/live1.sdp\n    rtsp://192.168.18.234/live2.sdp\n    rtsp://192.168.18.234/live3.sdp\n    rtsp://192.168.18.234/live_h264.sdp\n    rtsp://192.168.18.234/livestream\n    rtsp://192.168.18.234/image/jpeg.cgi\n    rtsp://192.168.18.234/livestream/\n    rtsp://192.168.18.234/image.jpg\n    rtsp://192.168.18.234/img/media.sav\n    rtsp://192.168.18.234/live_mpeg4.sdp\n    rtsp://192.168.18.234/media.amp\n    rtsp://192.168.18.234/media/video1\n    rtsp://192.168.18.234/media\n    rtsp://192.168.18.234/media/video2\n    rtsp://192.168.18.234/media/media.amp\n    rtsp://192.168.18.234/media/video3\n    rtsp://192.168.18.234/mjpeg/media.smp\n    rtsp://192.168.18.234/mp4\n    rtsp://192.168.18.234/mpeg4\n    rtsp://192.168.18.234/mpeg4/1/media.amp\n    rtsp://192.168.18.234/mpeg4/media.amp\n    rtsp://192.168.18.234/mpeg4/media.amp?resolution=640x480\n    rtsp://192.168.18.234/medias1\n    rtsp://192.168.18.234/mjpeg.cgi\n    rtsp://192.168.18.234/mpeg4/media.smp\n    rtsp://192.168.18.234/mpeg4cif\n    rtsp://192.168.18.234/mpg4/rtsp.amp\n    rtsp://192.168.18.234/multicaststream\n    rtsp://192.168.18.234/now.mp4\n    rtsp://192.168.18.234/nph-h264.cgi\n    rtsp://192.168.18.234/mpeg4unicast\n    rtsp://192.168.18.234/nphMpeg4/g726-640x\n    rtsp://192.168.18.234/nphMpeg4/g726-640x480\n    rtsp://192.168.18.234/nphMpeg4/nil-320x240\n    rtsp://192.168.18.234/onvif1\n    rtsp://192.168.18.234/onvif2\n    rtsp://192.168.18.234/play1.sdp\n    rtsp://192.168.18.234/play2.sdp\n    rtsp://192.168.18.234/onvif-media/media.amp\n    rtsp://192.168.18.234/profile\n    rtsp://192.168.18.234/recognizer\n    rtsp://192.168.18.234/rtpvideo1.sdp\n    rtsp://192.168.18.234/rtsp_tunnel\n    rtsp://192.168.18.234/rtsph264\n    rtsp://192.168.18.234/rtsph2641080p\n    rtsp://192.168.18.234/onvif/live/2\n    rtsp://192.168.18.234/stream2\n    rtsp://192.168.18.234/streaming/mjpeg\n    rtsp://192.168.18.234/synthesizer\n    rtsp://192.168.18.234/tcp/av0_0\n    rtsp://192.168.18.234/ucast/11\n    rtsp://192.168.18.234/unicast/c1/s1/live\n    rtsp://192.168.18.234/user_defined\n    rtsp://192.168.18.234/video\n    rtsp://192.168.18.234/video.3gp\n    rtsp://192.168.18.234/video.cgi\n    rtsp://192.168.18.234/video.cgi?resolution=VGA\n    rtsp://192.168.18.234/video.cgi?resolution=vga\n    rtsp://192.168.18.234/video.h264\n    rtsp://192.168.18.234/video.mjpg\n    rtsp://192.168.18.234/video.mp4\n    rtsp://192.168.18.234/video.pro1\n    rtsp://192.168.18.234/video.pro2\n    rtsp://192.168.18.234/video.pro3\n    rtsp://192.168.18.234/video/mjpg.cgi\n    rtsp://192.168.18.234/video1\n    rtsp://192.168.18.234/video1+audio1\n    rtsp://192.168.18.234/video2.mjpg\n    rtsp://192.168.18.234/videoMain\n    rtsp://192.168.18.234/videoinput_1:0/h264_1/onvif.stm\n    rtsp://192.168.18.234/videostream.cgi?rate=0\n    rtsp://192.168.18.234/vis\n    rtsp://192.168.18.234/wfov\n    rtsp://192.168.18.234/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp?real_stream\n    rtsp://192.168.18.234/stream1\n    rtsp://192.168.18.234/image.mpg\n    rtsp://192.168.18.234/user.pin.mp2\n    rtsp://192.168.18.234/12"
+            },
+            "status": "success",
+            "timestamp": "2026-03-31T18:44:47.063804"
+          },
+          "web": {
+            "type": "web",
+            "scripts": {},
+            "status": "success",
+            "timestamp": "2026-03-31T18:44:47.969060"
+          },
+          "onvif": {
+            "error": "ONVIF detection failed"
+          },
+          "credentials": {
+            "error": "Credential scan failed"
+          },
+          "weak_security": {
+            "error": "Weak security scan failed"
+          }
+        },
+        "timestamp": "2026-03-31T18:43:23.078793"
+      }
+    },
+    "scan_duration_seconds": 85.833193,
+    "scan_mode": "QUICK"
   }
 ]

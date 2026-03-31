@@ -12,6 +12,18 @@ from datetime import datetime
 from typing import Optional, Generator
 import threading
 import time
+import shutil
+import io
+
+# Check if FFmpeg is available
+FFMPEG_AVAILABLE = shutil.which('ffmpeg') is not None
+
+# Try to import PIL for placeholder images
+try:
+    from PIL import Image, ImageDraw, ImageFont
+    PIL_AVAILABLE = True
+except ImportError:
+    PIL_AVAILABLE = False
 
 class RTSPStreamManager:
     """
@@ -33,9 +45,61 @@ class RTSPStreamManager:
         os.makedirs(self.snapshots_dir, exist_ok=True)
         print(f"📁 Snapshots directory: {os.path.abspath(self.snapshots_dir)}")
     
+    def _generate_placeholder_image(self, filepath: str, camera_id: str, rtsp_url: str) -> bool:
+        """
+        Generate a placeholder image when FFmpeg is unavailable
+        
+        Args:
+            filepath: Where to save the placeholder image
+            camera_id: Camera identifier
+            rtsp_url: RTSP URL for display
+        
+        Returns:
+            True if successful, False otherwise
+        """
+        if not PIL_AVAILABLE:
+            return False
+        
+        try:
+            # Create placeholder image (800x600, dark blue background)
+            img = Image.new('RGB', (800, 600), color=(30, 40, 80))
+            draw = ImageDraw.Draw(img)
+            
+            # Try to load a nice font, fallback to default
+            try:
+                title_font = ImageFont.truetype("arial.ttf", 36)
+                info_font = ImageFont.truetype("arial.ttf", 16)
+            except:
+                title_font = ImageFont.load_default()
+                info_font = ImageFont.load_default()
+            
+            # Draw text
+            draw.text((20, 50), "FFmpeg Not Installed", fill=(255, 200, 0), font=title_font)
+            draw.text((20, 120), "Live snapshot capture unavailable", fill=(200, 200, 200), font=info_font)
+            draw.text((20, 170), f"Camera ID: {camera_id}", fill=(150, 200, 255), font=info_font)
+            draw.text((20, 210), f"Stream: {rtsp_url[:50]}...", fill=(150, 200, 255), font=info_font)
+            draw.text((20, 270), "To enable snapshots, install FFmpeg:", fill=(200, 200, 200), font=info_font)
+            draw.text((20, 310), "• Linux: apt-get install ffmpeg", fill=(150, 255, 150), font=info_font)
+            draw.text((20, 350), "• Windows: choco install ffmpeg", fill=(150, 255, 150), font=info_font)
+            draw.text((20, 390), "• Or: pip install ffmpeg-python", fill=(150, 255, 150), font=info_font)
+            draw.text((20, 500), f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", fill=(100, 100, 100), font=info_font)
+            
+            # Ensure directory exists
+            os.makedirs(os.path.dirname(filepath), exist_ok=True)
+            
+            # Save image
+            img.save(filepath, 'JPEG', quality=85)
+            print(f"  ✓ Placeholder image generated (PIL)")
+            return True
+            
+        except Exception as e:
+            print(f"  ✗ Placeholder generation failed: {e}")
+            return False
+
     def capture_snapshot(self, rtsp_url: str, camera_id: str = "default") -> Optional[dict]:
         """
         Capture a single snapshot from RTSP stream
+        Falls back to placeholder image if FFmpeg unavailable
         
         Args:
             rtsp_url: RTSP stream URL (e.g., rtsp://192.168.18.234/live)
@@ -50,18 +114,54 @@ class RTSPStreamManager:
                 'url': '/api/snapshot/snapshot_20260331_143022.jpg',
                 'file_size_bytes': 45230,
                 'timestamp': '2026-03-31T14:30:22.123456',
-                'rtsp_url': rtsp_url
+                'rtsp_url': rtsp_url,
+                'source': 'ffmpeg' | 'placeholder'
             }
         """
-        try:
-            # Generate unique filename
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f"snapshot_{camera_id}_{timestamp}.jpg"
-            filepath = os.path.join(self.snapshots_dir, filename)
+        # Generate unique filename
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"snapshot_{camera_id}_{timestamp}.jpg"
+        filepath = os.path.join(self.snapshots_dir, filename)
+        
+        print(f"\n🎬 SNAPSHOT CAPTURE")
+        print(f"  RTSP URL: {rtsp_url}")
+        print(f"  Output: {filename}")
+        
+        # Check if FFmpeg is available
+        if not FFMPEG_AVAILABLE:
+            print(f"  ⚠️  FFmpeg not installed - attempting fallback")
             
-            print(f"\n🎬 SNAPSHOT CAPTURE")
-            print(f"  RTSP URL: {rtsp_url}")
-            print(f"  Output: {filename}")
+            # Try to generate placeholder using PIL
+            if self._generate_placeholder_image(filepath, camera_id, rtsp_url):
+                if os.path.exists(filepath):
+                    file_size = os.path.getsize(filepath)
+                    return {
+                        'success': True,
+                        'filename': filename,
+                        'filepath': filepath,
+                        'url': f'/api/snapshot/{filename}',
+                        'file_size_bytes': file_size,
+                        'timestamp': datetime.now().isoformat(),
+                        'rtsp_url': rtsp_url,
+                        'source': 'placeholder',
+                        'note': 'Placeholder image - FFmpeg not installed'
+                    }
+            
+            # PIL also unavailable
+            print(f"  ✗ FFmpeg and PIL not available - cannot create snapshot")
+            return {
+                'success': False,
+                'error': 'FFmpeg not installed and PIL unavailable for placeholder',
+                'installation_info': {
+                    'linux': 'apt-get install ffmpeg',
+                    'windows': 'choco install ffmpeg (or download from ffmpeg.org)',
+                    'pip': 'pip install ffmpeg-python'
+                },
+                'timestamp': datetime.now().isoformat()
+            }
+        
+        # FFmpeg is available - proceed with actual capture
+        try:
             print(f"  Timeout: 10 seconds")
             
             # FFmpeg command to capture single frame
@@ -96,7 +196,8 @@ class RTSPStreamManager:
                     'url': f'/api/snapshot/{filename}',
                     'file_size_bytes': file_size,
                     'timestamp': datetime.now().isoformat(),
-                    'rtsp_url': rtsp_url
+                    'rtsp_url': rtsp_url,
+                    'source': 'ffmpeg'
                 }
             else:
                 print(f"  ✗ Capture failed or file too small")
@@ -115,14 +216,6 @@ class RTSPStreamManager:
                 'error': 'Stream timeout - camera may be offline or unreachable',
                 'timestamp': datetime.now().isoformat()
             }
-        except FileNotFoundError:
-            print(f"  ✗ FFmpeg not installed")
-            print(f"  ℹ️  Install with: apt-get install ffmpeg (Linux) or choco install ffmpeg (Windows)")
-            return {
-                'success': False,
-                'error': 'FFmpeg not installed - cannot capture stream',
-                'timestamp': datetime.now().isoformat()
-            }
         except Exception as e:
             print(f"  ✗ Error: {e}")
             return {
@@ -134,6 +227,7 @@ class RTSPStreamManager:
     def get_live_stream(self, rtsp_url: str, stream_id: str = "default") -> Generator[bytes, None, None]:
         """
         Stream RTSP as MJPEG (Motion JPEG) for browser display
+        Falls back to placeholder image stream if FFmpeg unavailable
         
         Yields MJPEG frames for streaming in <img src> tags
         
@@ -145,6 +239,56 @@ class RTSPStreamManager:
             JPEG frame data with proper MJPEG boundaries
         """
         process = None
+        
+        # Check if FFmpeg is available
+        if not FFMPEG_AVAILABLE:
+            print(f"\n🎥 LIVE STREAM (FALLBACK - FFmpeg not available)")
+            print(f"  RTSP URL: {rtsp_url}")
+            print(f"  Format: Placeholder JPEG (no FFmpeg)")
+            
+            # Generate a single placeholder frame for streaming
+            if PIL_AVAILABLE:
+                try:
+                    img = Image.new('RGB', (800, 600), color=(30, 40, 80))
+                    draw = ImageDraw.Draw(img)
+                    
+                    try:
+                        font = ImageFont.truetype("arial.ttf", 24)
+                        small_font = ImageFont.truetype("arial.ttf", 14)
+                    except:
+                        font = ImageFont.load_default()
+                        small_font = ImageFont.load_default()
+                    
+                    draw.text((20, 50), "Live Stream Unavailable", fill=(255, 200, 0), font=font)
+                    draw.text((20, 110), "FFmpeg not installed", fill=(200, 200, 200), font=small_font)
+                    draw.text((20, 150), f"Stream: {rtsp_url[:50]}...", fill=(150, 200, 255), font=small_font)
+                    draw.text((20, 190), "Expected: Real-time MJPEG feed", fill=(200, 100, 100), font=small_font)
+                    draw.text((20, 240), "To enable streaming, install FFmpeg:", fill=(200, 200, 200), font=small_font)
+                    draw.text((20, 270), "Linux: apt-get install ffmpeg", fill=(150, 255, 150), font=small_font)
+                    draw.text((20, 300), "Windows: choco install ffmpeg", fill=(150, 255, 150), font=small_font)
+                    
+                    # Convert image to JPEG bytes
+                    import io
+                    buffer = io.BytesIO()
+                    img.save(buffer, format='JPEG', quality=85)
+                    jpeg_data = buffer.getvalue()
+                    
+                    # Yield MJPEG frame with boundary
+                    boundary = b'--BOUNDARY\r\n'
+                    header = b'Content-Type: image/jpeg\r\nContent-Length: ' + str(len(jpeg_data)).encode() + b'\r\n\r\n'
+                    
+                    yield boundary + header + jpeg_data + b'\r\n'
+                    print(f"  ✓ Placeholder frame generated (PIL)")
+                    
+                except Exception as e:
+                    print(f"  ✗ Placeholder generation failed: {e}")
+                    yield b'Stream failed'
+            else:
+                print(f"  ✗ FFmpeg not installed and PIL unavailable")
+                yield b'Stream unavailable - FFmpeg not installed'
+            return
+        
+        # FFmpeg is available - proceed with actual stream
         try:
             print(f"\n🎥 LIVE STREAM START")
             print(f"  RTSP URL: {rtsp_url}")

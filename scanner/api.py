@@ -13,15 +13,33 @@ import json
 import os
 import subprocess
 import platform
+import shutil
+
+# Add FFmpeg to PATH on Windows if not already available
+if platform.system() == 'Windows' and not shutil.which('ffmpeg'):
+    ffmpeg_paths = [
+        r'C:\Users\haziq\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-8.1-full_build\bin',
+        r'C:\Program Files\FFmpeg\bin',
+        r'C:\Program Files (x86)\FFmpeg\bin',
+    ]
+    for ffmpeg_path in ffmpeg_paths:
+        if os.path.exists(ffmpeg_path):
+            os.environ['PATH'] = ffmpeg_path + os.pathsep + os.environ.get('PATH', '')
+            print(f"✓ Added FFmpeg to PATH: {ffmpeg_path}")
+            break
 
 app = Flask(__name__)
 CORS(app)
 
+# Use absolute path for snapshots directory
+SNAPSHOTS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'snapshots'))
+os.makedirs(SNAPSHOTS_DIR, exist_ok=True)
+
 # Initialize RTSP stream manager
-rtsp_manager = RTSPStreamManager(snapshots_dir="snapshots")
+rtsp_manager = RTSPStreamManager(snapshots_dir=SNAPSHOTS_DIR)
 
 # Store scan history
-HISTORY_FILE = "scan_history.json"
+HISTORY_FILE = os.path.join(os.path.dirname(__file__), "scan_history.json")
 
 def load_history():
     """Load scan history from file"""
